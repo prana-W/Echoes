@@ -5,7 +5,7 @@ import checkHealth from './controllers/checkHealth.controller.js';
 import {errorHandler} from './middlewares/index.js';
 import morgan from 'morgan';
 
-import {authRouter, visitorsRouter, relationRouter, userRouter} from './routes/index.js';
+import {authRouter, visitorsRouter, relationRouter, userRouter, timeCapsuleRouter} from './routes/index.js';
 
 const app = express();
 
@@ -34,6 +34,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/visitors', visitorsRouter);
 app.use('/api/v1/relations', relationRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/timecapsule', timeCapsuleRouter);
 
 // Error Handling
 app.use(errorHandler());
