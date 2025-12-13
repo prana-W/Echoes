@@ -64,4 +64,51 @@ const getUserByEmail = asyncHandler(async (req, res) => {
         );
 });
 
-export {getUsersByName, getUserByEmail};
+import Relation from "../models/relation.model.js";
+import { onlineUsers } from "../store/presence.store.js";
+
+const getFriendsOfUser = async (userId) => {
+    // Find all relations where user is either side
+    const relations = await Relation.find({
+        $or: [
+            { from: userId },
+            { to: userId },
+        ],
+    });
+
+    // Collect the "other" user IDs
+    const friendIds = new Set();
+
+    relations.forEach(rel => {
+        if (rel.from.toString() === userId.toString()) {
+            friendIds.add(rel.to.toString());
+        } else {
+            friendIds.add(rel.from.toString());
+        }
+    });
+
+    // Fetch user documents
+    const friends = await User.find({
+        _id: { $in: Array.from(friendIds) },
+    }).select("name email");
+
+    return friends;
+};
+
+const getUserPresence = asyncHandler(async (req, res) => {
+    const userId = req.userId;
+
+    const friends = await getFriendsOfUser(userId); // relations logic
+
+    const presence = friends.map(friend => ({
+        userId: friend._id,
+        name: friend.name,
+        online: onlineUsers.has(friend._id.toString()),
+    }));
+
+    return res.status(statusCode.OK).json(new ApiResponse(200, "User presence fetched successfully", presence));
+
+});
+
+
+export {getUsersByName, getUserByEmail, getUserPresence};
