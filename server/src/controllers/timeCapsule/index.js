@@ -5,6 +5,7 @@ import {
     getTimeCapsule,
     getAllTimeCapsulesForUser,
     openTimeCapsule,
+    getEntireTimeCapsule
 } from './timeCapsule.controller.js';
 
 import {
@@ -21,4 +22,5 @@ export {
     openTimeCapsule,
     reactToTimeCapsule,
     getMyReactionForTimeCapsule,
+    getEntireTimeCapsule
 };

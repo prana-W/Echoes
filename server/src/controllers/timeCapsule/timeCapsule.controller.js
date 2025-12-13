@@ -3,7 +3,7 @@ import {ApiError, ApiResponse, asyncHandler} from '../../utility/index.js';
 import statusCode from '../../constants/statusCode.js';
 import TimeCapsule from '../../models/timeCapsule/timeCapsule.model.js';
 import User from '../../models/user.model.js';
-import {Analytics} from '../../models/index.js';
+import {Analytics, TimeCapsuleContent} from '../../models/index.js';
 
 const validateUsersExist = async (userIds = []) => {
     if (!Array.isArray(userIds) || userIds.length === 0) return;
@@ -482,6 +482,114 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
 });
 
 
+const getEntireTimeCapsule = asyncHandler(async (req, res) => {
+    const { timecapsuleId } = req.params;
+    const userId = req.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
+        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+    }
+
+    const capsule = await TimeCapsule.findById(timecapsuleId)
+        .populate("owner", "name email")
+        .populate("contributors", "name email")
+        .populate("recipients", "name email");
+
+    if (!capsule) {
+        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+    }
+
+    const userIdStr = userId.toString();
+
+    const isOwner = capsule.owner._id.toString() === userIdStr;
+    const isContributor = capsule.contributors.some(
+        u => u._id.toString() === userIdStr
+    );
+    const isRecipient = capsule.recipients.some(
+        u => u._id.toString() === userIdStr
+    );
+
+    if (!isOwner && !isContributor && !isRecipient) {
+        throw new ApiError(
+            statusCode.FORBIDDEN,
+            "You are not allowed to view this time capsule"
+        );
+    }
+
+    if (!capsule.isOpened) {
+        throw new ApiError(
+            statusCode.FORBIDDEN,
+            "Time capsule has not been opened yet"
+        );
+    }
+
+    const contents = await TimeCapsuleContent.find({
+        capsule: timecapsuleId,
+    })
+        .populate("createdBy", "name email")
+        .sort({ createdAt: 1 });
+
+    const images = [];
+    const videos = [];
+    const audios = [];
+    const texts = [];
+    const questions = [];
+
+    contents.forEach(item => {
+        const base = {
+            id: item._id,
+            content: item.content,
+            createdBy: item.createdBy,
+            createdAt: item.createdAt,
+        };
+
+        if (item.type === "image") images.push(base);
+        if (item.type === "video") videos.push(base);
+        if (item.type === "audio") audios.push(base);
+        if (item.type === "text") texts.push(base);
+        if (item.type === "question") questions.push(base);
+    });
+
+    const SERVER_TIME = Date.now();
+
+    const timeElapsedMs = SERVER_TIME - new Date(capsule.createdAt).getTime();
+
+    const response = {
+        metadata: {
+            id: capsule._id,
+            title: capsule.title,
+            description: capsule.description,
+            theme: capsule.theme,
+            owner: capsule.owner,
+            contributors: capsule.contributors,
+            recipients: capsule.recipients,
+            totalContributors: capsule.contributors.length,
+            totalRecipients: capsule.recipients.length,
+            isEventRelated: capsule.isEventRelated,
+            event: capsule.event || null,
+            createdAt: capsule.createdAt,
+            openedAt: capsule.updatedAt,
+            timeElapsedMs,
+        },
+
+        contents: {
+            images,
+            videos,
+            audios,
+            texts,
+            questions,
+        },
+    };
+
+    return res.status(statusCode.OK).json(
+        new ApiResponse(
+            statusCode.OK,
+            "Entire time capsule fetched successfully",
+            response
+        )
+    );
+});
+
 export {
     createTimeCapsule,
     modifyTimeCapsule,
@@ -489,4 +597,5 @@ export {
     getTimeCapsule,
     getAllTimeCapsulesForUser,
     openTimeCapsule,
+    getEntireTimeCapsule
 };
