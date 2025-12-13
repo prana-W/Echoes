@@ -1,4 +1,5 @@
 import verifyAccessToken from './middlewares/verifyAccessToken.middleware.js';
+import { onlineUsers } from "../store/presence.store.js";
 
 function registerSockets(io) {
     // Middleware to verify access token for each socket connection
@@ -7,10 +8,20 @@ function registerSockets(io) {
     io.on('connection', (socket) => {
         console.log('✅ Socket connected:', socket.id);
 
-        // socket.on('packet', handlePacket(socket));
+        // const userId = socket.handshake.auth.userId;
+        const userId = socket?.userId;
+        console.log(userId);
 
-        socket.on('disconnect', () => {
-            console.log('Socket disconnected. User:', socket?.userId);
+        if (userId) {
+            onlineUsers.set(userId, socket.id);
+            io.emit("presence:update", { userId, status: "online" });
+        }
+
+        socket.on("disconnect", () => {
+            if (userId) {
+                onlineUsers.delete(userId);
+                io.emit("presence:update", { userId, status: "offline" });
+            }
         });
     });
 }
