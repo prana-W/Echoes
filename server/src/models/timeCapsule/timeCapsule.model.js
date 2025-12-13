@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import {eventList} from '../../constants/eventsList.js';
 
 const reactionSchema = new mongoose.Schema(
     {
@@ -55,14 +56,7 @@ const timeCapsuleSchema = new mongoose.Schema(
 
         event: {
             type: String,
-            enum: [
-                'birthday',
-                'wedding',
-                'anniversary',
-                'graduation',
-                'retirement',
-                'other',
-            ],
+            enum: eventList
         },
 
         theme: {
