@@ -1,7 +1,7 @@
-import createUploader from "../../utility/uploadMediaTimeCapsule.util.js";
+import createUploader from '../../utility/uploadMediaTimeCapsule.util.js';
 
 const uploadImages = createUploader({
-    allowedMimePrefix: "image/",
+    allowedMimePrefix: 'image/',
     maxFileSize: 50 * 1024 * 1024,
     maxFiles: 20,
 });
