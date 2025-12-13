@@ -7,12 +7,12 @@ const analyticsSchema = new mongoose.Schema(
             default: 0,
         },
 
-        totalTimeCapsulesCreated: {
+        totalCapsulesCreated: {
             type: Number,
             default: 0,
         },
 
-        totalTimeCapsulesOpened: {
+        totalCapsulesOpened: {
             type: Number,
             default: 0,
         },

@@ -3,6 +3,7 @@ import { ApiError, ApiResponse, asyncHandler } from "../utility/index.js";
 import statusCode from "../constants/statusCode.js";
 import TimeCapsule from "../models/timeCapsule/timeCapsule.model.js";
 import User from "../models/user.model.js";
+import {Analytics} from '../models/index.js';
 
 const validateUsersExist = async (userIds = []) => {
     if (!Array.isArray(userIds) || userIds.length === 0) return;
@@ -96,6 +97,13 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
         event: isEventRelated ? event : undefined,
         theme,
     });
+
+    // For Analytics purposes
+    await Analytics.findOneAndUpdate(
+        {},
+        { $inc: { totalCapsulesCreated: 1 } },
+        { upsert: true, new: true }
+    );
 
     return res.status(statusCode.CREATED).json(
         new ApiResponse(
@@ -241,8 +249,136 @@ const deleteTimeCapsule = asyncHandler(async (req, res) => {
     );
 });
 
+const getTimeCapsule = asyncHandler(async (req, res) => {
+    const { timecapsuleId } = req.params;
+    const userId = req.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
+        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+    }
+
+    const capsule = await TimeCapsule.findById(timecapsuleId)
+        .populate("owner", "name email")
+        .populate("contributors", "name email")
+        .populate("recipients", "name email");
+
+    if (!capsule) {
+        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+    }
+
+    const userIdStr = userId.toString();
+
+    const isOwner = capsule.owner._id.toString() === userIdStr;
+    const isContributor = capsule.contributors.some(
+        u => u._id.toString() === userIdStr
+    );
+    const isRecipient = capsule.recipients.some(
+        u => u._id.toString() === userIdStr
+    );
+
+    if (!isOwner && !isContributor && !isRecipient) {
+        throw new ApiError(
+            statusCode.FORBIDDEN,
+            "You do not have access to this time capsule"
+        );
+    }
+
+    // If capsule is not opened yet, restrict sensitive fields
+    if (!capsule.isOpened && !isOwner) {
+        return res.status(statusCode.OK).json(
+            new ApiResponse(
+                statusCode.OK,
+                "Time capsule fetched (locked view)",
+                {
+                    _id: capsule._id,
+                    title: capsule.title,
+                    description: capsule.description,
+                    theme: capsule.theme,
+                    owner: capsule.owner,
+                    contributors: capsule.contributors,
+                    recipients: capsule.recipients,
+                    openAt: capsule.openAt,
+                    isEventRelated: capsule.isEventRelated,
+                    event: capsule.event,
+                    isOpened: capsule.isOpened,
+                    createdAt: capsule.createdAt,
+                }
+            )
+        );
+    }
+
+    return res.status(statusCode.OK).json(
+        new ApiResponse(
+            statusCode.OK,
+            "Time capsule fetched successfully",
+            capsule
+        )
+    );
+});
+
+
+const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
+    const userId = req.userId;
+
+    const capsules = await TimeCapsule.find({
+        $or: [
+            { owner: userId },
+            { contributors: userId },
+            { recipients: userId },
+        ],
+    })
+        .populate("owner", "name email")
+        .populate("contributors", "name email")
+        .populate("recipients", "name email")
+        .sort({ createdAt: -1 });
+
+    if (!capsules || capsules.length === 0) {
+        return res.status(statusCode.OK).json(
+            new ApiResponse(
+                statusCode.OK,
+                "No time capsules found for this user",
+                []
+            )
+        );
+    }
+
+    const responseCapsules = capsules.map(capsule => {
+        const isOwner = capsule.owner._id.toString() === userId.toString();
+
+        // If capsule is locked and user is not owner, return limited view
+        if (!capsule.isOpened && !isOwner) {
+            return {
+                _id: capsule._id,
+                title: capsule.title,
+                description: capsule.description,
+                theme: capsule.theme,
+                owner: capsule.owner,
+                contributors: capsule.contributors,
+                recipients: capsule.recipients,
+                openAt: capsule.openAt,
+                isEventRelated: capsule.isEventRelated,
+                event: capsule.event,
+                isOpened: capsule.isOpened,
+                createdAt: capsule.createdAt,
+            };
+        }
+
+        return capsule;
+    });
+
+    return res.status(statusCode.OK).json(
+        new ApiResponse(
+            statusCode.OK,
+            "Time capsules fetched successfully",
+            responseCapsules
+        )
+    );
+});
+
 export {
     createTimeCapsule,
     modifyTimeCapsule,
     deleteTimeCapsule,
+    getTimeCapsule,
+    getAllTimeCapsulesForUser
 };
