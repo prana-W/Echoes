@@ -13,5 +13,5 @@ export {
     userRouter,
     timeCapsuleRouter,
     timeCapsuleContentRouter,
-    eventsRouter
+    eventsRouter,
 };

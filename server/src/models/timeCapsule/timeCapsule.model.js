@@ -56,7 +56,7 @@ const timeCapsuleSchema = new mongoose.Schema(
 
         event: {
             type: String,
-            enum: eventList
+            enum: eventList,
         },
 
         theme: {
@@ -83,6 +83,10 @@ const timeCapsuleSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        emailSent: {
+            type: Boolean,
+            default: false,
+        }
     },
     {
         timestamps: true,
