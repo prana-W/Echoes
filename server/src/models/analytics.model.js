@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const analyticsSchema = new mongoose.Schema(
     {
@@ -22,6 +22,6 @@ const analyticsSchema = new mongoose.Schema(
     }
 );
 
-const Analytics = mongoose.model("Analytics", analyticsSchema);
+const Analytics = mongoose.model('Analytics', analyticsSchema);
 
 export default Analytics;

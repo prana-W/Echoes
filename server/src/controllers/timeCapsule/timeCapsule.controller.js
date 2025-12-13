@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
-import { ApiError, ApiResponse, asyncHandler } from "../../utility/index.js";
-import statusCode from "../../constants/statusCode.js";
-import TimeCapsule from "../../models/timeCapsule/timeCapsule.model.js";
-import User from "../../models/user.model.js";
+import mongoose from 'mongoose';
+import {ApiError, ApiResponse, asyncHandler} from '../../utility/index.js';
+import statusCode from '../../constants/statusCode.js';
+import TimeCapsule from '../../models/timeCapsule/timeCapsule.model.js';
+import User from '../../models/user.model.js';
 import {Analytics} from '../../models/index.js';
 
 const validateUsersExist = async (userIds = []) => {
     if (!Array.isArray(userIds) || userIds.length === 0) return;
 
-    const uniqueIds = [...new Set(userIds.map(id => id.toString()))];
+    const uniqueIds = [...new Set(userIds.map((id) => id.toString()))];
 
     // Validate ObjectId format
     for (const id of uniqueIds) {
@@ -20,12 +20,12 @@ const validateUsersExist = async (userIds = []) => {
         }
     }
 
-    const users = await User.find({ _id: { $in: uniqueIds } }).select("_id");
+    const users = await User.find({_id: {$in: uniqueIds}}).select('_id');
 
     if (users.length !== uniqueIds.length) {
         throw new ApiError(
             statusCode.BAD_REQUEST,
-            "One or more users provided do not exist"
+            'One or more users provided do not exist'
         );
     }
 };
@@ -42,11 +42,11 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
         event,
         theme,
         isEventRelated = false,
-        allowContributorsToOpen = false
+        allowContributorsToOpen = false,
     } = req.body;
 
     if (!title) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Title is required");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Title is required');
     }
 
     // Event vs Date validation
@@ -54,14 +54,14 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
         if (!event) {
             throw new ApiError(
                 statusCode.BAD_REQUEST,
-                "Event is required when isEventRelated is true"
+                'Event is required when isEventRelated is true'
             );
         }
     } else {
         if (!openAt) {
             throw new ApiError(
                 statusCode.BAD_REQUEST,
-                "openAt is required when isEventRelated is false"
+                'openAt is required when isEventRelated is false'
             );
         }
     }
@@ -73,7 +73,7 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
     // Contributors (owner always included)
     const contributorSet = new Set([
         ownerId.toString(),
-        ...contributors.map(id => id.toString()),
+        ...contributors.map((id) => id.toString()),
     ]);
 
     const finalContributors = Array.from(contributorSet);
@@ -81,7 +81,7 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
     // Recipients (contributors auto-added)
     const recipientSet = new Set([
         ...finalContributors,
-        ...recipients.map(id => id.toString()),
+        ...recipients.map((id) => id.toString()),
     ]);
 
     const finalRecipients = Array.from(recipientSet);
@@ -102,37 +102,39 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
     // For Analytics purposes
     await Analytics.findOneAndUpdate(
         {},
-        { $inc: { totalCapsulesCreated: 1 } },
-        { upsert: true, new: true }
+        {$inc: {totalCapsulesCreated: 1}},
+        {upsert: true, new: true}
     );
 
-    return res.status(statusCode.CREATED).json(
-        new ApiResponse(
-            statusCode.CREATED,
-            "Time capsule created successfully",
-            capsule
-        )
-    );
+    return res
+        .status(statusCode.CREATED)
+        .json(
+            new ApiResponse(
+                statusCode.CREATED,
+                'Time capsule created successfully',
+                capsule
+            )
+        );
 });
 
 const modifyTimeCapsule = asyncHandler(async (req, res) => {
-    const { timecapsuleId } = req.params;
+    const {timecapsuleId} = req.params;
     const userId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId);
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
     }
 
     // Only owner can modify
     if (capsule.owner.toString() !== userId) {
         throw new ApiError(
             statusCode.FORBIDDEN,
-            "Only the creator can modify this time capsule"
+            'Only the creator can modify this time capsule'
         );
     }
 
@@ -159,10 +161,12 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
     if (theme !== undefined) capsule.theme = theme;
 
     // Contributors
-    let contributorSet = new Set(capsule.contributors.map(id => id.toString()));
+    let contributorSet = new Set(
+        capsule.contributors.map((id) => id.toString())
+    );
 
-    addContributors.forEach(id => contributorSet.add(id.toString()));
-    removeContributors.forEach(id => contributorSet.delete(id.toString()));
+    addContributors.forEach((id) => contributorSet.add(id.toString()));
+    removeContributors.forEach((id) => contributorSet.delete(id.toString()));
 
     // Owner can NEVER be removed
     contributorSet.add(capsule.owner.toString());
@@ -170,13 +174,13 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
     const updatedContributors = Array.from(contributorSet);
 
     // Recipients
-    let recipientSet = new Set(capsule.recipients.map(id => id.toString()));
+    let recipientSet = new Set(capsule.recipients.map((id) => id.toString()));
 
     // Contributors always recipients
-    updatedContributors.forEach(id => recipientSet.add(id));
+    updatedContributors.forEach((id) => recipientSet.add(id));
 
-    addRecipients.forEach(id => recipientSet.add(id.toString()));
-    removeRecipients.forEach(id => recipientSet.delete(id.toString()));
+    addRecipients.forEach((id) => recipientSet.add(id.toString()));
+    removeRecipients.forEach((id) => recipientSet.delete(id.toString()));
 
     capsule.contributors = updatedContributors;
     capsule.recipients = Array.from(recipientSet);
@@ -189,7 +193,7 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
             if (!event) {
                 throw new ApiError(
                     statusCode.BAD_REQUEST,
-                    "Event is required when isEventRelated is true"
+                    'Event is required when isEventRelated is true'
                 );
             }
             capsule.event = event;
@@ -198,7 +202,7 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
             if (!openAt) {
                 throw new ApiError(
                     statusCode.BAD_REQUEST,
-                    "openAt is required when isEventRelated is false"
+                    'openAt is required when isEventRelated is false'
                 );
             }
             capsule.openAt = openAt;
@@ -208,77 +212,78 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
 
     await capsule.save();
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Time capsule updated successfully",
-            capsule
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(
+                statusCode.OK,
+                'Time capsule updated successfully',
+                capsule
+            )
+        );
 });
 
 const deleteTimeCapsule = asyncHandler(async (req, res) => {
-    const { timecapsuleId } = req.params;
+    const {timecapsuleId} = req.params;
     const userId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId);
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
     }
 
     // Only owner can delete
     if (capsule.owner.toString() !== userId) {
         throw new ApiError(
             statusCode.FORBIDDEN,
-            "Only the creator can delete this time capsule"
+            'Only the creator can delete this time capsule'
         );
     }
 
     await TimeCapsule.findByIdAndDelete(timecapsuleId);
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Time capsule deleted successfully"
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(statusCode.OK, 'Time capsule deleted successfully')
+        );
 });
 
 const getTimeCapsule = asyncHandler(async (req, res) => {
-    const { timecapsuleId } = req.params;
+    const {timecapsuleId} = req.params;
     const userId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId)
-        .populate("owner", "name email")
-        .populate("contributors", "name email")
-        .populate("recipients", "name email");
+        .populate('owner', 'name email')
+        .populate('contributors', 'name email')
+        .populate('recipients', 'name email');
 
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
     }
 
     const userIdStr = userId.toString();
 
     const isOwner = capsule.owner._id.toString() === userIdStr;
     const isContributor = capsule.contributors.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
     const isRecipient = capsule.recipients.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
 
     if (!isOwner && !isContributor && !isRecipient) {
         throw new ApiError(
             statusCode.FORBIDDEN,
-            "You do not have access to this time capsule"
+            'You do not have access to this time capsule'
         );
     }
 
@@ -287,7 +292,7 @@ const getTimeCapsule = asyncHandler(async (req, res) => {
         return res.status(statusCode.OK).json(
             new ApiResponse(
                 statusCode.OK,
-                "Time capsule fetched (locked view)",
+                'Time capsule fetched (locked view)',
                 {
                     _id: capsule._id,
                     title: capsule.title,
@@ -306,41 +311,41 @@ const getTimeCapsule = asyncHandler(async (req, res) => {
         );
     }
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Time capsule fetched successfully",
-            capsule
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(
+                statusCode.OK,
+                'Time capsule fetched successfully',
+                capsule
+            )
+        );
 });
 
 const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
     const userId = req.userId;
 
     const capsules = await TimeCapsule.find({
-        $or: [
-            { owner: userId },
-            { contributors: userId },
-            { recipients: userId },
-        ],
+        $or: [{owner: userId}, {contributors: userId}, {recipients: userId}],
     })
-        .populate("owner", "name email")
-        .populate("contributors", "name email")
-        .populate("recipients", "name email")
-        .sort({ createdAt: -1 });
+        .populate('owner', 'name email')
+        .populate('contributors', 'name email')
+        .populate('recipients', 'name email')
+        .sort({createdAt: -1});
 
     if (!capsules || capsules.length === 0) {
-        return res.status(statusCode.OK).json(
-            new ApiResponse(
-                statusCode.OK,
-                "No time capsules found for this user",
-                []
-            )
-        );
+        return res
+            .status(statusCode.OK)
+            .json(
+                new ApiResponse(
+                    statusCode.OK,
+                    'No time capsules found for this user',
+                    []
+                )
+            );
     }
 
-    const responseCapsules = capsules.map(capsule => {
+    const responseCapsules = capsules.map((capsule) => {
         const isOwner = capsule.owner._id.toString() === userId.toString();
 
         // If capsule is locked and user is not owner, return limited view
@@ -364,40 +369,42 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
         return capsule;
     });
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Time capsules fetched successfully",
-            responseCapsules
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(
+                statusCode.OK,
+                'Time capsules fetched successfully',
+                responseCapsules
+            )
+        );
 });
 
 const openTimeCapsule = asyncHandler(async (req, res) => {
-    const { timecapsuleId } = req.params;
+    const {timecapsuleId} = req.params;
     const userId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId)
-        .populate("owner", "name email")
-        .populate("contributors", "name email")
-        .populate("recipients", "name email");
+        .populate('owner', 'name email')
+        .populate('contributors', 'name email')
+        .populate('recipients', 'name email');
 
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
     }
 
     const userIdStr = userId?.toString();
 
     const isOwner = capsule.owner._id.toString() === userIdStr;
     const isContributor = capsule.contributors.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
     const isRecipient = capsule.recipients.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
 
     // Access control
@@ -405,14 +412,14 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         if (!isOwner && !isContributor && !isRecipient) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
-                "You are not allowed to open this time capsule"
+                'You are not allowed to open this time capsule'
             );
         }
     } else {
         if (!isOwner && !isRecipient) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
-                "Only owner or recipients can open this time capsule"
+                'Only owner or recipients can open this time capsule'
             );
         }
     }
@@ -439,20 +446,20 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
 
     await Analytics.findOneAndUpdate(
         {},
-        { $inc: { totalCapsulesOpened: 1 } },
-        { upsert: true, new: true }
+        {$inc: {totalCapsulesOpened: 1}},
+        {upsert: true, new: true}
     );
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Time capsule opened successfully",
-            capsule
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(
+                statusCode.OK,
+                'Time capsule opened successfully',
+                capsule
+            )
+        );
 });
-
-
 
 export {
     createTimeCapsule,
@@ -460,5 +467,5 @@ export {
     deleteTimeCapsule,
     getTimeCapsule,
     getAllTimeCapsulesForUser,
-    openTimeCapsule
+    openTimeCapsule,
 };

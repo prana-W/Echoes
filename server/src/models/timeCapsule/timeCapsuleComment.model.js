@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const timeCapsuleCommentSchema = new mongoose.Schema(
     {
         capsule: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "TimeCapsule",
+            ref: 'TimeCapsule',
             required: true,
         },
 
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: 'User',
             required: true,
         },
 
@@ -26,7 +26,7 @@ const timeCapsuleCommentSchema = new mongoose.Schema(
 );
 
 const TimeCapsuleComment = mongoose.model(
-    "TimeCapsuleComment",
+    'TimeCapsuleComment',
     timeCapsuleCommentSchema
 );
 

@@ -6,4 +6,12 @@ import TimeCapsule from './timeCapsule/timeCapsule.model.js';
 import TimeCapsuleContent from './timeCapsule/timeCapsuleContent.model.js';
 import TimeCapsuleComment from './timeCapsule/timeCapsuleComment.model.js';
 
-export {Analytics, Relation, User, Visitor, TimeCapsule, TimeCapsuleContent, TimeCapsuleComment};
+export {
+    Analytics,
+    Relation,
+    User,
+    Visitor,
+    TimeCapsule,
+    TimeCapsuleContent,
+    TimeCapsuleComment,
+};

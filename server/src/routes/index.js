@@ -5,4 +5,11 @@ import userRouter from './user.routes.js';
 import timeCapsuleRouter from './timeCapsule.routes.js';
 import timeCapsuleContentRouter from './timeCapsuleContent.routes.js';
 
-export {authRouter, visitorsRouter, relationRouter, userRouter, timeCapsuleRouter, timeCapsuleContentRouter}
+export {
+    authRouter,
+    visitorsRouter,
+    relationRouter,
+    userRouter,
+    timeCapsuleRouter,
+    timeCapsuleContentRouter,
+};

@@ -1,8 +1,8 @@
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
-const uploadDir = "uploads";
+const uploadDir = 'uploads';
 
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
     },
 
     filename: (req, file, cb) => {
-        const { timecapsuleId } = req.params;
+        const {timecapsuleId} = req.params;
         const userId = req.userId;
 
         const random = Math.floor(Math.random() * 1e9);
@@ -23,16 +23,15 @@ const storage = multer.diskStorage({
             file.originalname
         )}`;
 
-
         cb(null, filename);
     },
 });
 
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    if (file.mimetype.startsWith('image/')) {
         cb(null, true);
     } else {
-        cb(new Error("Only image files are allowed"), false);
+        cb(new Error('Only image files are allowed'), false);
     }
 };
 
