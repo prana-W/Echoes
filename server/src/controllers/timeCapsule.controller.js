@@ -30,7 +30,6 @@ const validateUsersExist = async (userIds = []) => {
     }
 };
 
-
 const createTimeCapsule = asyncHandler(async (req, res) => {
     const ownerId = req.userId;
 
@@ -40,9 +39,10 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
         contributors = [],
         recipients = [],
         openAt,
-        isEventRelated = false,
         event,
         theme,
+        isEventRelated = false,
+        allowContributorsToOpen = false
     } = req.body;
 
     if (!title) {
@@ -96,6 +96,7 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
         isEventRelated,
         event: isEventRelated ? event : undefined,
         theme,
+        allowContributorsToOpen,
     });
 
     // For Analytics purposes
@@ -375,10 +376,70 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
     );
 });
 
+const openTimeCapsule = asyncHandler(async (req, res) => {
+    const { timecapsuleId } = req.params;
+    const userId = req.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
+        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+    }
+
+    const capsule = await TimeCapsule.findById(timecapsuleId)
+        .populate("owner", "name email")
+        .populate("contributors", "name email")
+        .populate("recipients", "name email");
+
+    if (!capsule) {
+        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+    }
+
+    const userIdStr = userId.toString();
+
+    const isOwner = capsule.owner._id.toString() === userIdStr;
+    const isContributor = capsule.contributors.some(
+        u => u._id.toString() === userIdStr
+    );
+    const isRecipient = capsule.recipients.some(
+        u => u._id.toString() === userIdStr
+    );
+
+    // Access control
+    if (capsule.allowContributorsToOpen) {
+        if (!isOwner && !isContributor && !isRecipient) {
+            throw new ApiError(
+                statusCode.FORBIDDEN,
+                "You are not allowed to open this time capsule"
+            );
+        }
+    } else {
+        if (!isOwner && !isRecipient) {
+            throw new ApiError(
+                statusCode.FORBIDDEN,
+                "Only owner or recipients can open this time capsule"
+            );
+        }
+    }
+
+    if (!capsule.isOpened) {
+        capsule.isOpened = true;
+        await capsule.save();
+    }
+
+    return res.status(statusCode.OK).json(
+        new ApiResponse(
+            statusCode.OK,
+            "Time capsule opened successfully",
+            capsule
+        )
+    );
+});
+
+
 export {
     createTimeCapsule,
     modifyTimeCapsule,
     deleteTimeCapsule,
     getTimeCapsule,
-    getAllTimeCapsulesForUser
+    getAllTimeCapsulesForUser,
+    openTimeCapsule
 };
