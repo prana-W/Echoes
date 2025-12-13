@@ -229,6 +229,9 @@ const deleteAudioContent = asyncHandler(async (req, res) => {
     }
 
     const capsule = await TimeCapsule.findById(content.capsule);
+    if (!capsule) {
+        throw new ApiError(404, "Parent time capsule not found");
+    }
 
     const canDelete =
         capsule.owner.toString() === userId ||
@@ -238,10 +241,21 @@ const deleteAudioContent = asyncHandler(async (req, res) => {
         throw new ApiError(403, "Not allowed to delete audio");
     }
 
+    // Delete audio file from filesystem
+    const filePath = path.join(process.cwd(), content.content);
+
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+
+    // Delete DB record
     await TimeCapsuleContent.findByIdAndDelete(contentId);
 
-    return res.json(new ApiResponse(200, "Audio deleted"));
+    return res.json(
+        new ApiResponse(200, "Audio deleted successfully")
+    );
 });
+
 
 const uploadVideoToTimeCapsule = asyncHandler(async (req, res) => {
     const { timecapsuleId } = req.params;
@@ -295,7 +309,6 @@ const getMyVideosForTimeCapsule = asyncHandler(async (req, res) => {
     );
 });
 
-
 const deleteVideoContent = asyncHandler(async (req, res) => {
     const { contentId } = req.params;
     const userId = req.userId;
@@ -306,17 +319,33 @@ const deleteVideoContent = asyncHandler(async (req, res) => {
     }
 
     const capsule = await TimeCapsule.findById(content.capsule);
+    if (!capsule) {
+        throw new ApiError(404, "Parent time capsule not found");
+    }
 
     const canDelete =
         capsule.owner.toString() === userId ||
         content.createdBy.toString() === userId;
 
-    if (!canDelete) throw new ApiError(403, "Not allowed");
+    if (!canDelete) {
+        throw new ApiError(403, "Not allowed");
+    }
 
+    // Delete video file from filesystem
+    const filePath = path.join(process.cwd(), content.content);
+
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+
+    // Delete DB record
     await TimeCapsuleContent.findByIdAndDelete(contentId);
 
-    res.json(new ApiResponse(200, "Video deleted"));
+    return res.json(
+        new ApiResponse(200, "Video deleted successfully")
+    );
 });
+
 
 const addTextToTimeCapsule = asyncHandler(async (req, res) => {
     const { timecapsuleId } = req.params;
