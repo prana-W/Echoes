@@ -1,0 +1,15 @@
+export const eventList = [
+    "birthday",
+    "wedding",
+    "anniversary",
+    "graduation",
+    "retirement",
+    "engagement",
+    "childbirth",
+    "firstJob",
+    "promotion",
+    "housePurchase",
+    "startupLaunch",
+    "memorial",
+    "other",
+]

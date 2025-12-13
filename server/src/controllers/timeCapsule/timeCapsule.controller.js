@@ -381,30 +381,33 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
 });
 
 const openTimeCapsule = asyncHandler(async (req, res) => {
-    const {timecapsuleId} = req.params;
+    const { timecapsuleId } = req.params;
     const userId = req.userId;
 
+    // TODO: Can be changed later for demo purposes
+    const SERVER_TIME = new Date();
+
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
+        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId)
-        .populate('owner', 'name email')
-        .populate('contributors', 'name email')
-        .populate('recipients', 'name email');
+        .populate("owner", "name email")
+        .populate("contributors", "name email")
+        .populate("recipients", "name email");
 
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
+        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
     }
 
-    const userIdStr = userId?.toString();
+    const userIdStr = userId.toString();
 
     const isOwner = capsule.owner._id.toString() === userIdStr;
     const isContributor = capsule.contributors.some(
-        (u) => u._id.toString() === userIdStr
+        u => u._id.toString() === userIdStr
     );
     const isRecipient = capsule.recipients.some(
-        (u) => u._id.toString() === userIdStr
+        u => u._id.toString() === userIdStr
     );
 
     // Access control
@@ -412,30 +415,48 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         if (!isOwner && !isContributor && !isRecipient) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
-                'You are not allowed to open this time capsule'
+                "You are not allowed to open this time capsule"
             );
         }
     } else {
         if (!isOwner && !isRecipient) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
-                'Only owner or recipients can open this time capsule'
+                "Only owner or recipients can open this time capsule"
             );
         }
     }
 
-    // Todo: Adding server-side check for time. Modify it to client-side for demo purposes
+    /* ================= DATE-BASED CAPSULE ================= */
 
-    // Time validation for date-based capsules
-    if (
-        capsule.isEventRelated === false &&
-        capsule.openAt &&
-        new Date(capsule.openAt) > new Date()
-    ) {
-        throw new ApiError(
-            statusCode.FORBIDDEN,
-            `This time capsule cannot be opened yet!`
-        );
+    if (capsule?.isEventRelated === false) {
+        if (capsule?.openAt && new Date(capsule.openAt) > SERVER_TIME) {
+            throw new ApiError(
+                statusCode.FORBIDDEN,
+                "Capsule can't be opened before time!"
+            );
+        }
+    }
+
+    /* ================= EVENT-BASED CAPSULE ================= */
+
+    // we are checking if the particular event has occured for the user between the capsule creation time and current server time
+    if (capsule.isEventRelated === true) {
+        const eventExists = await Event.findOne({
+            user: capsule.owner._id,
+            eventType: capsule.event,
+            eventTime: {
+                $gte: capsule.createdAt,
+                $lte: SERVER_TIME,
+            },
+        });
+
+        if (!eventExists) {
+            throw new ApiError(
+                statusCode.FORBIDDEN,
+                `${capsule.event} event has not occurred yet for ${capsule.owner.name}`
+            );
+        }
     }
 
     // Open capsule (idempotent)
@@ -444,22 +465,22 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         await capsule.save();
     }
 
+    // Analytics update
     await Analytics.findOneAndUpdate(
         {},
-        {$inc: {totalCapsulesOpened: 1}},
-        {upsert: true, new: true}
+        { $inc: { totalTimeCapsulesOpened: 1 } },
+        { upsert: true, new: true }
     );
 
-    return res
-        .status(statusCode.OK)
-        .json(
-            new ApiResponse(
-                statusCode.OK,
-                'Time capsule opened successfully',
-                capsule
-            )
-        );
+    return res.status(statusCode.OK).json(
+        new ApiResponse(
+            statusCode.OK,
+            "Time capsule opened successfully",
+            capsule
+        )
+    );
 });
+
 
 export {
     createTimeCapsule,

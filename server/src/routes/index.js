@@ -4,6 +4,7 @@ import relationRouter from './relation.routes.js';
 import userRouter from './user.routes.js';
 import timeCapsuleRouter from './timeCapsule.routes.js';
 import timeCapsuleContentRouter from './timeCapsuleContent.routes.js';
+import eventsRouter from './event.routes.js';
 
 export {
     authRouter,
@@ -12,4 +13,5 @@ export {
     userRouter,
     timeCapsuleRouter,
     timeCapsuleContentRouter,
+    eventsRouter
 };

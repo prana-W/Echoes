@@ -12,6 +12,7 @@ import {
     userRouter,
     timeCapsuleRouter,
     timeCapsuleContentRouter,
+    eventsRouter
 } from './routes/index.js';
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/v1/visitors', visitorsRouter);
 app.use('/api/v1/relations', relationRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/timecapsule', timeCapsuleRouter);
+app.use("/api/v1/event", eventsRouter);
 
 // For Uploads
 
