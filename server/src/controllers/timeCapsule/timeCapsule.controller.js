@@ -381,33 +381,33 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
 });
 
 const openTimeCapsule = asyncHandler(async (req, res) => {
-    const { timecapsuleId } = req.params;
+    const {timecapsuleId} = req.params;
     const userId = req.userId;
 
     // TODO: Can be changed later for demo purposes
     const SERVER_TIME = new Date();
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId)
-        .populate("owner", "name email")
-        .populate("contributors", "name email")
-        .populate("recipients", "name email");
+        .populate('owner', 'name email')
+        .populate('contributors', 'name email')
+        .populate('recipients', 'name email');
 
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
     }
 
     const userIdStr = userId.toString();
 
     const isOwner = capsule.owner._id.toString() === userIdStr;
     const isContributor = capsule.contributors.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
     const isRecipient = capsule.recipients.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
 
     // Access control
@@ -415,14 +415,14 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         if (!isOwner && !isContributor && !isRecipient) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
-                "You are not allowed to open this time capsule"
+                'You are not allowed to open this time capsule'
             );
         }
     } else {
         if (!isOwner && !isRecipient) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
-                "Only owner or recipients can open this time capsule"
+                'Only owner or recipients can open this time capsule'
             );
         }
     }
@@ -468,66 +468,67 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
     // Analytics update
     await Analytics.findOneAndUpdate(
         {},
-        { $inc: { totalTimeCapsulesOpened: 1 } },
-        { upsert: true, new: true }
+        {$inc: {totalTimeCapsulesOpened: 1}},
+        {upsert: true, new: true}
     );
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Time capsule opened successfully",
-            capsule
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(
+                statusCode.OK,
+                'Time capsule opened successfully',
+                capsule
+            )
+        );
 });
 
-
 const getEntireTimeCapsule = asyncHandler(async (req, res) => {
-    const { timecapsuleId } = req.params;
+    const {timecapsuleId} = req.params;
     const userId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
-        throw new ApiError(statusCode.BAD_REQUEST, "Invalid timeCapsuleId");
+        throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId)
-        .populate("owner", "name email")
-        .populate("contributors", "name email")
-        .populate("recipients", "name email");
+        .populate('owner', 'name email')
+        .populate('contributors', 'name email')
+        .populate('recipients', 'name email');
 
     if (!capsule) {
-        throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
+        throw new ApiError(statusCode.NOT_FOUND, 'Time capsule not found');
     }
 
     const userIdStr = userId.toString();
 
     const isOwner = capsule.owner._id.toString() === userIdStr;
     const isContributor = capsule.contributors.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
     const isRecipient = capsule.recipients.some(
-        u => u._id.toString() === userIdStr
+        (u) => u._id.toString() === userIdStr
     );
 
     if (!isOwner && !isContributor && !isRecipient) {
         throw new ApiError(
             statusCode.FORBIDDEN,
-            "You are not allowed to view this time capsule"
+            'You are not allowed to view this time capsule'
         );
     }
 
     if (!capsule.isOpened) {
         throw new ApiError(
             statusCode.FORBIDDEN,
-            "Time capsule has not been opened yet"
+            'Time capsule has not been opened yet'
         );
     }
 
     const contents = await TimeCapsuleContent.find({
         capsule: timecapsuleId,
     })
-        .populate("createdBy", "name email")
-        .sort({ createdAt: 1 });
+        .populate('createdBy', 'name email')
+        .sort({createdAt: 1});
 
     const images = [];
     const videos = [];
@@ -535,7 +536,7 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
     const texts = [];
     const questions = [];
 
-    contents.forEach(item => {
+    contents.forEach((item) => {
         const base = {
             id: item._id,
             content: item.content,
@@ -543,11 +544,11 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
             createdAt: item.createdAt,
         };
 
-        if (item.type === "image") images.push(base);
-        if (item.type === "video") videos.push(base);
-        if (item.type === "audio") audios.push(base);
-        if (item.type === "text") texts.push(base);
-        if (item.type === "question") questions.push(base);
+        if (item.type === 'image') images.push(base);
+        if (item.type === 'video') videos.push(base);
+        if (item.type === 'audio') audios.push(base);
+        if (item.type === 'text') texts.push(base);
+        if (item.type === 'question') questions.push(base);
     });
 
     const SERVER_TIME = Date.now();
@@ -581,13 +582,15 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
         },
     };
 
-    return res.status(statusCode.OK).json(
-        new ApiResponse(
-            statusCode.OK,
-            "Entire time capsule fetched successfully",
-            response
-        )
-    );
+    return res
+        .status(statusCode.OK)
+        .json(
+            new ApiResponse(
+                statusCode.OK,
+                'Entire time capsule fetched successfully',
+                response
+            )
+        );
 });
 
 export {
@@ -597,5 +600,5 @@ export {
     getTimeCapsule,
     getAllTimeCapsulesForUser,
     openTimeCapsule,
-    getEntireTimeCapsule
+    getEntireTimeCapsule,
 };

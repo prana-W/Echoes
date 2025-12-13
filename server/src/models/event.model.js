@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import {eventList} from '../constants/eventsList.js';
 
 const eventSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: 'User',
             required: true,
         },
 
@@ -25,8 +25,8 @@ const eventSchema = new mongoose.Schema(
     }
 );
 
-eventSchema.index({ user: 1, eventType: 1 });
+eventSchema.index({user: 1, eventType: 1});
 
-const Event = mongoose.model("Event", eventSchema);
+const Event = mongoose.model('Event', eventSchema);
 
 export default Event;

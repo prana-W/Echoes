@@ -8,7 +8,7 @@ import {
     openTimeCapsule,
     reactToTimeCapsule,
     getMyReactionForTimeCapsule,
-    getEntireTimeCapsule
+    getEntireTimeCapsule,
 } from '../controllers/timeCapsule/index.js';
 
 import {
@@ -56,6 +56,6 @@ router.get(
 // Get all comments by logged-in user
 router.get('/comments/me', verifyAccessToken, getMyComments);
 
-router.get('/view/:timecapsuleId', verifyAccessToken, getEntireTimeCapsule)
+router.get('/view/:timecapsuleId', verifyAccessToken, getEntireTimeCapsule);
 
 export default router;

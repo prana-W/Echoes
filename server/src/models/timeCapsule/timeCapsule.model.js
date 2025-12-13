@@ -56,7 +56,7 @@ const timeCapsuleSchema = new mongoose.Schema(
 
         event: {
             type: String,
-            enum: eventList
+            enum: eventList,
         },
 
         theme: {
