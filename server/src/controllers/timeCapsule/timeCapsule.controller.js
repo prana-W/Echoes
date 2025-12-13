@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { ApiError, ApiResponse, asyncHandler } from "../utility/index.js";
-import statusCode from "../constants/statusCode.js";
-import TimeCapsule from "../models/timeCapsule/timeCapsule.model.js";
-import User from "../models/user.model.js";
-import {Analytics} from '../models/index.js';
+import { ApiError, ApiResponse, asyncHandler } from "../../utility/index.js";
+import statusCode from "../../constants/statusCode.js";
+import TimeCapsule from "../../models/timeCapsule/timeCapsule.model.js";
+import User from "../../models/user.model.js";
+import {Analytics} from '../../models/index.js';
 
 const validateUsersExist = async (userIds = []) => {
     if (!Array.isArray(userIds) || userIds.length === 0) return;
@@ -115,7 +115,6 @@ const createTimeCapsule = asyncHandler(async (req, res) => {
     );
 });
 
-
 const modifyTimeCapsule = asyncHandler(async (req, res) => {
     const { timecapsuleId } = req.params;
     const userId = req.userId;
@@ -218,7 +217,6 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
     );
 });
 
-
 const deleteTimeCapsule = asyncHandler(async (req, res) => {
     const { timecapsuleId } = req.params;
     const userId = req.userId;
@@ -317,7 +315,6 @@ const getTimeCapsule = asyncHandler(async (req, res) => {
     );
 });
 
-
 const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
     const userId = req.userId;
 
@@ -393,7 +390,7 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         throw new ApiError(statusCode.NOT_FOUND, "Time capsule not found");
     }
 
-    const userIdStr = userId.toString();
+    const userIdStr = userId?.toString();
 
     const isOwner = capsule.owner._id.toString() === userIdStr;
     const isContributor = capsule.contributors.some(
@@ -420,6 +417,19 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         }
     }
 
+    // Time validation for date-based capsules
+    if (
+        capsule.isEventRelated === false &&
+        capsule.openAt &&
+        new Date(capsule.openAt) > new Date()
+    ) {
+        throw new ApiError(
+            statusCode.FORBIDDEN,
+            `This time capsule cannot be opened yet!`
+        );
+    }
+
+    // Open capsule (idempotent)
     if (!capsule.isOpened) {
         capsule.isOpened = true;
         await capsule.save();
@@ -433,6 +443,7 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         )
     );
 });
+
 
 
 export {
