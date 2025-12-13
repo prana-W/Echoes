@@ -340,67 +340,76 @@ const deleteVideoContent = asyncHandler(async (req, res) => {
 });
 
 const addTextToTimeCapsule = asyncHandler(async (req, res) => {
-    const {timecapsuleId} = req.params;
-    const {text} = req.body;
+    const { timecapsuleId } = req.params;
+    const { text, isQuestion = false } = req.body;
     const userId = req.userId;
 
     if (!text || !text.trim()) {
-        throw new ApiError(400, 'Text is required');
+        throw new ApiError(400, "Text is required");
     }
 
     const capsule = await TimeCapsule.findById(timecapsuleId);
-    if (!capsule) throw new ApiError(404, 'Time capsule not found');
+    if (!capsule) {
+        throw new ApiError(404, "Time capsule not found");
+    }
 
     const isAllowed =
         capsule.owner.toString() === userId ||
-        capsule.contributors.some((id) => id.toString() === userId);
+        capsule.contributors.some(id => id.toString() === userId);
 
-    if (!isAllowed) throw new ApiError(403, 'Not allowed');
+    if (!isAllowed) {
+        throw new ApiError(403, "Not allowed");
+    }
 
     const content = await TimeCapsuleContent.create({
         capsule: timecapsuleId,
-        type: 'text',
+        type: isQuestion ? "question" : "text",
         content: text,
         createdBy: userId,
     });
 
-    res.status(201).json(new ApiResponse(201, 'Text added', content));
+    return res.status(201).json(
+        new ApiResponse(201, "Content added successfully", content)
+    );
 });
 
 const getMyTextsForTimeCapsule = asyncHandler(async (req, res) => {
-    const {timecapsuleId} = req.params;
+    const { timecapsuleId } = req.params;
     const userId = req.userId;
 
     const capsule = await TimeCapsule.findById(timecapsuleId);
-    if (!capsule) throw new ApiError(404, 'Time capsule not found');
+    if (!capsule) {
+        throw new ApiError(404, "Time capsule not found");
+    }
 
     const hasAccess =
         capsule.owner.toString() === userId ||
-        capsule.contributors.some((id) => id.toString() === userId) ||
-        capsule.recipients.some((id) => id.toString() === userId);
+        capsule.contributors.some(id => id.toString() === userId) ||
+        capsule.recipients.some(id => id.toString() === userId);
 
     if (!hasAccess) {
-        throw new ApiError(403, 'Access denied');
+        throw new ApiError(403, "Access denied");
     }
 
     const texts = await TimeCapsuleContent.find({
         capsule: timecapsuleId,
-        type: 'text',
+        type: { $in: ["text", "question"] },
         createdBy: userId,
-    }).sort({createdAt: 1});
+    }).sort({ createdAt: 1 });
 
     return res.json(
-        new ApiResponse(200, 'User texts fetched successfully', texts)
+        new ApiResponse(200, "User texts fetched successfully", texts)
     );
 });
 
+
 const deleteTextContent = asyncHandler(async (req, res) => {
-    const {contentId} = req.params;
+    const { contentId } = req.params;
     const userId = req.userId;
 
     const content = await TimeCapsuleContent.findById(contentId);
-    if (!content || content.type !== 'text') {
-        throw new ApiError(404, 'Text not found');
+    if (!content || !["text", "question"].includes(content.type)) {
+        throw new ApiError(404, "Text not found");
     }
 
     const capsule = await TimeCapsule.findById(content.capsule);
@@ -409,12 +418,17 @@ const deleteTextContent = asyncHandler(async (req, res) => {
         capsule.owner.toString() === userId ||
         content.createdBy.toString() === userId;
 
-    if (!canDelete) throw new ApiError(403, 'Not allowed');
+    if (!canDelete) {
+        throw new ApiError(403, "Not allowed");
+    }
 
     await TimeCapsuleContent.findByIdAndDelete(contentId);
 
-    res.json(new ApiResponse(200, 'Text deleted'));
+    return res.json(
+        new ApiResponse(200, "Text deleted successfully")
+    );
 });
+
 
 export {
     getMyImagesForTimeCapsule,
