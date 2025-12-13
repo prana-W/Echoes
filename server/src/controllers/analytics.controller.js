@@ -1,6 +1,6 @@
-import { ApiResponse, asyncHandler } from "../utility/index.js";
-import Analytics from "../models/analytics.model.js";
-import Visitor from "../models/visitors.model.js";
+import {ApiResponse, asyncHandler} from '../utility/index.js';
+import Analytics from '../models/analytics.model.js';
+import Visitor from '../models/visitors.model.js';
 
 const getAnalytics = asyncHandler(async (req, res) => {
     // There should ideally be only one analytics document
@@ -16,15 +16,13 @@ const getAnalytics = asyncHandler(async (req, res) => {
         {
             $group: {
                 _id: null,
-                totalVisitors: { $sum: "$count" },
+                totalVisitors: {$sum: '$count'},
             },
         },
     ]);
 
     const totalVisitors =
-        visitorAggregation.length > 0
-            ? visitorAggregation[0].totalVisitors
-            : 0;
+        visitorAggregation.length > 0 ? visitorAggregation[0].totalVisitors : 0;
 
     const response = {
         totalUsers: analytics.totalUsers,
@@ -35,12 +33,8 @@ const getAnalytics = asyncHandler(async (req, res) => {
     };
 
     return res.json(
-        new ApiResponse(
-            200,
-            "Analytics fetched successfully",
-            response
-        )
+        new ApiResponse(200, 'Analytics fetched successfully', response)
     );
 });
 
-export { getAnalytics };
+export {getAnalytics};

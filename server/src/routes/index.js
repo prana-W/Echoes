@@ -15,5 +15,5 @@ export {
     timeCapsuleRouter,
     timeCapsuleContentRouter,
     eventsRouter,
-    analyticsRouter
+    analyticsRouter,
 };

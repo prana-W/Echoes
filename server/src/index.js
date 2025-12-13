@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import {createServer} from 'http';
 import {connectToDatabase} from './connection/index.js';
 import app from './app.js';
-import startCapsuleEmailCron from "./cron/capsuleEmail.cron.js";
+import startCapsuleEmailCron from './cron/capsuleEmail.cron.js';
 import initializeSocket from './sockets/index.js';
 import registerSockets from './sockets/socket.js';
 
