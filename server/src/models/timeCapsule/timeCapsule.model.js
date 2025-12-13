@@ -27,30 +27,25 @@ const timeCapsuleSchema = new mongoose.Schema(
             type: String,
             trim: true,
         },
-
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
         },
-
         contributors: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
         ],
-
         recipients: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
         ],
-
         openAt: {
             type: Date,
-            required: true,
         },
 
         isEventRelated: {
