@@ -2,6 +2,7 @@ import { ApiError, ApiResponse, asyncHandler } from "../utility/index.js";
 import statusCode from "../constants/statusCode.js";
 import cookieOptions from "../constants/cookieOptions.js";
 import User from "../models/user.model.js";
+import Analytics from "../models/analytics.model.js";
 
 const signupUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -27,6 +28,12 @@ const signupUser = asyncHandler(async (req, res) => {
         password,
     });
 
+    await Analytics.findOneAndUpdate(
+        {},
+        { $inc: { totalUsers: 1 } },
+        { upsert: true, new: true }
+    );
+
     return res.status(statusCode.CREATED).json(
         new ApiResponse(statusCode.CREATED, "User registered successfully.", {
             userId: user._id,
@@ -35,7 +42,6 @@ const signupUser = asyncHandler(async (req, res) => {
         })
     );
 });
-
 
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
