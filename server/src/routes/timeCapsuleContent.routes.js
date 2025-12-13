@@ -1,8 +1,7 @@
 import express from "express";
 import { verifyAccessToken } from "../middlewares/index.js";
-
 import uploadImages from "../middlewares/timeCapsule/uploadImages.middleware.js";
-import uploadVideos from "../middlewares/timeCapsule/uploadVideos.middleware.js";
+import uploadVideos from "../middlewares/timeCapsule/uploadVideo.middleware.js";
 import uploadAudio from "../middlewares/timeCapsule/uploadAudio.middleware.js";
 
 import {
@@ -51,22 +50,22 @@ router.delete(
 
 // Get all videos uploaded by the user
 router.get(
-    "/videos/:timecapsuleId",
+    "/video/:timecapsuleId",
     verifyAccessToken,
     getMyVideosForTimeCapsule
 );
 
 // Upload videos
 router.post(
-    "/videos/:timecapsuleId",
+    "/video/:timecapsuleId",
     verifyAccessToken,
-    uploadVideos.array("videos", 5),
+    uploadVideos.array("videos", 1),
     uploadVideoToTimeCapsule
 );
 
 // Delete a video
 router.delete(
-    "/videos/:contentId",
+    "/video/:contentId",
     verifyAccessToken,
     deleteVideoContent
 );
