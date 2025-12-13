@@ -417,6 +417,8 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         }
     }
 
+    // Todo: Adding server-side check for time. Modify it to client-side for demo purposes
+
     // Time validation for date-based capsules
     if (
         capsule.isEventRelated === false &&
@@ -434,6 +436,12 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
         capsule.isOpened = true;
         await capsule.save();
     }
+
+    await Analytics.findOneAndUpdate(
+        {},
+        { $inc: { totalCapsulesOpened: 1 } },
+        { upsert: true, new: true }
+    );
 
     return res.status(statusCode.OK).json(
         new ApiResponse(
