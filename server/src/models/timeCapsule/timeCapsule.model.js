@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const reactionSchema = new mongoose.Schema(
     {
         type: {
             type: String,
-            enum: ["like", "heart", "thumbsup", "laugh", "sad"],
+            enum: ['like', 'heart', 'thumbsup', 'laugh', 'sad'],
             required: true,
         },
         count: {
@@ -12,7 +12,7 @@ const reactionSchema = new mongoose.Schema(
             default: 0,
         },
     },
-    { _id: false }
+    {_id: false}
 );
 
 const timeCapsuleSchema = new mongoose.Schema(
@@ -29,19 +29,19 @@ const timeCapsuleSchema = new mongoose.Schema(
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: 'User',
             required: true,
         },
         contributors: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
+                ref: 'User',
             },
         ],
         recipients: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
+                ref: 'User',
             },
         ],
         openAt: {
@@ -56,12 +56,12 @@ const timeCapsuleSchema = new mongoose.Schema(
         event: {
             type: String,
             enum: [
-                "birthday",
-                "wedding",
-                "anniversary",
-                "graduation",
-                "retirement",
-                "other",
+                'birthday',
+                'wedding',
+                'anniversary',
+                'graduation',
+                'retirement',
+                'other',
             ],
         },
 
@@ -73,11 +73,11 @@ const timeCapsuleSchema = new mongoose.Schema(
         reactions: {
             type: [reactionSchema],
             default: [
-                { type: "like", count: 0 },
-                { type: "heart", count: 0 },
-                { type: "thumbsup", count: 0 },
-                { type: "laugh", count: 0 },
-                { type: "sad", count: 0 },
+                {type: 'like', count: 0},
+                {type: 'heart', count: 0},
+                {type: 'thumbsup', count: 0},
+                {type: 'laugh', count: 0},
+                {type: 'sad', count: 0},
             ],
         },
 
@@ -88,13 +88,13 @@ const timeCapsuleSchema = new mongoose.Schema(
         allowContributorsToOpen: {
             type: Boolean,
             default: false,
-        }
+        },
     },
     {
         timestamps: true,
     }
 );
 
-const TimeCapsule = mongoose.model("TimeCapsule", timeCapsuleSchema);
+const TimeCapsule = mongoose.model('TimeCapsule', timeCapsuleSchema);
 
 export default TimeCapsule;

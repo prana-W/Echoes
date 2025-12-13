@@ -4,10 +4,13 @@ import {
     deleteTimeCapsule,
     getTimeCapsule,
     getAllTimeCapsulesForUser,
-    openTimeCapsule
+    openTimeCapsule,
 } from './timeCapsule.controller.js';
 
-import { reactToTimeCapsule, getMyReactionForTimeCapsule } from './timeCapsuleReaction.controller.js';
+import {
+    reactToTimeCapsule,
+    getMyReactionForTimeCapsule,
+} from './timeCapsuleReaction.controller.js';
 
 export {
     createTimeCapsule,
@@ -17,5 +20,5 @@ export {
     getAllTimeCapsulesForUser,
     openTimeCapsule,
     reactToTimeCapsule,
-    getMyReactionForTimeCapsule
+    getMyReactionForTimeCapsule,
 };

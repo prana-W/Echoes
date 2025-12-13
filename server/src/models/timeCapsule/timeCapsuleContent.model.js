@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const timeCapsuleContentSchema = new mongoose.Schema(
     {
         capsule: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "TimeCapsule",
+            ref: 'TimeCapsule',
             required: true,
         },
 
         type: {
             type: String,
-            enum: ["image", "video", "audio", "text"],
+            enum: ['image', 'video', 'audio', 'text'],
             required: true,
         },
 
@@ -21,7 +21,7 @@ const timeCapsuleContentSchema = new mongoose.Schema(
 
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: 'User',
             required: true,
         },
     },
@@ -31,7 +31,7 @@ const timeCapsuleContentSchema = new mongoose.Schema(
 );
 
 const TimeCapsuleContent = mongoose.model(
-    "TimeCapsuleContent",
+    'TimeCapsuleContent',
     timeCapsuleContentSchema
 );
 

@@ -1,5 +1,8 @@
 import router from 'express';
-import {addVisitorCount, getVisitorCount} from '../controllers/visitors.controller.js';
+import {
+    addVisitorCount,
+    getVisitorCount,
+} from '../controllers/visitors.controller.js';
 
 const visitorRouter = router.Router();
 
