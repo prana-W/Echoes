@@ -8,6 +8,7 @@ import {
     openTimeCapsule,
     reactToTimeCapsule,
     getMyReactionForTimeCapsule,
+    getEntireTimeCapsule
 } from '../controllers/timeCapsule/index.js';
 
 import {
@@ -27,7 +28,7 @@ router.get('/:timecapsuleId', verifyAccessToken, getTimeCapsule);
 router.post('/', verifyAccessToken, createTimeCapsule);
 router.put('/:timecapsuleId', verifyAccessToken, modifyTimeCapsule);
 router.delete('/:timecapsuleId', verifyAccessToken, deleteTimeCapsule);
-router.post('/open/:timecapsuleId', verifyAccessToken, openTimeCapsule);
+router.post('/open/:timecapsuleId', verifyAccessToken, openTimeCapsule); // for just making the isOpen field true in the database
 
 router.post('/reaction/:timecapsuleId', verifyAccessToken, reactToTimeCapsule);
 router.get(
@@ -54,5 +55,7 @@ router.get(
 
 // Get all comments by logged-in user
 router.get('/comments/me', verifyAccessToken, getMyComments);
+
+router.get('/view/:timecapsuleId', verifyAccessToken, getEntireTimeCapsule)
 
 export default router;
