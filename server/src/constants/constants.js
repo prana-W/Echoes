@@ -1,0 +1,1 @@
+export const SERVER_TIME = () => new Date();

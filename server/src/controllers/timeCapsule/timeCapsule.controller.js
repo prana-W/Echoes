@@ -4,6 +4,7 @@ import statusCode from '../../constants/statusCode.js';
 import TimeCapsule from '../../models/timeCapsule/timeCapsule.model.js';
 import User from '../../models/user.model.js';
 import {Analytics, TimeCapsuleContent} from '../../models/index.js';
+import {SERVER_TIME} from '../../constants/constants.js';
 
 const validateUsersExist = async (userIds = []) => {
     if (!Array.isArray(userIds) || userIds.length === 0) return;
@@ -384,8 +385,8 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
     const {timecapsuleId} = req.params;
     const userId = req.userId;
 
-    // TODO: Can be changed later for demo purposes
-    const SERVER_TIME = new Date();
+    // TODO: Can be changed later for demo purposes (check for bugs)
+    const now = SERVER_TIME();
 
     if (!mongoose.Types.ObjectId.isValid(timecapsuleId)) {
         throw new ApiError(statusCode.BAD_REQUEST, 'Invalid timeCapsuleId');
@@ -430,7 +431,7 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
     /* ================= DATE-BASED CAPSULE ================= */
 
     if (capsule?.isEventRelated === false) {
-        if (capsule?.openAt && new Date(capsule.openAt) > SERVER_TIME) {
+        if (capsule?.openAt && new Date(capsule.openAt) > now) {
             throw new ApiError(
                 statusCode.FORBIDDEN,
                 "Capsule can't be opened before time!"
@@ -447,7 +448,7 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
             eventType: capsule.event,
             eventTime: {
                 $gte: capsule.createdAt,
-                $lte: SERVER_TIME,
+                $lte: now,
             },
         });
 
@@ -551,9 +552,9 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
         if (item.type === 'question') questions.push(base);
     });
 
-    const SERVER_TIME = Date.now();
+    const now = SERVER_TIME();
 
-    const timeElapsedMs = SERVER_TIME - new Date(capsule.createdAt).getTime();
+    const timeElapsedMs = now - new Date(capsule.createdAt).getTime();
 
     const response = {
         metadata: {
