@@ -70,7 +70,7 @@
     --muted-foreground: oklch(0.68 0.02 60); /* Faded vintage text */
 
     /* Accent - Vintage Paper */
-    --accent: oklch(0.30 0.03 50); /* Aged paper brown */
+    --accent: oklch(0.3 0.03 50); /* Aged paper brown */
     --accent-foreground: oklch(0.85 0.02 55); /* Warm sepia */
 
     /* Destructive - Vintage Burgundy Red */
@@ -83,13 +83,13 @@
 
     /* Charts - Vintage palette */
     --chart-1: oklch(0.62 0.12 75); /* Amber */
-    --chart-2: oklch(0.55 0.10 195); /* Teal */
+    --chart-2: oklch(0.55 0.1 195); /* Teal */
     --chart-3: oklch(0.48 0.15 25); /* Burgundy */
-    --chart-4: oklch(0.60 0.10 120); /* Olive green */
+    --chart-4: oklch(0.6 0.1 120); /* Olive green */
     --chart-5: oklch(0.58 0.12 40); /* Burnt orange */
 
     /* Sidebar */
-    --sidebar: oklch(0.20 0.02 42); /* Sidebar background */
+    --sidebar: oklch(0.2 0.02 42); /* Sidebar background */
     --sidebar-foreground: oklch(0.95 0.01 65); /* Sidebar text */
     --sidebar-primary: oklch(0.62 0.12 75); /* Amber accent */
     --sidebar-primary-foreground: oklch(0.18 0.02 45); /* Dark text */
@@ -113,18 +113,18 @@
     --secondary-foreground: oklch(0.95 0.01 65);
     --muted: oklch(0.28 0.025 40);
     --muted-foreground: oklch(0.68 0.02 60);
-    --accent: oklch(0.30 0.03 50);
+    --accent: oklch(0.3 0.03 50);
     --accent-foreground: oklch(0.85 0.02 55);
     --destructive: oklch(0.48 0.15 25);
     --border: oklch(0.35 0.03 45);
     --input: oklch(0.35 0.03 45);
     --ring: oklch(0.62 0.12 75);
     --chart-1: oklch(0.62 0.12 75);
-    --chart-2: oklch(0.55 0.10 195);
+    --chart-2: oklch(0.55 0.1 195);
     --chart-3: oklch(0.48 0.15 25);
-    --chart-4: oklch(0.60 0.10 120);
+    --chart-4: oklch(0.6 0.1 120);
     --chart-5: oklch(0.58 0.12 40);
-    --sidebar: oklch(0.20 0.02 42);
+    --sidebar: oklch(0.2 0.02 42);
     --sidebar-foreground: oklch(0.95 0.01 65);
     --sidebar-primary: oklch(0.62 0.12 75);
     --sidebar-primary-foreground: oklch(0.18 0.02 45);
@@ -151,7 +151,7 @@
     }
 
     .vintage-shadow {
-        box-shadow: 0 4px 12px oklch(0.10 0.02 40 / 0.6);
+        box-shadow: 0 4px 12px oklch(0.1 0.02 40 / 0.6);
     }
 
     .text-vintage-subtle {

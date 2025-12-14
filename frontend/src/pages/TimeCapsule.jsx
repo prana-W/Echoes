@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Clock, Plus, Lock, LockOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useApi } from '@/hooks/index.js';
-import { toast } from 'sonner';
+import React, {useState, useEffect} from 'react';
+import {Clock, Plus, Lock, LockOpen} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {useApi} from '@/hooks/index.js';
+import {toast} from 'sonner';
 import TimeCapsuleCard from '@/components/TimeCapsuleComponent.jsx';
 
 export default function TimeCapsulesPage() {
@@ -33,7 +33,7 @@ export default function TimeCapsulesPage() {
     const fetchCapsules = async () => {
         setLoading(true);
         try {
-            const { data, success } = await api.get('/timecapsule');
+            const {data, success} = await api.get('/timecapsule');
             if (success && data) {
                 setCapsules(data);
                 categorize(data);
@@ -50,7 +50,7 @@ export default function TimeCapsulesPage() {
         const sealed = [];
         const unsealed = [];
 
-        list.forEach(c => {
+        list.forEach((c) => {
             if (c.isOpened) opened.push(c);
             else if (c.isSealed) sealed.push(c);
             else unsealed.push(c);
@@ -105,7 +105,7 @@ export default function TimeCapsulesPage() {
 
     const finalizeSeal = async () => {
         try {
-            await api.put(`/timecapsule/${sealTarget._id}`, { isSealed: true });
+            await api.put(`/timecapsule/${sealTarget._id}`, {isSealed: true});
             toast.success('Capsule sealed successfully.');
             setSealTarget(null);
             setSealHolding(false);
@@ -121,7 +121,6 @@ export default function TimeCapsulesPage() {
     const canOpenCapsule = (capsule) => {
         if (!capsule.isSealed || capsule.isOpened) return false;
         if (capsule.isEventRelated) return false;
-
 
         if (new Date(capsule?.openAt) < new Date()) {
             return true;
@@ -160,7 +159,7 @@ export default function TimeCapsulesPage() {
 
     const finalizeOpen = async () => {
         try {
-            const { success } = await api.post(
+            const {success} = await api.post(
                 `/timecapsule/open/${openTarget._id}`
             );
 
@@ -216,7 +215,7 @@ export default function TimeCapsulesPage() {
                             Waiting to be Sealed
                         </h2>
                         <div className="grid md:grid-cols-3 gap-6">
-                            {unsealedCapsules.map(c => (
+                            {unsealedCapsules.map((c) => (
                                 <TimeCapsuleCard
                                     key={c._id}
                                     capsule={c}
@@ -236,7 +235,7 @@ export default function TimeCapsulesPage() {
                             Opened & Revealed
                         </h2>
                         <div className="grid md:grid-cols-3 gap-6">
-                            {openedCapsules.map(c => (
+                            {openedCapsules.map((c) => (
                                 <TimeCapsuleCard
                                     key={c._id}
                                     capsule={c}
@@ -254,7 +253,7 @@ export default function TimeCapsulesPage() {
                             Sealed & Waiting
                         </h2>
                         <div className="grid md:grid-cols-3 gap-6">
-                            {sealedCapsules.map(c => (
+                            {sealedCapsules.map((c) => (
                                 <TimeCapsuleCard
                                     key={c._id}
                                     capsule={c}
@@ -307,14 +306,14 @@ export default function TimeCapsulesPage() {
 
 /* ---------------- Shared Hold Modal ---------------- */
 function HoldModal({
-                       title,
-                       subtitle,
-                       progress,
-                       onHoldStart,
-                       onHoldEnd,
-                       onCancel,
-                       icon,
-                   }) {
+    title,
+    subtitle,
+    progress,
+    onHoldStart,
+    onHoldEnd,
+    onCancel,
+    icon,
+}) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
             <div className="bg-card border border-border rounded-xl p-8 max-w-md text-center space-y-6">
@@ -332,7 +331,7 @@ function HoldModal({
                     <div className="h-14 rounded-lg bg-muted overflow-hidden">
                         <div
                             className="h-full bg-primary transition-all"
-                            style={{ width: `${progress}%` }}
+                            style={{width: `${progress}%`}}
                         />
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center font-serif">

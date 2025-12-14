@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { useApi } from "@/hooks";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import {useEffect, useState} from 'react';
+import {useSearchParams, useNavigate} from 'react-router-dom';
+import {toast} from 'sonner';
+import {useApi} from '@/hooks';
+import {Button} from '@/components/ui/button';
+import {Card} from '@/components/ui/card';
+import {Input} from '@/components/ui/input';
+import {Textarea} from '@/components/ui/textarea';
+import {Switch} from '@/components/ui/switch';
 
 const eventList = [
-    "birthday",
-    "wedding",
-    "anniversary",
-    "graduation",
-    "retirement",
-    "engagement",
-    "childbirth",
-    "firstJob",
-    "promotion",
-    "housePurchase",
-    "startupLaunch",
-    "memorial",
-    "other",
+    'birthday',
+    'wedding',
+    'anniversary',
+    'graduation',
+    'retirement',
+    'engagement',
+    'childbirth',
+    'firstJob',
+    'promotion',
+    'housePurchase',
+    'startupLaunch',
+    'memorial',
+    'other',
 ];
 
 const AssembleCapsule = () => {
@@ -29,32 +29,33 @@ const AssembleCapsule = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    const isNew = searchParams.get("new") === "true";
-    const timecapsuleId = searchParams.get("capsuleId");
+    const isNew = searchParams.get('new') === 'true';
+    const timecapsuleId = searchParams.get('capsuleId');
 
     const [loading, setLoading] = useState(false);
 
     /* Core fields */
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [theme, setTheme] = useState("vintage");
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [theme, setTheme] = useState('vintage');
     const [isEventRelated, setIsEventRelated] = useState(false);
-    const [event, setEvent] = useState("");
-    const [openAt, setOpenAt] = useState("");
-    const [allowContributorsToOpen, setAllowContributorsToOpen] = useState(false);
+    const [event, setEvent] = useState('');
+    const [openAt, setOpenAt] = useState('');
+    const [allowContributorsToOpen, setAllowContributorsToOpen] =
+        useState(false);
 
     /* Relations */
     const [relations, setRelations] = useState([]);
     const [contributors, setContributors] = useState([]);
     const [recipients, setRecipients] = useState([]);
 
-    const modeLabel = isNew ? "Assemble a New Capsule" : "Refine Your Capsule";
+    const modeLabel = isNew ? 'Assemble a New Capsule' : 'Refine Your Capsule';
 
     /* ---------------- Fetch relations ---------------- */
     useEffect(() => {
         const fetchRelations = async () => {
             try {
-                const { data } = await api.get("/relations");
+                const {data} = await api.get('/relations');
                 setRelations(data || []);
             } catch (err) {
                 toast.error(err?.message);
@@ -70,15 +71,17 @@ const AssembleCapsule = () => {
         const fetchCapsule = async () => {
             setLoading(true);
             try {
-                const { data } = await api.get(`/timecapsule/${timecapsuleId}`);
+                const {data} = await api.get(`/timecapsule/${timecapsuleId}`);
 
-                setTitle(data.title || "");
-                setDescription(data.description || "");
-                setTheme(data.theme || "vintage");
+                setTitle(data.title || '');
+                setDescription(data.description || '');
+                setTheme(data.theme || 'vintage');
                 setIsEventRelated(data.isEventRelated);
-                setEvent(data.event || "");
-                setOpenAt(data.openAt?.slice(0, 16) || "");
-                setAllowContributorsToOpen(data.allowContributorsToOpen || false);
+                setEvent(data.event || '');
+                setOpenAt(data.openAt?.slice(0, 16) || '');
+                setAllowContributorsToOpen(
+                    data.allowContributorsToOpen || false
+                );
                 setContributors(data.contributors || []);
                 setRecipients(data.recipients || []);
             } catch (err) {
@@ -93,10 +96,8 @@ const AssembleCapsule = () => {
 
     /* ---------------- Toggle helpers ---------------- */
     const toggleSelection = (id, setter) => {
-        setter(prev =>
-            prev.includes(id)
-                ? prev.filter(x => x !== id)
-                : [...prev, id]
+        setter((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
         );
     };
 
@@ -118,13 +119,16 @@ const AssembleCapsule = () => {
 
         try {
             if (isNew) {
-                const { success, message, data } = await api.post("/timecapsule", payload);
+                const {success, message, data} = await api.post(
+                    '/timecapsule',
+                    payload
+                );
                 if (success) {
                     toast.success(message);
                     navigate(`/capsule/${data._id}`);
                 }
             } else {
-                const { success, message } = await api.put(
+                const {success, message} = await api.put(
                     `/timecapsule/${timecapsuleId}`,
                     payload
                 );
@@ -143,7 +147,9 @@ const AssembleCapsule = () => {
             <div className="max-w-3xl mx-auto space-y-10">
                 {/* Header */}
                 <div className="text-center space-y-2">
-                    <h1 className="text-4xl font-serif font-bold">{modeLabel}</h1>
+                    <h1 className="text-4xl font-serif font-bold">
+                        {modeLabel}
+                    </h1>
                     <p className="text-muted-foreground italic">
                         Memories deserve time, care, and silence.
                     </p>
@@ -154,7 +160,7 @@ const AssembleCapsule = () => {
                     <Input
                         placeholder="A letter to my future self…"
                         value={title}
-                        onChange={e => setTitle(e.target.value)}
+                        onChange={(e) => setTitle(e.target.value)}
                         className="text-lg font-serif"
                     />
 
@@ -162,7 +168,7 @@ const AssembleCapsule = () => {
                         rows={6}
                         placeholder="Write as if time itself is listening…"
                         value={description}
-                        onChange={e => setDescription(e.target.value)}
+                        onChange={(e) => setDescription(e.target.value)}
                         className="font-serif"
                     />
 
@@ -180,10 +186,10 @@ const AssembleCapsule = () => {
                             <select
                                 className="mt-4 w-full bg-background border border-border p-2 rounded-md"
                                 value={event}
-                                onChange={e => setEvent(e.target.value)}
+                                onChange={(e) => setEvent(e.target.value)}
                             >
                                 <option value="">Select an event</option>
-                                {eventList.map(ev => (
+                                {eventList.map((ev) => (
                                     <option key={ev} value={ev}>
                                         {ev}
                                     </option>
@@ -194,7 +200,7 @@ const AssembleCapsule = () => {
                                 type="datetime-local"
                                 className="mt-4"
                                 value={openAt}
-                                onChange={e => setOpenAt(e.target.value)}
+                                onChange={(e) => setOpenAt(e.target.value)}
                             />
                         )}
                     </Card>
@@ -202,13 +208,19 @@ const AssembleCapsule = () => {
                     {/* Contributors */}
                     <Card className="p-5 bg-muted/40 space-y-3">
                         <h3 className="font-serif">Contributors</h3>
-                        {relations.map(rel => (
-                            <label key={rel._id} className="flex items-center gap-2 text-sm">
+                        {relations.map((rel) => (
+                            <label
+                                key={rel._id}
+                                className="flex items-center gap-2 text-sm"
+                            >
                                 <input
                                     type="checkbox"
                                     checked={contributors.includes(rel.to._id)}
                                     onChange={() =>
-                                        toggleSelection(rel.to._id, setContributors)
+                                        toggleSelection(
+                                            rel.to._id,
+                                            setContributors
+                                        )
                                     }
                                 />
                                 {rel.to.name}
@@ -219,13 +231,19 @@ const AssembleCapsule = () => {
                     {/* Recipients */}
                     <Card className="p-5 bg-muted/40 space-y-3">
                         <h3 className="font-serif">Recipients</h3>
-                        {relations.map(rel => (
-                            <label key={rel._id} className="flex items-center gap-2 text-sm">
+                        {relations.map((rel) => (
+                            <label
+                                key={rel._id}
+                                className="flex items-center gap-2 text-sm"
+                            >
                                 <input
                                     type="checkbox"
                                     checked={recipients.includes(rel.to._id)}
                                     onChange={() =>
-                                        toggleSelection(rel.to._id, setRecipients)
+                                        toggleSelection(
+                                            rel.to._id,
+                                            setRecipients
+                                        )
                                     }
                                 />
                                 {rel.to.name}
@@ -241,7 +259,7 @@ const AssembleCapsule = () => {
                         onClick={handleSave}
                         className="px-12 py-6 text-lg font-serif bg-primary vintage-glow"
                     >
-                        {isNew ? "Assemble This Capsule" : "Save Changes"}
+                        {isNew ? 'Assemble This Capsule' : 'Save Changes'}
                     </Button>
                 </div>
             </div>

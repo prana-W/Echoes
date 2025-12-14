@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { Lock, Mail, User, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, {useState} from 'react';
+import {Lock, Mail, User, Clock} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {useApi} from '@/hooks/index.js';
 import {toast} from 'sonner';
 
@@ -15,7 +21,7 @@ export default function AuthPage() {
     // Login form state
     const [loginData, setLoginData] = useState({
         email: '',
-        password: ''
+        password: '',
     });
 
     // Register form state
@@ -23,7 +29,7 @@ export default function AuthPage() {
         name: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
     });
 
     // Handle login
@@ -31,9 +37,9 @@ export default function AuthPage() {
         setLoading(true);
 
         try {
-            const { data, success, message } = await api.post('/auth/login', {
+            const {data, success, message} = await api.post('/auth/login', {
                 email: loginData.email,
-                password: loginData.password
+                password: loginData.password,
             });
 
             if (success) {
@@ -58,20 +64,27 @@ export default function AuthPage() {
         setLoading(true);
 
         try {
-            const { data, success, message } = await api.post('/auth/signup', {
+            const {data, success, message} = await api.post('/auth/signup', {
                 name: registerData.name,
                 email: registerData.email,
-                password: registerData.password
+                password: registerData.password,
             });
 
             if (success) {
                 toast.success(message || 'Account created successfully!');
                 // Optionally switch to login or auto-login
                 setIsLogin(true);
-                setRegisterData({ name: '', email: '', password: '', confirmPassword: '' });
+                setRegisterData({
+                    name: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                });
             }
         } catch (err) {
-            toast.error(err?.message || 'Registration failed. Please try again.');
+            toast.error(
+                err?.message || 'Registration failed. Please try again.'
+            );
         } finally {
             setLoading(false);
         }
@@ -102,7 +115,9 @@ export default function AuthPage() {
                         Echoes
                     </CardTitle>
                     <CardDescription className="text-muted-foreground">
-                        {isLogin ? 'Welcome back to your memories' : 'Begin your journey through time'}
+                        {isLogin
+                            ? 'Welcome back to your memories'
+                            : 'Begin your journey through time'}
                     </CardDescription>
                 </CardHeader>
 
@@ -111,7 +126,10 @@ export default function AuthPage() {
                         // Login Form
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="login-email" className="text-foreground">
+                                <Label
+                                    htmlFor="login-email"
+                                    className="text-foreground"
+                                >
                                     Email
                                 </Label>
                                 <div className="relative">
@@ -122,14 +140,24 @@ export default function AuthPage() {
                                         placeholder="your@email.com"
                                         className="pl-10 bg-muted/50 border-border focus:border-primary"
                                         value={loginData.email}
-                                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                                        onKeyPress={(e) => handleKeyPress(e, handleLogin)}
+                                        onChange={(e) =>
+                                            setLoginData({
+                                                ...loginData,
+                                                email: e.target.value,
+                                            })
+                                        }
+                                        onKeyPress={(e) =>
+                                            handleKeyPress(e, handleLogin)
+                                        }
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="login-password" className="text-foreground">
+                                <Label
+                                    htmlFor="login-password"
+                                    className="text-foreground"
+                                >
                                     Password
                                 </Label>
                                 <div className="relative">
@@ -140,8 +168,15 @@ export default function AuthPage() {
                                         placeholder="••••••••"
                                         className="pl-10 bg-muted/50 border-border focus:border-primary"
                                         value={loginData.password}
-                                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                                        onKeyPress={(e) => handleKeyPress(e, handleLogin)}
+                                        onChange={(e) =>
+                                            setLoginData({
+                                                ...loginData,
+                                                password: e.target.value,
+                                            })
+                                        }
+                                        onKeyPress={(e) =>
+                                            handleKeyPress(e, handleLogin)
+                                        }
                                     />
                                 </div>
                             </div>
@@ -158,7 +193,10 @@ export default function AuthPage() {
                         // Register Form
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="register-name" className="text-foreground">
+                                <Label
+                                    htmlFor="register-name"
+                                    className="text-foreground"
+                                >
                                     Name
                                 </Label>
                                 <div className="relative">
@@ -169,14 +207,24 @@ export default function AuthPage() {
                                         placeholder="Your name"
                                         className="pl-10 bg-muted/50 border-border focus:border-primary"
                                         value={registerData.name}
-                                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
-                                        onKeyPress={(e) => handleKeyPress(e, handleRegister)}
+                                        onChange={(e) =>
+                                            setRegisterData({
+                                                ...registerData,
+                                                name: e.target.value,
+                                            })
+                                        }
+                                        onKeyPress={(e) =>
+                                            handleKeyPress(e, handleRegister)
+                                        }
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="register-email" className="text-foreground">
+                                <Label
+                                    htmlFor="register-email"
+                                    className="text-foreground"
+                                >
                                     Email
                                 </Label>
                                 <div className="relative">
@@ -187,14 +235,24 @@ export default function AuthPage() {
                                         placeholder="your@email.com"
                                         className="pl-10 bg-muted/50 border-border focus:border-primary"
                                         value={registerData.email}
-                                        onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                                        onKeyPress={(e) => handleKeyPress(e, handleRegister)}
+                                        onChange={(e) =>
+                                            setRegisterData({
+                                                ...registerData,
+                                                email: e.target.value,
+                                            })
+                                        }
+                                        onKeyPress={(e) =>
+                                            handleKeyPress(e, handleRegister)
+                                        }
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="register-password" className="text-foreground">
+                                <Label
+                                    htmlFor="register-password"
+                                    className="text-foreground"
+                                >
                                     Password
                                 </Label>
                                 <div className="relative">
@@ -205,14 +263,24 @@ export default function AuthPage() {
                                         placeholder="••••••••"
                                         className="pl-10 bg-muted/50 border-border focus:border-primary"
                                         value={registerData.password}
-                                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                                        onKeyPress={(e) => handleKeyPress(e, handleRegister)}
+                                        onChange={(e) =>
+                                            setRegisterData({
+                                                ...registerData,
+                                                password: e.target.value,
+                                            })
+                                        }
+                                        onKeyPress={(e) =>
+                                            handleKeyPress(e, handleRegister)
+                                        }
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="register-confirm" className="text-foreground">
+                                <Label
+                                    htmlFor="register-confirm"
+                                    className="text-foreground"
+                                >
                                     Confirm Password
                                 </Label>
                                 <div className="relative">
@@ -223,8 +291,15 @@ export default function AuthPage() {
                                         placeholder="••••••••"
                                         className="pl-10 bg-muted/50 border-border focus:border-primary"
                                         value={registerData.confirmPassword}
-                                        onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
-                                        onKeyPress={(e) => handleKeyPress(e, handleRegister)}
+                                        onChange={(e) =>
+                                            setRegisterData({
+                                                ...registerData,
+                                                confirmPassword: e.target.value,
+                                            })
+                                        }
+                                        onKeyPress={(e) =>
+                                            handleKeyPress(e, handleRegister)
+                                        }
                                     />
                                 </div>
                             </div>
@@ -234,7 +309,9 @@ export default function AuthPage() {
                                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                                 disabled={loading}
                             >
-                                {loading ? 'Creating account...' : 'Create Account'}
+                                {loading
+                                    ? 'Creating account...'
+                                    : 'Create Account'}
                             </Button>
                         </div>
                     )}
@@ -242,7 +319,9 @@ export default function AuthPage() {
                     {/* Toggle between login and register */}
                     <div className="mt-6 text-center">
                         <p className="text-sm text-muted-foreground">
-                            {isLogin ? "Don't have an account?" : 'Already have an account?'}
+                            {isLogin
+                                ? "Don't have an account?"
+                                : 'Already have an account?'}
                             <button
                                 type="button"
                                 onClick={() => setIsLogin(!isLogin)}

@@ -1,14 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import {Link} from 'react-router-dom';
 
 const NotFound = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-background px-6">
             <div className="max-w-xl w-full text-center">
-
                 {/* Card */}
                 <div className="bg-card border border-border rounded-xl p-10 vintage-shadow">
-
                     {/* 404 */}
                     <h1 className="text-8xl font-extrabold text-primary mb-4 tracking-tight">
                         404
@@ -21,8 +19,8 @@ const NotFound = () => {
 
                     {/* Description */}
                     <p className="text-muted-foreground mb-8 leading-relaxed">
-                        The page you’re trying to reach doesn’t exist,
-                        or it may have faded away with time.
+                        The page you’re trying to reach doesn’t exist, or it may
+                        have faded away with time.
                     </p>
 
                     {/* Action */}

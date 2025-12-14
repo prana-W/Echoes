@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     Clock,
     Users,
@@ -12,17 +12,17 @@ import {
     Video,
     Mic,
     FileText,
-    MessageCircle
+    MessageCircle,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { useApi } from '@/hooks/index.js';
-import { toast } from 'sonner';
-import { useParams } from 'react-router-dom';
+import {Button} from '@/components/ui/button';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
+import {Textarea} from '@/components/ui/textarea';
+import {useApi} from '@/hooks/index.js';
+import {toast} from 'sonner';
+import {useParams} from 'react-router-dom';
 
 export default function ViewCapsulePage() {
-    const { capsuleId } = useParams();
+    const {capsuleId} = useParams();
     const api = useApi();
 
     const [capsuleData, setCapsuleData] = useState(null);
@@ -38,7 +38,9 @@ export default function ViewCapsulePage() {
     const fetchCapsule = async () => {
         setLoading(true);
         try {
-            const { data, success } = await api.get(`/timecapsule/view/${capsuleId}`);
+            const {data, success} = await api.get(
+                `/timecapsule/view/${capsuleId}`
+            );
             if (success && data) {
                 setCapsuleData(data);
             }
@@ -76,11 +78,11 @@ export default function ViewCapsulePage() {
 
         setSendingAnswer(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             toast.success('Message finally delivered to the past! ✨', {
                 duration: 4000,
             });
-            setAnswers({ ...answers, [questionId]: '' });
+            setAnswers({...answers, [questionId]: ''});
         } catch (err) {
             toast.error('Failed to send answer');
         } finally {
@@ -93,7 +95,9 @@ export default function ViewCapsulePage() {
             <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center">
                     <Clock className="w-16 h-16 text-primary animate-pulse mx-auto mb-4 vintage-glow" />
-                    <p className="text-muted-foreground text-lg">Opening your time capsule...</p>
+                    <p className="text-muted-foreground text-lg">
+                        Opening your time capsule...
+                    </p>
                 </div>
             </div>
         );
@@ -104,16 +108,20 @@ export default function ViewCapsulePage() {
             <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center">
                     <X className="w-16 h-16 text-destructive mx-auto mb-4" />
-                    <p className="text-foreground text-lg">Time capsule not found</p>
+                    <p className="text-foreground text-lg">
+                        Time capsule not found
+                    </p>
                 </div>
             </div>
         );
     }
 
-    const { metadata, contents } = capsuleData;
+    const {metadata, contents} = capsuleData;
     const timeElapsed = metadata.timeElapsedMs;
     const daysElapsed = Math.floor(timeElapsed / (1000 * 60 * 60 * 24));
-    const hoursElapsed = Math.floor((timeElapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const hoursElapsed = Math.floor(
+        (timeElapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
 
     return (
         <div className="min-h-screen bg-background">
@@ -146,21 +154,32 @@ export default function ViewCapsulePage() {
                         <Card className="border-border vintage-shadow">
                             <CardContent className="p-6 text-center">
                                 <User className="w-8 h-8 text-primary mx-auto mb-3" />
-                                <h3 className="text-sm font-medium text-muted-foreground mb-2">Created by</h3>
-                                <p className="text-lg font-semibold text-foreground">{metadata.owner.name}</p>
-                                <p className="text-xs text-muted-foreground">{metadata.owner.email}</p>
+                                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                                    Created by
+                                </h3>
+                                <p className="text-lg font-semibold text-foreground">
+                                    {metadata.owner.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    {metadata.owner.email}
+                                </p>
                             </CardContent>
                         </Card>
 
                         <Card className="border-border vintage-shadow">
                             <CardContent className="p-6 text-center">
                                 <Clock className="w-8 h-8 text-secondary mx-auto mb-3" />
-                                <h3 className="text-sm font-medium text-muted-foreground mb-2">Time Elapsed</h3>
+                                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                                    Time Elapsed
+                                </h3>
                                 <p className="text-lg font-semibold text-foreground">
                                     {daysElapsed} days, {hoursElapsed} hours
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                    Opened on {new Date(metadata.openedAt).toLocaleDateString()}
+                                    Opened on{' '}
+                                    {new Date(
+                                        metadata.openedAt
+                                    ).toLocaleDateString()}
                                 </p>
                             </CardContent>
                         </Card>
@@ -168,12 +187,15 @@ export default function ViewCapsulePage() {
                         <Card className="border-border vintage-shadow">
                             <CardContent className="p-6 text-center">
                                 <Users className="w-8 h-8 text-primary mx-auto mb-3" />
-                                <h3 className="text-sm font-medium text-muted-foreground mb-2">Contributors</h3>
+                                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                                    Contributors
+                                </h3>
                                 <p className="text-lg font-semibold text-foreground">
                                     {metadata.totalContributors}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                    {metadata.totalRecipients} recipient{metadata.totalRecipients !== 1 ? 's' : ''}
+                                    {metadata.totalRecipients} recipient
+                                    {metadata.totalRecipients !== 1 ? 's' : ''}
                                 </p>
                             </CardContent>
                         </Card>
@@ -181,7 +203,9 @@ export default function ViewCapsulePage() {
 
                     <div className="text-center mt-8">
                         <div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-                            <span className="text-primary font-medium">Theme: {metadata.theme}</span>
+                            <span className="text-primary font-medium">
+                                Theme: {metadata.theme}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -201,25 +225,38 @@ export default function ViewCapsulePage() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {contents.images.map((image, index) => (
-                                <Card key={index} className="border-border overflow-hidden group">
+                                <Card
+                                    key={index}
+                                    className="border-border overflow-hidden group"
+                                >
                                     <div className="relative aspect-square">
                                         <img
                                             src={`${import.meta.env.VITE_BASE_SERVER_URL}${image.content}`}
-                                            alt={image.caption || `Memory ${index + 1}`}
+                                            alt={
+                                                image.caption ||
+                                                `Memory ${index + 1}`
+                                            }
                                             className="w-full h-full object-cover"
                                         />
                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                                             <Button
                                                 size="sm"
                                                 variant="secondary"
-                                                onClick={() => setFullscreenImage(image)}
+                                                onClick={() =>
+                                                    setFullscreenImage(image)
+                                                }
                                             >
                                                 <Maximize2 className="w-4 h-4" />
                                             </Button>
                                             <Button
                                                 size="sm"
                                                 variant="secondary"
-                                                onClick={() => handleDownload(image.url, `memory-${index + 1}.jpg`)}
+                                                onClick={() =>
+                                                    handleDownload(
+                                                        image.url,
+                                                        `memory-${index + 1}.jpg`
+                                                    )
+                                                }
                                             >
                                                 <Download className="w-4 h-4" />
                                             </Button>
@@ -227,7 +264,9 @@ export default function ViewCapsulePage() {
                                     </div>
                                     {image.caption && (
                                         <CardContent className="p-4">
-                                            <p className="text-sm text-muted-foreground">{image.caption}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {image.caption}
+                                            </p>
                                         </CardContent>
                                     )}
                                 </Card>
@@ -251,17 +290,23 @@ export default function ViewCapsulePage() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {contents.videos.map((video, index) => (
-                                <Card key={index} className="border-border overflow-hidden">
+                                <Card
+                                    key={index}
+                                    className="border-border overflow-hidden"
+                                >
                                     <video
                                         controls
                                         className="w-full aspect-video bg-black"
                                         src={`${import.meta.env.VITE_BASE_SERVER_URL}${video.content}`}
                                     >
-                                        Your browser does not support the video tag.
+                                        Your browser does not support the video
+                                        tag.
                                     </video>
                                     {video.caption && (
                                         <CardContent className="p-4">
-                                            <p className="text-sm text-muted-foreground">{video.caption}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {video.caption}
+                                            </p>
                                         </CardContent>
                                     )}
                                 </Card>
@@ -296,13 +341,18 @@ export default function ViewCapsulePage() {
                                                     Audio Recording {index + 1}
                                                 </p>
                                                 {audio.caption && (
-                                                    <p className="text-sm text-muted-foreground">{audio.caption}</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {audio.caption}
+                                                    </p>
                                                 )}
                                             </div>
                                         </div>
                                         <audio controls className="w-full">
-                                            <source src={`${import.meta.env.VITE_BASE_SERVER_URL}${audio.content}`} />
-                                            Your browser does not support the audio element.
+                                            <source
+                                                src={`${import.meta.env.VITE_BASE_SERVER_URL}${audio.content}`}
+                                            />
+                                            Your browser does not support the
+                                            audio element.
                                         </audio>
                                     </CardContent>
                                 </Card>
@@ -326,7 +376,10 @@ export default function ViewCapsulePage() {
                         </div>
                         <div className="grid grid-cols-1 gap-6">
                             {contents.texts.map((text, index) => (
-                                <Card key={index} className="border-border vintage-shadow">
+                                <Card
+                                    key={index}
+                                    className="border-border vintage-shadow"
+                                >
                                     <CardContent className="p-8">
                                         <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap font-serif">
                                             {text.content}
@@ -345,53 +398,72 @@ export default function ViewCapsulePage() {
             )}
 
             {/* Questions Section - Only for Owner */}
-            {metadata.isOwner && contents.questions && contents.questions.length > 0 && (
-                <section className="py-16 px-6">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-12">
-                            <div className="inline-flex items-center justify-center mb-4">
-                                <div className="p-4 rounded-full bg-primary/10 vintage-glow">
-                                    <MessageCircle className="w-10 h-10 text-primary" />
+            {metadata.isOwner &&
+                contents.questions &&
+                contents.questions.length > 0 && (
+                    <section className="py-16 px-6">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="text-center mb-12">
+                                <div className="inline-flex items-center justify-center mb-4">
+                                    <div className="p-4 rounded-full bg-primary/10 vintage-glow">
+                                        <MessageCircle className="w-10 h-10 text-primary" />
+                                    </div>
                                 </div>
+                                <h2 className="text-4xl font-serif font-bold text-foreground mb-3">
+                                    A Question from the Past
+                                </h2>
+                                <p className="text-muted-foreground">
+                                    Your past self wants to know...
+                                </p>
                             </div>
-                            <h2 className="text-4xl font-serif font-bold text-foreground mb-3">
-                                A Question from the Past
-                            </h2>
-                            <p className="text-muted-foreground">
-                                Your past self wants to know...
-                            </p>
-                        </div>
 
-                        <div className="space-y-8">
-                            {contents.questions.map((question, index) => (
-                                <Card key={index} className="border-2 border-primary/30 vintage-shadow">
-                                    <CardHeader>
-                                        <CardTitle className="text-2xl font-serif text-foreground">
-                                            {question.text}
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <Textarea
-                                            placeholder="Share your answer with your past self..."
-                                            className="min-h-32 bg-muted/50 border-border resize-none mb-4 font-serif"
-                                            value={answers[question.id] || ''}
-                                            onChange={(e) => setAnswers({ ...answers, [question.id]: e.target.value })}
-                                        />
-                                        <Button
-                                            onClick={() => handleSendAnswer(question.id)}
-                                            disabled={sendingAnswer}
-                                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6 vintage-glow"
-                                        >
-                                            <Send className="w-5 h-5 mr-2" />
-                                            {sendingAnswer ? 'Sending to the past...' : 'Send to the Past'}
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                            <div className="space-y-8">
+                                {contents.questions.map((question, index) => (
+                                    <Card
+                                        key={index}
+                                        className="border-2 border-primary/30 vintage-shadow"
+                                    >
+                                        <CardHeader>
+                                            <CardTitle className="text-2xl font-serif text-foreground">
+                                                {question.text}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <Textarea
+                                                placeholder="Share your answer with your past self..."
+                                                className="min-h-32 bg-muted/50 border-border resize-none mb-4 font-serif"
+                                                value={
+                                                    answers[question.id] || ''
+                                                }
+                                                onChange={(e) =>
+                                                    setAnswers({
+                                                        ...answers,
+                                                        [question.id]:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                            />
+                                            <Button
+                                                onClick={() =>
+                                                    handleSendAnswer(
+                                                        question.id
+                                                    )
+                                                }
+                                                disabled={sendingAnswer}
+                                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6 vintage-glow"
+                                            >
+                                                <Send className="w-5 h-5 mr-2" />
+                                                {sendingAnswer
+                                                    ? 'Sending to the past...'
+                                                    : 'Send to the Past'}
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                )}
 
             {/* Final Message */}
             <section className="py-20 px-6">
@@ -402,8 +474,9 @@ export default function ViewCapsulePage() {
                             End of Journey
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            Thank you for revisiting these precious moments. Your memories are forever preserved,
-                            echoing through time.
+                            Thank you for revisiting these precious moments.
+                            Your memories are forever preserved, echoing through
+                            time.
                         </p>
                     </div>
                 </div>
@@ -432,7 +505,10 @@ export default function ViewCapsulePage() {
                             variant="secondary"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleDownload(fullscreenImage.url, 'memory.jpg');
+                                handleDownload(
+                                    fullscreenImage.url,
+                                    'memory.jpg'
+                                );
                             }}
                         >
                             <Download className="w-4 h-4 mr-2" />

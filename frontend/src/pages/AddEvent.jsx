@@ -1,24 +1,24 @@
-import { useState } from "react";
-import { toast } from "sonner";
-import { useApi } from "@/hooks";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import {useState} from 'react';
+import {toast} from 'sonner';
+import {useApi} from '@/hooks';
+import {Card} from '@/components/ui/card';
+import {Button} from '@/components/ui/button';
+import {CheckCircle} from 'lucide-react';
 
 export const eventList = [
-    "birthday",
-    "wedding",
-    "anniversary",
-    "graduation",
-    "retirement",
-    "engagement",
-    "childbirth",
-    "firstJob",
-    "promotion",
-    "housePurchase",
-    "startupLaunch",
-    "memorial",
-    "other",
+    'birthday',
+    'wedding',
+    'anniversary',
+    'graduation',
+    'retirement',
+    'engagement',
+    'childbirth',
+    'firstJob',
+    'promotion',
+    'housePurchase',
+    'startupLaunch',
+    'memorial',
+    'other',
 ];
 
 // helper: Capitalize first letter
@@ -26,24 +26,24 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const LifeEventPage = () => {
     const api = useApi();
-    const [selectedEvent, setSelectedEvent] = useState("");
+    const [selectedEvent, setSelectedEvent] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
         if (!selectedEvent) {
-            toast.error("Please select an event first");
+            toast.error('Please select an event first');
             return;
         }
 
         setLoading(true);
         try {
-            const { success, message } = await api.post("/event", {
+            const {success, message} = await api.post('/event', {
                 eventType: selectedEvent,
             });
 
             if (success) {
-                toast.success(message || "Event recorded successfully");
-                setSelectedEvent("");
+                toast.success(message || 'Event recorded successfully');
+                setSelectedEvent('');
             }
         } catch (err) {
             toast.error(err?.message);
@@ -79,10 +79,10 @@ const LifeEventPage = () => {
                                         flex items-center justify-between px-5 py-4
                                         rounded-lg border transition-all
                                         ${
-                                        isSelected
-                                            ? "border-primary bg-primary/10 vintage-glow"
-                                            : "border-border bg-muted/40 hover:bg-muted"
-                                    }
+                                            isSelected
+                                                ? 'border-primary bg-primary/10 vintage-glow'
+                                                : 'border-border bg-muted/40 hover:bg-muted'
+                                        }
                                     `}
                                 >
                                     <span className="font-serif text-lg">

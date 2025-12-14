@@ -8,19 +8,19 @@ import {
     Sparkles,
     Users,
     Calendar,
-    CheckCircle
+    CheckCircle,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import {Button} from '@/components/ui/button';
+import {Card} from '@/components/ui/card';
+import {Badge} from '@/components/ui/badge';
 
 export default function TimeCapsuleCard({
-                                            capsule,
-                                            onEdit,
-                                            onAddMemories,
-                                            onSeal,
-                                            onOpen,
-                                        }) {
+    capsule,
+    onEdit,
+    onAddMemories,
+    onSeal,
+    onOpen,
+}) {
     const isLocked = capsule.isSealed && !capsule.isOpened;
     const isOpened = capsule.isOpened;
     const canEdit = capsule.isOwner && !capsule.isSealed;
@@ -43,11 +43,8 @@ export default function TimeCapsuleCard({
             day: 'numeric',
         });
 
-        daysUntil = Math.ceil(
-            (openDate - new Date()) / (1000 * 60 * 60 * 24)
-        );
+        daysUntil = Math.ceil((openDate - new Date()) / (1000 * 60 * 60 * 24));
         isPast = openDate.getTime() <= Date.now();
-
     }
 
     return (
@@ -55,9 +52,30 @@ export default function TimeCapsuleCard({
             {/* Capsule Shape Background */}
             <div className="absolute inset-0 pointer-events-none opacity-5">
                 <svg viewBox="0 0 200 300" className="w-full h-full">
-                    <ellipse cx="100" cy="80" rx="80" ry="80" fill="currentColor" className="text-primary" />
-                    <rect x="20" y="80" width="160" height="140" fill="currentColor" className="text-primary" />
-                    <ellipse cx="100" cy="220" rx="80" ry="80" fill="currentColor" className="text-primary" />
+                    <ellipse
+                        cx="100"
+                        cy="80"
+                        rx="80"
+                        ry="80"
+                        fill="currentColor"
+                        className="text-primary"
+                    />
+                    <rect
+                        x="20"
+                        y="80"
+                        width="160"
+                        height="140"
+                        fill="currentColor"
+                        className="text-primary"
+                    />
+                    <ellipse
+                        cx="100"
+                        cy="220"
+                        rx="80"
+                        ry="80"
+                        fill="currentColor"
+                        className="text-primary"
+                    />
                 </svg>
             </div>
 
@@ -74,8 +92,8 @@ export default function TimeCapsuleCard({
                                     isOpened
                                         ? 'bg-primary/20 vintage-glow'
                                         : isLocked
-                                            ? 'bg-secondary/20'
-                                            : 'bg-muted'
+                                          ? 'bg-secondary/20'
+                                          : 'bg-muted'
                                 }`}
                             >
                                 {isOpened ? (
