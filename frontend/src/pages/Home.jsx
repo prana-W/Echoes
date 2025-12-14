@@ -21,6 +21,7 @@ import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {useApi} from '@/hooks/index.js';
 import Logo from '@/components/EchoesLogo.jsx'
+import OnlinePeopleWidget from '@/components/OnlinePeopleWidget.jsx';
 
 export default function HomePage() {
     const api = useApi();
@@ -113,6 +114,8 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
+
+            <OnlinePeopleWidget />
 
             {/* Analytics Section */}
             {!loading && analytics && (

@@ -1,27 +1,50 @@
-import verifyAccessToken from './middlewares/verifyAccessToken.middleware.js';
-import {onlineUsers} from '../store/presence.store.js';
+import verifySocketAccessToken from "./middlewares/verifySocketAccessToken.middleware.js";
+import { onlineUsers } from "../store/presence.store.js";
+import User from "../models/user.model.js";
 
 function registerSockets(io) {
-    // Middleware to verify access token for each socket connection
-    io.use(verifyAccessToken());
+    // Authenticate every socket
+    io.use(verifySocketAccessToken());
 
-    io.on('connection', (socket) => {
-        console.log('✅ Socket connected:', socket.id);
+    io.on("connection", async (socket) => {
+        const userId = socket.userId;
 
-        // const userId = socket.handshake.auth.userId;
-        const userId = socket?.userId;
-        console.log(userId);
-
-        if (userId) {
-            onlineUsers.set(userId, socket.id);
-            io.emit('presence:update', {userId, status: 'online'});
+        // Resolve name (JWT or DB fallback)
+        let name = socket.name;
+        if (!name) {
+            const user = await User.findById(userId).select("name");
+            name = user?.name || "Unknown";
         }
 
-        socket.on('disconnect', () => {
-            if (userId) {
+        console.log("✅ Socket connected:", socket.id, "User:", userId);
+
+        // First connection for this user
+        if (!onlineUsers.has(userId)) {
+            onlineUsers.set(userId, {
+                sockets: new Set(),
+                name,
+            });
+
+            // Notify everyone
+            io.emit("user:online", { userId, name });
+        }
+
+        // Track socket
+        onlineUsers.get(userId).sockets.add(socket.id);
+
+        socket.on("disconnect", () => {
+            const entry = onlineUsers.get(userId);
+            if (!entry) return;
+
+            entry.sockets.delete(socket.id);
+
+            // Last socket disconnected → user offline
+            if (entry.sockets.size === 0) {
                 onlineUsers.delete(userId);
-                io.emit('presence:update', {userId, status: 'offline'});
+                io.emit("user:offline", { userId, name: entry.name });
             }
+
+            console.log("❌ Socket disconnected:", socket.id);
         });
     });
 }

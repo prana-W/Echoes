@@ -5,34 +5,60 @@ import User from '../models/user.model.js';
 
 // Todo: Must be same as in relation.model.js
 const reciprocalMap = {
+    /* Parents ↔ Children */
     father: 'son',
     mother: 'son',
+
     son: 'father',
     daughter: 'father',
 
+    /* Spouse */
     husband: 'wife',
     wife: 'husband',
 
+    /* Siblings */
     brother: 'brother',
     sister: 'sister',
 
-    grandfather: 'grandson',
-    grandmother: 'grandson',
+    /* Grandparents (maternal) */
+    maternal_grandfather: 'grandson',
+    maternal_grandmother: 'grandson',
+
+    /* Grandparents (paternal) */
+    paternal_grandfather: 'grandson',
+    paternal_grandmother: 'grandson',
+
+    /* Grandchildren */
     grandson: 'grandfather',
     granddaughter: 'grandmother',
 
-    maternal_uncle: 'nephew',
-    paternal_uncle: 'nephew',
-    maternal_aunt: 'niece',
-    paternal_aunt: 'niece',
+    /* In-laws */
+    brother_in_law: 'brother_in_law',
+    sister_in_law: 'sister_in_law',
 
+    /* Uncles & Aunts (generic) */
     uncle: 'nephew',
     aunt: 'niece',
+
+    /* Uncles & Aunts (maternal) */
+    maternal_uncle: 'nephew',
+    maternal_aunt: 'niece',
+
+    /* Uncles & Aunts (paternal) */
+    paternal_uncle: 'nephew',
+    paternal_aunt: 'niece',
+
+    /* Nephews & Nieces */
     nephew: 'uncle',
     niece: 'aunt',
 
-    other: 'other'
+    /* Cousins */
+    cousin: 'cousin',
+
+    /* Fallback */
+    other: 'other',
 };
+
 
 const createRelation = asyncHandler(async (req, res) => {
     const fromUserId = req.userId;

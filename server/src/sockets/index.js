@@ -1,10 +1,11 @@
 import {Server} from 'socket.io';
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
 
 function initializeSocket(httpServer) {
-    // Todo: Add options as needed
     const io = new Server(httpServer, {
         cors: {
-            origin: '*', //todo: Adjust this to your client's origin in production
+            origin: allowedOrigins,
+            credentials: true,
         },
     });
 
