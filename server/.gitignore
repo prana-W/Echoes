@@ -138,4 +138,3 @@ vite.config.ts.timestamp-*
 
 /web-extension/test.js
 .idea/
-uploads
