@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useApi } from "@/hooks";
@@ -7,6 +7,22 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+
+const eventList = [
+    "birthday",
+    "wedding",
+    "anniversary",
+    "graduation",
+    "retirement",
+    "engagement",
+    "childbirth",
+    "firstJob",
+    "promotion",
+    "housePurchase",
+    "startupLaunch",
+    "memorial",
+    "other",
+];
 
 const AssembleCapsule = () => {
     const api = useApi();
@@ -25,24 +41,36 @@ const AssembleCapsule = () => {
     const [isEventRelated, setIsEventRelated] = useState(false);
     const [event, setEvent] = useState("");
     const [openAt, setOpenAt] = useState("");
-    const [allowContributorsToOpen, setAllowContributorsToOpen] =
-        useState(false);
+    const [allowContributorsToOpen, setAllowContributorsToOpen] = useState(false);
 
-    /* Mode label */
+    /* Relations */
+    const [relations, setRelations] = useState([]);
+    const [contributors, setContributors] = useState([]);
+    const [recipients, setRecipients] = useState([]);
+
     const modeLabel = isNew ? "Assemble a New Capsule" : "Refine Your Capsule";
 
-    /* ----------------------------------
-       Fetch capsule if EDIT mode
-    -----------------------------------*/
+    /* ---------------- Fetch relations ---------------- */
+    useEffect(() => {
+        const fetchRelations = async () => {
+            try {
+                const { data } = await api.get("/relations");
+                setRelations(data || []);
+            } catch (err) {
+                toast.error(err?.message);
+            }
+        };
+        fetchRelations();
+    }, []);
+
+    /* ---------------- Fetch capsule (edit mode) ---------------- */
     useEffect(() => {
         if (isNew || !timecapsuleId) return;
 
         const fetchCapsule = async () => {
             setLoading(true);
             try {
-                const { data } = await api.get(
-                    `/timecapsule/${timecapsuleId}`
-                );
+                const { data } = await api.get(`/timecapsule/${timecapsuleId}`);
 
                 setTitle(data.title || "");
                 setDescription(data.description || "");
@@ -50,9 +78,9 @@ const AssembleCapsule = () => {
                 setIsEventRelated(data.isEventRelated);
                 setEvent(data.event || "");
                 setOpenAt(data.openAt?.slice(0, 16) || "");
-                setAllowContributorsToOpen(
-                    data.allowContributorsToOpen || false
-                );
+                setAllowContributorsToOpen(data.allowContributorsToOpen || false);
+                setContributors(data.contributors || []);
+                setRecipients(data.recipients || []);
             } catch (err) {
                 toast.error(err?.message);
             } finally {
@@ -63,9 +91,16 @@ const AssembleCapsule = () => {
         fetchCapsule();
     }, [isNew, timecapsuleId]);
 
-    /* ----------------------------------
-       CREATE / UPDATE
-    -----------------------------------*/
+    /* ---------------- Toggle helpers ---------------- */
+    const toggleSelection = (id, setter) => {
+        setter(prev =>
+            prev.includes(id)
+                ? prev.filter(x => x !== id)
+                : [...prev, id]
+        );
+    };
+
+    /* ---------------- Save ---------------- */
     const handleSave = async () => {
         setLoading(true);
 
@@ -77,15 +112,13 @@ const AssembleCapsule = () => {
             event: isEventRelated ? event : undefined,
             openAt: !isEventRelated ? openAt : undefined,
             allowContributorsToOpen,
+            contributors,
+            recipients,
         };
 
         try {
             if (isNew) {
-                const { success, message, data } = await api.post(
-                    "/timecapsule",
-                    payload
-                );
-
+                const { success, message, data } = await api.post("/timecapsule", payload);
                 if (success) {
                     toast.success(message);
                     navigate(`/capsule/${data._id}`);
@@ -95,7 +128,6 @@ const AssembleCapsule = () => {
                     `/timecapsule/${timecapsuleId}`,
                     payload
                 );
-
                 if (success) toast.success(message);
             }
         } catch (err) {
@@ -105,124 +137,112 @@ const AssembleCapsule = () => {
         }
     };
 
-    /* ----------------------------------
-       UI
-    -----------------------------------*/
+    /* ---------------- UI ---------------- */
     return (
         <div className="min-h-screen bg-background px-6 py-12">
             <div className="max-w-3xl mx-auto space-y-10">
                 {/* Header */}
                 <div className="text-center space-y-2">
-                    <h1 className="text-4xl font-serif font-bold text-foreground">
-                        {modeLabel}
-                    </h1>
+                    <h1 className="text-4xl font-serif font-bold">{modeLabel}</h1>
                     <p className="text-muted-foreground italic">
                         Memories deserve time, care, and silence.
                     </p>
                 </div>
 
-                {/* Capsule Core */}
-                <Card className="bg-card border-border p-8 vintage-shadow space-y-8">
-                    {/* Title */}
-                    <div className="space-y-2">
-                        <label className="text-sm text-muted-foreground">
-                            Capsule Title
-                        </label>
-                        <Input
-                            placeholder="A letter to my future self…"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="text-lg font-serif"
-                        />
-                    </div>
+                {/* Core */}
+                <Card className="p-8 vintage-shadow space-y-8">
+                    <Input
+                        placeholder="A letter to my future self…"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        className="text-lg font-serif"
+                    />
 
-                    {/* Description */}
-                    <div className="space-y-2">
-                        <label className="text-sm text-muted-foreground">
-                            The Memory Inside
-                        </label>
-                        <Textarea
-                            rows={6}
-                            placeholder="Write as if time itself is listening…"
-                            value={description}
-                            onChange={(e) =>
-                                setDescription(e.target.value)
-                            }
-                            className="font-serif leading-relaxed"
-                        />
-                    </div>
+                    <Textarea
+                        rows={6}
+                        placeholder="Write as if time itself is listening…"
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        className="font-serif"
+                    />
 
-                    {/* Time Logic */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <Card className="p-5 bg-muted/40">
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm">
-                                    Tie to a life event
-                                </span>
-                                <Switch
-                                    checked={isEventRelated}
-                                    onCheckedChange={setIsEventRelated}
-                                />
-                            </div>
+                    {/* Event / Date */}
+                    <Card className="p-5 bg-muted/40">
+                        <div className="flex justify-between items-center">
+                            <span>Tie to a life event</span>
+                            <Switch
+                                checked={isEventRelated}
+                                onCheckedChange={setIsEventRelated}
+                            />
+                        </div>
 
-                            {isEventRelated ? (
-                                <Input
-                                    className="mt-4"
-                                    placeholder="Graduation, Marriage, 30th Birthday…"
-                                    value={event}
-                                    onChange={(e) =>
-                                        setEvent(e.target.value)
+                        {isEventRelated ? (
+                            <select
+                                className="mt-4 w-full bg-background border border-border p-2 rounded-md"
+                                value={event}
+                                onChange={e => setEvent(e.target.value)}
+                            >
+                                <option value="">Select an event</option>
+                                {eventList.map(ev => (
+                                    <option key={ev} value={ev}>
+                                        {ev}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <Input
+                                type="datetime-local"
+                                className="mt-4"
+                                value={openAt}
+                                onChange={e => setOpenAt(e.target.value)}
+                            />
+                        )}
+                    </Card>
+
+                    {/* Contributors */}
+                    <Card className="p-5 bg-muted/40 space-y-3">
+                        <h3 className="font-serif">Contributors</h3>
+                        {relations.map(rel => (
+                            <label key={rel._id} className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="checkbox"
+                                    checked={contributors.includes(rel.to._id)}
+                                    onChange={() =>
+                                        toggleSelection(rel.to._id, setContributors)
                                     }
                                 />
-                            ) : (
-                                <Input
-                                    className="mt-4"
-                                    type="datetime-local"
-                                    value={openAt}
-                                    onChange={(e) =>
-                                        setOpenAt(e.target.value)
-                                    }
-                                />
-                            )}
-                        </Card>
+                                {rel.to.name}
+                            </label>
+                        ))}
+                    </Card>
 
-                        <Card className="p-5 bg-muted/40">
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm">
-                                    Contributors can open
-                                </span>
-                                <Switch
-                                    checked={allowContributorsToOpen}
-                                    onCheckedChange={
-                                        setAllowContributorsToOpen
+                    {/* Recipients */}
+                    <Card className="p-5 bg-muted/40 space-y-3">
+                        <h3 className="font-serif">Recipients</h3>
+                        {relations.map(rel => (
+                            <label key={rel._id} className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="checkbox"
+                                    checked={recipients.includes(rel.to._id)}
+                                    onChange={() =>
+                                        toggleSelection(rel.to._id, setRecipients)
                                     }
                                 />
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-3">
-                                Trust shared memories with others.
-                            </p>
-                        </Card>
-                    </div>
+                                {rel.to.name}
+                            </label>
+                        ))}
+                    </Card>
                 </Card>
 
-                {/* Seal Button */}
-                <div className="text-center pt-6">
+                {/* Action */}
+                <div className="text-center">
                     <Button
                         disabled={loading}
                         onClick={handleSave}
-                        className="
-                            px-12 py-6 text-lg font-serif
-                            bg-primary text-primary-foreground
-                            hover:vintage-glow
-                            transition-all duration-500
-                        "
+                        className="px-12 py-6 text-lg font-serif bg-primary vintage-glow"
                     >
                         {isNew ? "Seal This Capsule" : "Save Changes"}
                     </Button>
-
-                    <p className="mt-3 text-xs text-muted-foreground italic">
-                        Once sealed, some memories can never be changed.
-                    </p>
                 </div>
             </div>
         </div>

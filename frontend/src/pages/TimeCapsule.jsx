@@ -59,7 +59,7 @@ export default function TimeCapsulesPage() {
     };
 
     const handleAddMemories = (capsule) => {
-        window.location.href = `/capsule/${capsule._id}/memories`;
+        window.location.href = `/capsule/memories/${capsule._id}`;
     };
 
     const handleOpen = (capsule) => {
