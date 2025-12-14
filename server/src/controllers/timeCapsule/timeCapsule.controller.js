@@ -593,6 +593,8 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
             texts,
             questions,
         },
+
+        reactions: capsule?.reactions,
     };
 
     return res
