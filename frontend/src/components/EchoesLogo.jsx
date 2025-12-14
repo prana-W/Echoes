@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"; // Ensure you have your utility helper availab
 const Logo = ({ className, ...props }) => {
     return (
         <svg
-            viewBox="0 0 64 64"
+            viewBox="0 0 80 80"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             // Default size is w-16 h-16, but overrides apply via className
@@ -16,9 +16,9 @@ const Logo = ({ className, ...props }) => {
         Uses your theme's dark background color.
       */}
             <circle
-                cx="32"
-                cy="32"
-                r="32"
+                cx="40"
+                cy="40"
+                r="40"
                 className="fill-background"
             />
 
