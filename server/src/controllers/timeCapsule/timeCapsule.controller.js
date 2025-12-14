@@ -139,6 +139,13 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
         );
     }
 
+    if (capsule?.isSealed) {
+        throw new ApiError(
+            statusCode.FORBIDDEN,
+            'This time capsule is sealed and cannot be modified!'
+        );
+    }
+
     const {
         title,
         description,
@@ -150,6 +157,7 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
         isEventRelated,
         event,
         theme,
+        isSealed
     } = req.body;
 
     // Validate users being added
@@ -209,6 +217,10 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
             capsule.openAt = openAt;
             capsule.event = undefined;
         }
+    }
+
+    if (isSealed) {
+        capsule.isSealed = true;
     }
 
     await capsule.save();
@@ -288,8 +300,7 @@ const getTimeCapsule = asyncHandler(async (req, res) => {
         );
     }
 
-    // If capsule is not opened yet, restrict sensitive fields
-    if (!capsule.isOpened && !isOwner) {
+
         return res.status(statusCode.OK).json(
             new ApiResponse(
                 statusCode.OK,
@@ -307,18 +318,15 @@ const getTimeCapsule = asyncHandler(async (req, res) => {
                     event: capsule.event,
                     isOpened: capsule.isOpened,
                     createdAt: capsule.createdAt,
+                    isSealed: capsule?.isSealed,
+                    isOwner,
+                    isContributor: capsule.contributors.some(
+                        (u) => u._id.toString() === userId.toString()
+                    ),
+                    isRecipient: capsule.recipients.some(
+                        (u) => u._id.toString() === userId.toString()
+                    ),
                 }
-            )
-        );
-    }
-
-    return res
-        .status(statusCode.OK)
-        .json(
-            new ApiResponse(
-                statusCode.OK,
-                'Time capsule fetched successfully',
-                capsule
             )
         );
 });
@@ -349,8 +357,6 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
     const responseCapsules = capsules.map((capsule) => {
         const isOwner = capsule.owner._id.toString() === userId.toString();
 
-        // If capsule is locked and user is not owner, return limited view
-        if (!capsule.isOpened && !isOwner) {
             return {
                 _id: capsule._id,
                 title: capsule.title,
@@ -364,10 +370,15 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
                 event: capsule.event,
                 isOpened: capsule.isOpened,
                 createdAt: capsule.createdAt,
+                isOwner,
+                isSealed: capsule?.isSealed,
+                isContributor: capsule.contributors.some(
+                    (u) => u._id.toString() === userId.toString()
+                ),
+                isRecipient: capsule.recipients.some(
+                    (u) => u._id.toString() === userId.toString()
+                ),
             };
-        }
-
-        return capsule;
     });
 
     return res

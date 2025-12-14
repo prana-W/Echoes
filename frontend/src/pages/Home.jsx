@@ -88,7 +88,7 @@ export default function HomePage() {
                             <Button
                                 size="lg"
                                 className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 vintage-glow"
-                                onClick={() => window.location.href = '/create'}
+                                onClick={() => window.location.href = '/capsule'}
                             >
                                 Create Your Time Capsule
                                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -478,7 +478,7 @@ export default function HomePage() {
                         <Button
                             size="lg"
                             className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-10 py-6 vintage-glow"
-                            onClick={() => window.location.href = '/create'}
+                            onClick={() => window.location.href = '/capsule'}
                         >
                             Create Your Time Capsule Now
                             <Clock className="ml-2 w-5 h-5" />
