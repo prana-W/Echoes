@@ -1,19 +1,15 @@
-import jwt from "jsonwebtoken";
-import cookie from "cookie";
-import { ApiError } from "../../utility/index.js";
-import statusCode from "../../constants/statusCode.js";
+import jwt from 'jsonwebtoken';
+import cookie from 'cookie';
+import {ApiError} from '../../utility/index.js';
+import statusCode from '../../constants/statusCode.js';
 
 const verifySocketAccessToken = () => {
     return (socket, next) => {
         try {
-
             const cookies = socket.handshake.headers?.cookie;
 
             if (!cookies) {
-                throw new ApiError(
-                    statusCode.UNAUTHORIZED,
-                    "No cookies found"
-                );
+                throw new ApiError(statusCode.UNAUTHORIZED, 'No cookies found');
             }
 
             const parsedCookies = cookie.parse(cookies);
@@ -22,7 +18,7 @@ const verifySocketAccessToken = () => {
             if (!accessToken) {
                 throw new ApiError(
                     statusCode.UNAUTHORIZED,
-                    "Access token missing in cookies"
+                    'Access token missing in cookies'
                 );
             }
 
@@ -36,12 +32,7 @@ const verifySocketAccessToken = () => {
 
             next();
         } catch (err) {
-            next(
-                new ApiError(
-                    statusCode.UNAUTHORIZED,
-                    err.message
-                )
-            );
+            next(new ApiError(statusCode.UNAUTHORIZED, err.message));
         }
     };
 };

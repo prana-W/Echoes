@@ -1,7 +1,7 @@
 export const capsuleMaturationTemplate = (
-    name = "User",
-    title = "Untitled Time Capsule",
-    capsuleLink = "#"
+    name = 'User',
+    title = 'Untitled Time Capsule',
+    capsuleLink = '#'
 ) => `<!DOCTYPE html>
 <html lang="en">
 <head>

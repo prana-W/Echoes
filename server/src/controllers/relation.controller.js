@@ -59,10 +59,9 @@ const reciprocalMap = {
     other: 'other',
 };
 
-
 const createRelation = asyncHandler(async (req, res) => {
     const fromUserId = req.userId;
-    const { targetUserId, relation } = req.body;
+    const {targetUserId, relation} = req.body;
 
     if (!targetUserId || !relation) {
         throw new ApiError(
@@ -107,18 +106,17 @@ const createRelation = asyncHandler(async (req, res) => {
         existingDirect.relation = relation;
         existingReverse.relation = reciprocalRelation;
 
-        await Promise.all([
-            existingDirect.save(),
-            existingReverse.save(),
-        ]);
+        await Promise.all([existingDirect.save(), existingReverse.save()]);
 
-        return res.status(statusCode.OK).json(
-            new ApiResponse(
-                statusCode.OK,
-                'Relationship updated successfully',
-                [existingDirect, existingReverse]
-            )
-        );
+        return res
+            .status(statusCode.OK)
+            .json(
+                new ApiResponse(
+                    statusCode.OK,
+                    'Relationship updated successfully',
+                    [existingDirect, existingReverse]
+                )
+            );
     }
 
     // CREATE case (no relationship exists yet)
@@ -135,15 +133,16 @@ const createRelation = asyncHandler(async (req, res) => {
         },
     ]);
 
-    return res.status(statusCode.CREATED).json(
-        new ApiResponse(
-            statusCode.CREATED,
-            'Relationship created successfully',
-            relations
-        )
-    );
+    return res
+        .status(statusCode.CREATED)
+        .json(
+            new ApiResponse(
+                statusCode.CREATED,
+                'Relationship created successfully',
+                relations
+            )
+        );
 });
-
 
 const getAllRelations = asyncHandler(async (req, res) => {
     const userId = req.userId;

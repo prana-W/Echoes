@@ -7,4 +7,4 @@ const onlineUsers = new Map();
   }
 */
 
-export { onlineUsers };
+export {onlineUsers};

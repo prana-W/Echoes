@@ -1,13 +1,13 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { useApi } from "@/hooks";
-import getSocket from "@/lib/socket";
+import {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {toast} from 'sonner';
+import {useApi} from '@/hooks';
+import getSocket from '@/lib/socket';
 
 const socket = getSocket();
 
 const PresenceContext = createContext(null);
 
-export const PresenceProvider = ({ children }) => {
+export const PresenceProvider = ({children}) => {
     const api = useApi();
 
     const [people, setPeople] = useState([]);
@@ -23,7 +23,7 @@ export const PresenceProvider = ({ children }) => {
     /* ---------- Initial fetch ---------- */
     const fetchPresence = async () => {
         try {
-            const { data } = await api.get("/users/presence");
+            const {data} = await api.get('/users/presence');
 
             const enriched = data.myRelationsData.map((p) => {
                 if (!positionsRef.current[p.userId]) {
@@ -39,7 +39,7 @@ export const PresenceProvider = ({ children }) => {
             setPeople(enriched);
             setTotalOnline(data.totalOnlineUsers ?? enriched.length);
         } catch (err) {
-            toast.error(err?.message || "Failed to fetch presence");
+            toast.error(err?.message || 'Failed to fetch presence');
         }
     };
 
@@ -48,44 +48,36 @@ export const PresenceProvider = ({ children }) => {
         socket.connect();
         fetchPresence();
 
-        const handleOnline = ({ userId, name }) => {
-
+        const handleOnline = ({userId, name}) => {
             setPeople((prev) => {
                 if (prev.some((p) => p.userId === userId)) return prev;
 
                 const pos = generatePosition();
                 positionsRef.current[userId] = pos;
 
-                return [
-                    ...prev,
-                    { userId, name, online: true, position: pos },
-                ];
+                return [...prev, {userId, name, online: true, position: pos}];
             });
 
             setTotalOnline((prev) => prev + 1);
         };
 
-        const handleOffline = ({ userId }) => {
-            setPeople((prev) =>
-                prev.filter((p) => p.userId !== userId)
-            );
+        const handleOffline = ({userId}) => {
+            setPeople((prev) => prev.filter((p) => p.userId !== userId));
             setTotalOnline((prev) => Math.max(prev - 1, 0));
         };
 
-        socket.on("user:online", handleOnline);
-        socket.on("user:offline", handleOffline);
+        socket.on('user:online', handleOnline);
+        socket.on('user:offline', handleOffline);
 
         return () => {
-            socket.off("user:online", handleOnline);
-            socket.off("user:offline", handleOffline);
+            socket.off('user:online', handleOnline);
+            socket.off('user:offline', handleOffline);
             socket.disconnect();
         };
     }, []);
 
     return (
-        <PresenceContext.Provider
-            value={{ people, totalOnline }}
-        >
+        <PresenceContext.Provider value={{people, totalOnline}}>
             {children}
         </PresenceContext.Provider>
     );
@@ -94,7 +86,7 @@ export const PresenceProvider = ({ children }) => {
 export const usePresence = () => {
     const ctx = useContext(PresenceContext);
     if (!ctx) {
-        throw new Error("usePresence must be used inside PresenceProvider");
+        throw new Error('usePresence must be used inside PresenceProvider');
     }
     return ctx;
 };

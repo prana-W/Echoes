@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { useApi } from "@/hooks";
-import { REACTIONS } from "@/constants/reactions.js";
+import {useEffect, useRef, useState} from 'react';
+import {toast} from 'sonner';
+import {useApi} from '@/hooks';
+import {REACTIONS} from '@/constants/reactions.js';
 
 const HIDE_DELAY = 180; // ms – enough to move cursor comfortably
 
-const ReactionBar = ({ timecapsuleId }) => {
+const ReactionBar = ({timecapsuleId}) => {
     const api = useApi();
 
     const [open, setOpen] = useState(false);
@@ -17,7 +17,7 @@ const ReactionBar = ({ timecapsuleId }) => {
     /* ---------------- Fetch reactions ---------------- */
     const fetchReactions = async () => {
         try {
-            const { data } = await api.get(
+            const {data} = await api.get(
                 `/timecapsule/reaction/${timecapsuleId}`
             );
 
@@ -41,17 +41,16 @@ const ReactionBar = ({ timecapsuleId }) => {
         return () => clearInterval(intervalId);
     }, [timecapsuleId]);
 
-
     /* ---------------- React ---------------- */
     const handleReact = async (type) => {
         try {
-            const { success, message } = await api.post(
+            const {success, message} = await api.post(
                 `/timecapsule/reaction/${timecapsuleId}`,
-                { reactionType: type }
+                {reactionType: type}
             );
 
             if (success) {
-                toast.success(message || "Reaction saved");
+                toast.success(message || 'Reaction saved');
                 fetchReactions(); // 🔁 re-sync from server
             }
         } catch (err) {
@@ -77,7 +76,7 @@ const ReactionBar = ({ timecapsuleId }) => {
         allReactions.find((r) => r.type === type)?.count || 0;
 
     const selectedEmoji =
-        REACTIONS.find((r) => r.type === myReaction)?.emoji || "😊";
+        REACTIONS.find((r) => r.type === myReaction)?.emoji || '😊';
 
     return (
         <div
@@ -121,10 +120,10 @@ const ReactionBar = ({ timecapsuleId }) => {
                                     relative text-2xl transition-transform
                                     hover:scale-125
                                     ${
-                                    isSelected
-                                        ? "drop-shadow-[0_0_6px_rgba(255,200,100,0.8)]"
-                                        : ""
-                                }
+                                        isSelected
+                                            ? 'drop-shadow-[0_0_6px_rgba(255,200,100,0.8)]'
+                                            : ''
+                                    }
                                 `}
                             >
                                 {r.emoji}

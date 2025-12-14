@@ -1,10 +1,15 @@
-import { usePresence } from "@/context/PresenceContext";
+import {usePresence} from '@/context/PresenceContext';
 
-const getInitials = (name = "") =>
-    name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+const getInitials = (name = '') =>
+    name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
 
 const OnlinePeopleWidget = () => {
-    const { people, totalOnline } = usePresence();
+    const {people, totalOnline} = usePresence();
 
     return (
         <div className="bg-card border border-border rounded-xl p-4 space-y-3 vintage-shadow">
@@ -37,10 +42,10 @@ const OnlinePeopleWidget = () => {
         text-xs bg-card border px-2 py-1 rounded z-1000
         opacity-0 group-hover:opacity-100
         whitespace-nowrap
-    "                        >
+    "
+                        >
                             {p.name}
                         </div>
-
                     </div>
                 ))}
             </div>

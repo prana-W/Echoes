@@ -1,13 +1,13 @@
-import { ApiError, ApiResponse, asyncHandler } from '../utility/index.js';
+import {ApiError, ApiResponse, asyncHandler} from '../utility/index.js';
 import statusCode from '../constants/statusCode.js';
 import Event from '../models/event.model.js';
 import TimeCapsule from '../models/timeCapsule/timeCapsule.model.js';
-import { eventList } from '../constants/eventsList.js';
+import {eventList} from '../constants/eventsList.js';
 import {Analytics} from '../models/index.js';
 
 const triggerEvent = asyncHandler(async (req, res) => {
     const userId = req.userId;
-    const { eventType, eventTime } = req.body;
+    const {eventType, eventTime} = req.body;
 
     if (!eventType) {
         throw new ApiError(statusCode.BAD_REQUEST, 'eventType is required');
@@ -31,11 +31,11 @@ const triggerEvent = asyncHandler(async (req, res) => {
         isOpened: false,
     });
 
-    const capsuleIds = capsulesToOpen.map(c => c._id);
+    const capsuleIds = capsulesToOpen.map((c) => c._id);
 
     if (capsuleIds.length > 0) {
         await TimeCapsule.updateMany(
-            { _id: { $in: capsuleIds } },
+            {_id: {$in: capsuleIds}},
             {
                 $set: {
                     isOpened: true,
@@ -49,7 +49,6 @@ const triggerEvent = asyncHandler(async (req, res) => {
             {$inc: {totalCapsulesOpened: capsuleIds?.length}},
             {upsert: true, new: true}
         );
-
     }
 
     return res.status(statusCode.CREATED).json(
@@ -65,4 +64,4 @@ const triggerEvent = asyncHandler(async (req, res) => {
     );
 });
 
-export { triggerEvent };
+export {triggerEvent};

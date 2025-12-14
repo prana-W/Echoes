@@ -90,20 +90,15 @@ const getMyReactionForTimeCapsule = asyncHandler(async (req, res) => {
         user: userId,
     }).select('reactionType createdAt');
 
-    const allReaction = await TimeCapsule.findById(timecapsuleId).select('reactions');
+    const allReaction =
+        await TimeCapsule.findById(timecapsuleId).select('reactions');
 
-    return res
-        .status(statusCode.OK)
-        .json(
-            new ApiResponse(
-                statusCode.OK,
-                'User reaction fetched successfully',
-                {
-                    myReaction: reaction,
-                    allReaction: allReaction,
-                }
-            )
-        );
+    return res.status(statusCode.OK).json(
+        new ApiResponse(statusCode.OK, 'User reaction fetched successfully', {
+            myReaction: reaction,
+            allReaction: allReaction,
+        })
+    );
 });
 
 export {reactToTimeCapsule, getMyReactionForTimeCapsule};

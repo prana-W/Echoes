@@ -31,7 +31,10 @@ const startCapsuleEmailCron = () => {
                 await sendEmail({
                     to: capsule?.owner?.email,
                     subject: 'Your Time Capsule Is Ready to Be Opened',
-                    html: capsuleMaturationTemplate(capsule?.owner?.name, capsule?.title),
+                    html: capsuleMaturationTemplate(
+                        capsule?.owner?.name,
+                        capsule?.title
+                    ),
                 });
 
                 capsule.isEmailSent = true;

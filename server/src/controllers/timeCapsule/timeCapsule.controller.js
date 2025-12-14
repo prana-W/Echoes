@@ -157,7 +157,7 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
         isEventRelated,
         event,
         theme,
-        isSealed
+        isSealed,
     } = req.body;
 
     // Validate users being added
@@ -300,35 +300,30 @@ const getTimeCapsule = asyncHandler(async (req, res) => {
         );
     }
 
-
-        return res.status(statusCode.OK).json(
-            new ApiResponse(
-                statusCode.OK,
-                'Time capsule fetched (locked view)',
-                {
-                    _id: capsule._id,
-                    title: capsule.title,
-                    description: capsule.description,
-                    theme: capsule.theme,
-                    owner: capsule.owner,
-                    contributors: capsule.contributors,
-                    recipients: capsule.recipients,
-                    openAt: capsule.openAt,
-                    isEventRelated: capsule.isEventRelated,
-                    event: capsule.event,
-                    isOpened: capsule.isOpened,
-                    createdAt: capsule.createdAt,
-                    isSealed: capsule?.isSealed,
-                    isOwner,
-                    isContributor: capsule.contributors.some(
-                        (u) => u._id.toString() === userId.toString()
-                    ),
-                    isRecipient: capsule.recipients.some(
-                        (u) => u._id.toString() === userId.toString()
-                    ),
-                }
-            )
-        );
+    return res.status(statusCode.OK).json(
+        new ApiResponse(statusCode.OK, 'Time capsule fetched (locked view)', {
+            _id: capsule._id,
+            title: capsule.title,
+            description: capsule.description,
+            theme: capsule.theme,
+            owner: capsule.owner,
+            contributors: capsule.contributors,
+            recipients: capsule.recipients,
+            openAt: capsule.openAt,
+            isEventRelated: capsule.isEventRelated,
+            event: capsule.event,
+            isOpened: capsule.isOpened,
+            createdAt: capsule.createdAt,
+            isSealed: capsule?.isSealed,
+            isOwner,
+            isContributor: capsule.contributors.some(
+                (u) => u._id.toString() === userId.toString()
+            ),
+            isRecipient: capsule.recipients.some(
+                (u) => u._id.toString() === userId.toString()
+            ),
+        })
+    );
 });
 
 const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
@@ -357,28 +352,28 @@ const getAllTimeCapsulesForUser = asyncHandler(async (req, res) => {
     const responseCapsules = capsules.map((capsule) => {
         const isOwner = capsule.owner._id.toString() === userId.toString();
 
-            return {
-                _id: capsule._id,
-                title: capsule.title,
-                description: capsule.description,
-                theme: capsule.theme,
-                owner: capsule.owner,
-                contributors: capsule.contributors,
-                recipients: capsule.recipients,
-                openAt: capsule.openAt,
-                isEventRelated: capsule.isEventRelated,
-                event: capsule.event,
-                isOpened: capsule.isOpened,
-                createdAt: capsule.createdAt,
-                isOwner,
-                isSealed: capsule?.isSealed,
-                isContributor: capsule.contributors.some(
-                    (u) => u._id.toString() === userId.toString()
-                ),
-                isRecipient: capsule.recipients.some(
-                    (u) => u._id.toString() === userId.toString()
-                ),
-            };
+        return {
+            _id: capsule._id,
+            title: capsule.title,
+            description: capsule.description,
+            theme: capsule.theme,
+            owner: capsule.owner,
+            contributors: capsule.contributors,
+            recipients: capsule.recipients,
+            openAt: capsule.openAt,
+            isEventRelated: capsule.isEventRelated,
+            event: capsule.event,
+            isOpened: capsule.isOpened,
+            createdAt: capsule.createdAt,
+            isOwner,
+            isSealed: capsule?.isSealed,
+            isContributor: capsule.contributors.some(
+                (u) => u._id.toString() === userId.toString()
+            ),
+            isRecipient: capsule.recipients.some(
+                (u) => u._id.toString() === userId.toString()
+            ),
+        };
     });
 
     return res
@@ -583,7 +578,7 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
             createdAt: capsule.createdAt,
             openedAt: capsule.updatedAt,
             timeElapsedMs,
-            isOwner
+            isOwner,
         },
 
         contents: {

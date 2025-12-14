@@ -89,8 +89,8 @@ const timeCapsuleSchema = new mongoose.Schema(
         },
         isSealed: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     {
         timestamps: true,
