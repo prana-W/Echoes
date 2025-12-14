@@ -191,7 +191,7 @@ export default function TimeCapsuleCard({
                 <div className="flex gap-2 justify-center flex-wrap">
                     {isOpened ? (
                         <Button
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 vintage-glow"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 vintage-glow cursor-target"
                             onClick={() => onOpen(capsule)}
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
@@ -214,7 +214,7 @@ export default function TimeCapsuleCard({
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    className="border border-border hover:border-primary/50"
+                                    className="border border-border hover:border-primary/50 cursor-target"
                                     onClick={() => onEdit(capsule)}
                                 >
                                     <Edit className="w-4 h-4 mr-2" />
@@ -224,7 +224,7 @@ export default function TimeCapsuleCard({
                             {canAddMemories && (
                                 <Button
                                     variant="outline"
-                                    className="border-primary/30 hover:bg-primary/10"
+                                    className="border-primary/30 hover:bg-primary/10 cursor-target"
                                     onClick={() => onAddMemories(capsule)}
                                 >
                                     <Plus className="w-4 h-4 mr-2" />
@@ -233,7 +233,7 @@ export default function TimeCapsuleCard({
                             )}
                             {canSeal && (
                                 <Button
-                                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90 cursor-target"
                                     onClick={() => onSeal(capsule)}
                                 >
                                     <Lock className="w-4 h-4 mr-2" />

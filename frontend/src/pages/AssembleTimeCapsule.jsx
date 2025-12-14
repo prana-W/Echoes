@@ -15,6 +15,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import { Info } from 'lucide-react';
+import GoBackButton from '@/components/GoBack.jsx';
 
 const eventList = [
     'birthday',
@@ -151,6 +152,7 @@ const AssembleCapsule = () => {
 
     return (
         <div className="min-h-screen bg-background px-6 py-12">
+            <GoBackButton />
             <div className="max-w-3xl mx-auto space-y-10">
                 {/* Header */}
                 <div className="text-center space-y-2">
@@ -292,7 +294,7 @@ const AssembleCapsule = () => {
                     <Button
                         disabled={loading}
                         onClick={handleSave}
-                        className="px-12 py-6 text-lg font-serif bg-primary vintage-glow"
+                        className="px-12 py-6 text-lg font-serif bg-primary vintage-glow cursor-target"
                     >
                         {isNew ? 'Assemble This Capsule' : 'Save Changes'}
                     </Button>

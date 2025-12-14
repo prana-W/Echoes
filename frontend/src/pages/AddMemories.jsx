@@ -5,6 +5,7 @@ import {toast} from 'sonner';
 import {Card} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
+import GoBackButton from '@/components/GoBack.jsx';
 
 const MAX_IMAGES = 10;
 const MAX_VIDEOS = 5;
@@ -134,6 +135,7 @@ const AddMemories = () => {
     /* ---------------- UI ---------------- */
     return (
         <div className="min-h-screen bg-background px-6 py-12">
+            <GoBackButton />
             <div className="max-w-5xl mx-auto space-y-12">
                 <div className="text-center space-y-2">
                     <h1 className="text-4xl font-serif font-bold">

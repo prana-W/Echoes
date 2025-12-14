@@ -178,7 +178,7 @@ export default function TimeCapsulesPage() {
 
                     <Button
                         size="lg"
-                        className="bg-primary text-primary-foreground"
+                        className="bg-primary text-primary-foreground cursor-target"
                         onClick={() =>
                             (window.location.href =
                                 '/capsule/assemble?new=true')
@@ -366,7 +366,7 @@ function HoldModal({
                 <p className="text-sm text-muted-foreground">{subtitle}</p>
 
                 <div
-                    className="relative select-none"
+                    className="relative select-none cursor-target"
                     onMouseDown={onHoldStart}
                     onMouseUp={onHoldEnd}
                     onMouseLeave={onHoldEnd}
