@@ -63,7 +63,7 @@ export default function HomePage() {
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-serif font-bold text-foreground mb-4">
-                                Our Community's Journey
+                                Echoes Analytics
                             </h2>
                             <p className="text-muted-foreground">
                                 Together, we're preserving memories across time

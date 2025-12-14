@@ -9,8 +9,11 @@ const EchoesHero = () => {
     const velocityY = useRef(0);
     const prevEvent = useRef(0);
 
+    const isLoggedIn = Boolean(localStorage.getItem('user'));
+
     /* ---------------- Canvas Background ---------------- */
     useEffect(() => {
+
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -183,14 +186,17 @@ const EchoesHero = () => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             className="px-8 py-6 bg-primary text-primary-foreground text-lg rounded-lg
-                                       hover:scale-105 transition-all vintage-glow cursor-target"
-                            onClick={() => (window.location.href = '/capsule')}
+               hover:scale-105 transition-all vintage-glow cursor-target"
+                            onClick={() =>
+                                (window.location.href = isLoggedIn ? '/capsule' : '/auth')
+                            }
                         >
-                            <span className="flex items-center gap-2">
-                                Create Your Time Capsule
-                                <ArrowRight className="w-5 h-5" />
-                            </span>
+    <span className="flex items-center gap-2">
+        {isLoggedIn ? 'Create Your Time Capsule' : 'Enter Now'}
+        <ArrowRight className="w-5 h-5" />
+    </span>
                         </button>
+
 
                         <button
                             className="px-8 py-6 bg-card border border-border text-foreground text-lg
