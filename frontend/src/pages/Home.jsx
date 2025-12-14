@@ -38,7 +38,7 @@ export default function HomePage() {
                 setAnalytics(data);
             }
         } catch (err) {
-            toast.error(err?.message || "Failed to load analytics")
+            console.error('Failed to load analytics');
         } finally {
             setLoading(false);
         }
@@ -119,82 +119,200 @@ export default function HomePage() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {/* Total Users */}
-                            <Card className="border-border vintage-shadow hover:vintage-glow transition-all">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <UserCheck className="w-8 h-8 text-primary" />
-                                        <div className="text-right">
-                                            <div className="text-3xl font-bold text-foreground">
-                                                {analytics.totalUsers}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Bar Chart */}
+                            <Card className="border-border vintage-shadow">
+                                <CardHeader>
+                                    <CardTitle className="text-xl font-serif text-foreground">Platform Statistics</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-6">
+                                        {/* Total Users */}
+                                        <div>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <UserCheck className="w-5 h-5 text-primary" />
+                                                    <span className="text-sm font-medium text-foreground">Total Users</span>
+                                                </div>
+                                                <span className="text-lg font-bold text-foreground">{analytics.totalUsers}</span>
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-1">+12% this month</div>
+                                            <div className="h-3 bg-muted rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+                                                    style={{ width: `${Math.min((analytics.totalUsers / Math.max(analytics.totalUsers, analytics.totalCapsulesCreated, analytics.totalVisitors, 1)) * 100, 100)}%` }}
+                                                ></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="text-sm font-medium text-muted-foreground">Total Users</div>
-                                    <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
-                                        <div className="h-full bg-primary w-3/4"></div>
+
+                                        {/* Capsules Created */}
+                                        <div>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Package className="w-5 h-5 text-secondary" />
+                                                    <span className="text-sm font-medium text-foreground">Capsules Created</span>
+                                                </div>
+                                                <span className="text-lg font-bold text-foreground">{analytics.totalCapsulesCreated}</span>
+                                            </div>
+                                            <div className="h-3 bg-muted rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-secondary rounded-full transition-all duration-1000 ease-out"
+                                                    style={{ width: `${Math.min((analytics.totalCapsulesCreated / Math.max(analytics.totalUsers, analytics.totalCapsulesCreated, analytics.totalVisitors, 1)) * 100, 100)}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Capsules Opened */}
+                                        <div>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Sparkles className="w-5 h-5 text-primary" />
+                                                    <span className="text-sm font-medium text-foreground">Capsules Opened</span>
+                                                </div>
+                                                <span className="text-lg font-bold text-foreground">{analytics.totalCapsulesOpened}</span>
+                                            </div>
+                                            <div className="h-3 bg-muted rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+                                                    style={{ width: analytics.totalCapsulesCreated > 0 ? `${Math.min((analytics.totalCapsulesOpened / analytics.totalCapsulesCreated) * 100, 100)}%` : '0%' }}
+                                                ></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Total Visitors */}
+                                        <div>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Eye className="w-5 h-5 text-secondary" />
+                                                    <span className="text-sm font-medium text-foreground">Total Visitors</span>
+                                                </div>
+                                                <span className="text-lg font-bold text-foreground">{analytics.totalVisitors}</span>
+                                            </div>
+                                            <div className="h-3 bg-muted rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-secondary rounded-full transition-all duration-1000 ease-out"
+                                                    style={{ width: `${Math.min((analytics.totalVisitors / Math.max(analytics.totalUsers, analytics.totalCapsulesCreated, analytics.totalVisitors, 1)) * 100, 100)}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            {/* Capsules Created */}
-                            <Card className="border-border vintage-shadow hover:vintage-glow transition-all">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <Package className="w-8 h-8 text-secondary" />
-                                        <div className="text-right">
-                                            <div className="text-3xl font-bold text-foreground">
-                                                {analytics.totalCapsulesCreated}
+                            {/* Radial Progress Cards */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {/* Capsule Completion Rate */}
+                                <Card className="border-border vintage-shadow">
+                                    <CardContent className="p-6 flex flex-col items-center justify-center">
+                                        <div className="relative w-32 h-32 mb-4">
+                                            <svg className="w-full h-full transform -rotate-90">
+                                                <circle
+                                                    cx="64"
+                                                    cy="64"
+                                                    r="56"
+                                                    stroke="oklch(0.28 0.025 40)"
+                                                    strokeWidth="8"
+                                                    fill="none"
+                                                />
+                                                <circle
+                                                    cx="64"
+                                                    cy="64"
+                                                    r="56"
+                                                    stroke="oklch(0.62 0.12 75)"
+                                                    strokeWidth="8"
+                                                    fill="none"
+                                                    strokeDasharray={`${2 * Math.PI * 56}`}
+                                                    strokeDashoffset={`${2 * Math.PI * 56 * (1 - (analytics.totalCapsulesCreated > 0 ? analytics.totalCapsulesOpened / analytics.totalCapsulesCreated : 0))}`}
+                                                    className="transition-all duration-1000 ease-out"
+                                                    strokeLinecap="round"
+                                                />
+                                            </svg>
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl font-bold text-foreground">
+                          {analytics.totalCapsulesCreated > 0
+                              ? Math.round((analytics.totalCapsulesOpened / analytics.totalCapsulesCreated) * 100)
+                              : 0}%
+                        </span>
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-1">+8% this month</div>
                                         </div>
-                                    </div>
-                                    <div className="text-sm font-medium text-muted-foreground">Capsules Created</div>
-                                    <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
-                                        <div className="h-full bg-secondary w-1/2"></div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                        <h3 className="text-sm font-medium text-muted-foreground text-center">
+                                            Opening Rate
+                                        </h3>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            {analytics.totalCapsulesOpened} of {analytics.totalCapsulesCreated} opened
+                                        </p>
+                                    </CardContent>
+                                </Card>
 
-                            {/* Capsules Opened */}
-                            <Card className="border-border vintage-shadow hover:vintage-glow transition-all">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <Sparkles className="w-8 h-8 text-primary" />
-                                        <div className="text-right">
-                                            <div className="text-3xl font-bold text-foreground">
-                                                {analytics.totalCapsulesOpened}
+                                {/* Visits per User */}
+                                <Card className="border-border vintage-shadow">
+                                    <CardContent className="p-6 flex flex-col items-center justify-center">
+                                        <div className="relative w-32 h-32 mb-4">
+                                            <svg className="w-full h-full transform -rotate-90">
+                                                <circle
+                                                    cx="64"
+                                                    cy="64"
+                                                    r="56"
+                                                    stroke="oklch(0.28 0.025 40)"
+                                                    strokeWidth="8"
+                                                    fill="none"
+                                                />
+                                                <circle
+                                                    cx="64"
+                                                    cy="64"
+                                                    r="56"
+                                                    stroke="oklch(0.55 0.10 195)"
+                                                    strokeWidth="8"
+                                                    fill="none"
+                                                    strokeDasharray={`${2 * Math.PI * 56}`}
+                                                    strokeDashoffset={`${2 * Math.PI * 56 * (1 - Math.min((analytics.totalUsers > 0 ? (analytics.totalVisitors / analytics.totalUsers) / 10 : 0), 1))}`}
+                                                    className="transition-all duration-1000 ease-out"
+                                                    strokeLinecap="round"
+                                                />
+                                            </svg>
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl font-bold text-foreground">
+                          {analytics.totalUsers > 0
+                              ? (analytics.totalVisitors / (analytics.totalUsers)).toFixed(1)
+                              : '0.0'}
+                        </span>
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-1">Magical moments</div>
                                         </div>
-                                    </div>
-                                    <div className="text-sm font-medium text-muted-foreground">Capsules Opened</div>
-                                    <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
-                                        <div className="h-full bg-primary w-1/4"></div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                        <h3 className="text-sm font-medium text-muted-foreground text-center">
+                                            Visits per User
+                                        </h3>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            {analytics.totalVisitors} visits / {analytics.totalUsers} users
+                                        </p>
+                                    </CardContent>
+                                </Card>
 
-                            {/* Total Visitors */}
-                            <Card className="border-border vintage-shadow hover:vintage-glow transition-all">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <Eye className="w-8 h-8 text-secondary" />
-                                        <div className="text-right">
-                                            <div className="text-3xl font-bold text-foreground">
-                                                {analytics.totalVisitors}
+                                {/* Average Capsules per User */}
+                                <Card className="border-border vintage-shadow sm:col-span-2">
+                                    <CardContent className="p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                                                    Avg. Capsules per User
+                                                </h3>
+                                                <p className="text-3xl font-bold text-foreground">
+                                                    {analytics.totalUsers > 0
+                                                        ? (analytics.totalCapsulesCreated / analytics.totalUsers).toFixed(1)
+                                                        : '0.0'}
+                                                </p>
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-1">+20% this month</div>
+                                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                                <TrendingUp className="w-8 h-8 text-primary" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="text-sm font-medium text-muted-foreground">Total Visitors</div>
-                                    <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
-                                        <div className="h-full bg-secondary w-full"></div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                        <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 ease-out"
+                                                style={{ width: `${Math.min((analytics.totalUsers > 0 ? (analytics.totalCapsulesCreated / analytics.totalUsers) : 0) * 20, 100)}%` }}
+                                            ></div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -368,14 +486,6 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
-
-            {/* Footer */}
-            <footer className="border-t border-border py-8 px-6">
-                <div className="max-w-7xl mx-auto text-center text-muted-foreground">
-                    <p className="mb-2">© 2024 Echoes of the Past. All memories preserved with care.</p>
-                    <p className="text-sm">Made to remember the past and talk to the future.</p>
-                </div>
-            </footer>
         </div>
     );
 }
