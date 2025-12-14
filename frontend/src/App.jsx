@@ -14,6 +14,7 @@ import {
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import {ThemeProvider} from '@/components/theme-provider';
 import Layout from './Layout.jsx';
+import { PresenceProvider } from "@/context/PresenceContext";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
@@ -44,7 +45,9 @@ function App() {
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <ErrorBoundary>
+                <PresenceProvider>
                 <RouterProvider router={router} />
+                </PresenceProvider>
             </ErrorBoundary>
         </ThemeProvider>
     );
