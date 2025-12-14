@@ -30,6 +30,8 @@ const reciprocalMap = {
     aunt: 'niece',
     nephew: 'uncle',
     niece: 'aunt',
+
+    other: 'other'
 };
 
 const createRelation = asyncHandler(async (req, res) => {

@@ -47,6 +47,8 @@ const relationshipSchema = new mongoose.Schema(
 
                 'nephew',
                 'niece',
+
+                'other'
             ],
             required: true,
         },
