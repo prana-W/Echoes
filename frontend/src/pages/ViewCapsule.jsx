@@ -61,12 +61,10 @@ export default function ViewCapsulePage() {
             const link = document.createElement('a');
             link.href = downloadUrl;
             link.download = filename;
-            document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
             window.URL.revokeObjectURL(downloadUrl);
             toast.success('Download started!');
-        } catch (err) {
+        } catch {
             toast.error('Failed to download file');
         }
     };
@@ -214,70 +212,123 @@ export default function ViewCapsulePage() {
                 </div>
             </section>
 
-            {/* Images Section */}
-            {contents.images && contents.images.length > 0 && (
+
+
+            {/* ---------------- Images Section ---------------- */}
+            {contents.images?.length > 0 && (
                 <section className="py-16 px-6">
                     <div className="max-w-6xl mx-auto">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="p-3 rounded-lg bg-primary/10">
                                 <Image className="w-6 h-6 text-primary" />
                             </div>
-                            <h2 className="text-3xl font-serif font-bold text-foreground">
+                            <h2 className="text-3xl font-serif font-bold">
                                 Captured Moments
                             </h2>
                         </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {contents.images.map((image, index) => (
-                                <Card
-                                    key={index}
-                                    className="border-border overflow-hidden group"
-                                >
-                                    <div className="relative aspect-square">
-                                        <img
-                                            src={`${import.meta.env.VITE_BASE_SERVER_URL}${image.content}`}
-                                            alt={
-                                                image.caption ||
-                                                `Memory ${index + 1}`
-                                            }
-                                            className="w-full h-full object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                            <Button
-                                                size="sm"
-                                                variant="secondary"
-                                                onClick={() =>
-                                                    setFullscreenImage(image)
-                                                }
-                                            >
-                                                <Maximize2 className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="secondary"
-                                                onClick={() =>
-                                                    handleDownload(
-                                                        image.url,
-                                                        `memory-${index + 1}.jpg`
-                                                    )
-                                                }
-                                            >
-                                                <Download className="w-4 h-4" />
-                                            </Button>
+                            {contents.images.map((image, index) => {
+                                const imgSrc = `${import.meta.env.VITE_BASE_SERVER_URL}${image.content}`;
+
+                                return (
+                                    <Card
+                                        key={index}
+                                        className="border-border overflow-hidden group"
+                                    >
+                                        {/* FIXED SIZE IMAGE */}
+                                        <div className="relative w-full h-72">
+                                            <img
+                                                src={imgSrc}
+                                                alt={image.caption || `Memory ${index + 1}`}
+                                                className="w-full h-full object-cover rounded-lg"
+                                            />
+
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    onClick={() =>
+                                                        setFullscreenImage({
+                                                            src: imgSrc,
+                                                            caption: image.caption,
+                                                        })
+                                                    }
+                                                >
+                                                    <Maximize2 className="w-4 h-4" />
+                                                </Button>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    onClick={() =>
+                                                        handleDownload(
+                                                            imgSrc,
+                                                            `memory-${index + 1}.jpg`
+                                                        )
+                                                    }
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {image.caption && (
-                                        <CardContent className="p-4">
-                                            <p className="text-sm text-muted-foreground">
-                                                {image.caption}
-                                            </p>
-                                        </CardContent>
-                                    )}
-                                </Card>
-                            ))}
+
+                                        {image.caption && (
+                                            <CardContent className="p-4">
+                                                <p className="text-sm text-muted-foreground">
+                                                    {image.caption}
+                                                </p>
+                                            </CardContent>
+                                        )}
+                                    </Card>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
             )}
+
+            {/* ---------------- Fullscreen Image Modal (FIXED) ---------------- */}
+            {fullscreenImage && (
+                <div
+                    className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+                    onClick={() => setFullscreenImage(null)}
+                >
+                    <button
+                        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20"
+                        onClick={() => setFullscreenImage(null)}
+                    >
+                        <X className="w-6 h-6 text-white" />
+                    </button>
+
+                    <img
+                        src={fullscreenImage.src}
+                        alt={fullscreenImage.caption || 'Fullscreen'}
+                        className="max-w-full max-h-full object-contain"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+
+                    <div className="absolute bottom-4 right-4">
+                        <Button
+                            variant="secondary"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownload(
+                                    fullscreenImage.src,
+                                    'memory.jpg'
+                                );
+                            }}
+                        >
+                            <Download className="w-4 h-4 mr-2" />
+                            Download
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+
+
 
             {/* Videos Section */}
             {contents.videos && contents.videos.length > 0 && (
@@ -484,42 +535,6 @@ export default function ViewCapsulePage() {
                     </div>
                 </div>
             </section>
-
-            {/* Fullscreen Image Modal */}
-            {fullscreenImage && (
-                <div
-                    className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-                    onClick={() => setFullscreenImage(null)}
-                >
-                    <button
-                        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                        onClick={() => setFullscreenImage(null)}
-                    >
-                        <X className="w-6 h-6 text-white" />
-                    </button>
-                    <img
-                        src={fullscreenImage.url}
-                        alt={fullscreenImage.caption || 'Fullscreen'}
-                        className="max-w-full max-h-full object-contain"
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                    <div className="absolute bottom-4 right-4">
-                        <Button
-                            variant="secondary"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDownload(
-                                    fullscreenImage.url,
-                                    'memory.jpg'
-                                );
-                            }}
-                        >
-                            <Download className="w-4 h-4 mr-2" />
-                            Download
-                        </Button>
-                    </div>
-                </div>
-            )}
 
             {/* Background Decoration */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
