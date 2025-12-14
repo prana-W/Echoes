@@ -1,4 +1,4 @@
-import {Home, About, NotFound, Test} from './pages';
+import {Home, About, NotFound, Authentication} from './pages';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { ThemeProvider } from "@/components/theme-provider"
 import Layout from './Layout.jsx';
@@ -20,8 +20,8 @@ const router = createBrowserRouter([
                 element: <About />,
             },
             {
-                path: 'test',
-                element: <Test />,
+                path: 'auth',
+                element: <Authentication />,
             },
             {
                 path: '*',

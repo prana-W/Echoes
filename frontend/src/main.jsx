@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
     <>
         {/*<SocketProvider>*/}
         <App />
-        <Toaster richColors position="bottom-right" />
+        <Toaster position="bottom-right" />
         {/*</SocketProvider>*/}
     </>
 );

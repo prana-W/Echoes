@@ -1,6 +1,6 @@
-import Home from './Home';
+import Home from './Home.jsx';
 import About from './About';
 import NotFound from './NotFound';
-import Test from './Test';
+import Authentication from './Authentication.jsx';
 
-export {Home, About, NotFound, Test};
+export {Home, About, NotFound, Authentication};
