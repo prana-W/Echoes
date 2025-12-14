@@ -22,7 +22,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {useApi} from '@/hooks/index.js';
 import Logo from '@/components/EchoesLogo.jsx';
 import OnlinePeopleWidget from '@/components/OnlinePeopleWidget.jsx';
-import EchoesHero from '@/components/EchoesHero.jsx'
+import EchoesHero from '@/components/EchoesHero.jsx';
 
 export default function HomePage() {
     const api = useApi();
@@ -30,7 +30,7 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-       if(localStorage.getItem('user')) fetchAnalytics();
+        if (localStorage.getItem('user')) fetchAnalytics();
     }, []);
 
     const fetchAnalytics = async () => {
@@ -55,7 +55,7 @@ export default function HomePage() {
             {/* Hero Section */}
             <EchoesHero />
 
-            {localStorage.getItem('user') &&  <OnlinePeopleWidget />}
+            {localStorage.getItem('user') && <OnlinePeopleWidget />}
 
             {/* Analytics Section */}
             {!loading && analytics && (

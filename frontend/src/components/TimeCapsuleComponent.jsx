@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Clock,
     Lock,
@@ -11,21 +11,21 @@ import {
     CheckCircle,
     Info,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import {Button} from '@/components/ui/button';
+import {Card} from '@/components/ui/card';
+import {Badge} from '@/components/ui/badge';
 
 import EmptyCapsule from '@/assets/empty-capsule.png';
 import FullCapsule from '@/assets/full_capsule.png';
 import LockedCapsule from '@/assets/locked_capsule.png';
 
 export default function TimeCapsuleCard({
-                                            capsule,
-                                            onEdit,
-                                            onAddMemories,
-                                            onSeal,
-                                            onOpen,
-                                        }) {
+    capsule,
+    onEdit,
+    onAddMemories,
+    onSeal,
+    onOpen,
+}) {
     const [isHovered, setIsHovered] = useState(false);
 
     const isLocked = capsule.isSealed && !capsule.isOpened;
@@ -58,8 +58,8 @@ export default function TimeCapsuleCard({
     const capsuleImage = isOpened
         ? FullCapsule
         : isLocked
-            ? LockedCapsule
-            : EmptyCapsule;
+          ? LockedCapsule
+          : EmptyCapsule;
 
     return (
         <Card
@@ -70,7 +70,9 @@ export default function TimeCapsuleCard({
             {/* Hover Details Popup */}
             <div
                 className={`absolute -top-2 left-1/2 -translate-x-1/2 w-80 bg-card border-2 border-primary/30 rounded-xl p-5 shadow-2xl vintage-glow z-50 transition-all duration-300 ${
-                    isHovered ? 'opacity-100 -translate-y-full' : 'opacity-0 -translate-y-[calc(100%+1rem)] pointer-events-none'
+                    isHovered
+                        ? 'opacity-100 -translate-y-full'
+                        : 'opacity-0 -translate-y-[calc(100%+1rem)] pointer-events-none'
                 }`}
             >
                 {/* Arrow pointer */}
@@ -122,23 +124,37 @@ export default function TimeCapsuleCard({
                             {isOpened ? (
                                 <>
                                     <Sparkles className="w-4 h-4 text-primary" />
-                                    <span className="text-primary font-medium">Opened & Revealed</span>
+                                    <span className="text-primary font-medium">
+                                        Opened & Revealed
+                                    </span>
                                 </>
                             ) : isLocked ? (
                                 <>
                                     <Clock className="w-4 h-4 text-secondary" />
                                     {isEventBased ? (
-                                        <span className="italic">Opens on {capsule.event}</span>
+                                        <span className="italic">
+                                            Opens on {capsule.event}
+                                        </span>
                                     ) : isPast ? (
-                                        <span className="text-secondary font-medium">Ready to open!</span>
+                                        <span className="text-secondary font-medium">
+                                            Ready to open!
+                                        </span>
                                     ) : (
-                                        <span>Opens in <strong className="text-primary">{daysUntil}</strong> days</span>
+                                        <span>
+                                            Opens in{' '}
+                                            <strong className="text-primary">
+                                                {daysUntil}
+                                            </strong>{' '}
+                                            days
+                                        </span>
                                     )}
                                 </>
                             ) : (
                                 <>
                                     <Info className="w-4 h-4 text-muted-foreground" />
-                                    <span className="italic text-muted-foreground">Not sealed yet</span>
+                                    <span className="italic text-muted-foreground">
+                                        Not sealed yet
+                                    </span>
                                 </>
                             )}
                         </div>
@@ -165,7 +181,9 @@ export default function TimeCapsuleCard({
                     alt="Time Capsule"
                     className="h-64 object-contain transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-2xl drop-shadow-xl"
                     style={{
-                        filter: isHovered ? 'brightness(1.1) drop-shadow(0 0 30px rgba(211, 167, 89, 0.4))' : 'none'
+                        filter: isHovered
+                            ? 'brightness(1.1) drop-shadow(0 0 30px rgba(211, 167, 89, 0.4))'
+                            : 'none',
                     }}
                 />
             </div>
@@ -180,7 +198,10 @@ export default function TimeCapsuleCard({
                     <Calendar className="w-4 h-4 text-primary" />
                     {isEventBased ? (
                         <span className="italic capitalize">
-                            Event: <span className="text-foreground font-medium">{capsule.event}</span>
+                            Event:{' '}
+                            <span className="text-foreground font-medium">
+                                {capsule.event}
+                            </span>
                         </span>
                     ) : (
                         <span className="text-foreground">{formattedDate}</span>

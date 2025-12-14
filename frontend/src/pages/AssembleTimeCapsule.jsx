@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { useApi } from '@/hooks';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
+import {useEffect, useState} from 'react';
+import {useSearchParams, useNavigate} from 'react-router-dom';
+import {toast} from 'sonner';
+import {useApi} from '@/hooks';
+import {Button} from '@/components/ui/button';
+import {Card} from '@/components/ui/card';
+import {Input} from '@/components/ui/input';
+import {Textarea} from '@/components/ui/textarea';
+import {Switch} from '@/components/ui/switch';
 import {
     Dialog,
     DialogContent,
@@ -14,7 +14,7 @@ import {
     DialogTitle,
     DialogFooter,
 } from '@/components/ui/dialog';
-import { Info } from 'lucide-react';
+import {Info} from 'lucide-react';
 import GoBackButton from '@/components/GoBack.jsx';
 
 const eventList = [
@@ -64,7 +64,7 @@ const AssembleCapsule = () => {
     /* ---------------- Fetch relations ---------------- */
     useEffect(() => {
         api.get('/relations')
-            .then(({ data }) => setRelations(data || []))
+            .then(({data}) => setRelations(data || []))
             .catch((err) => toast.error(err?.message));
     }, []);
 
@@ -75,14 +75,16 @@ const AssembleCapsule = () => {
         const fetchCapsule = async () => {
             setLoading(true);
             try {
-                const { data } = await api.get(`/timecapsule/${timecapsuleId}`);
+                const {data} = await api.get(`/timecapsule/${timecapsuleId}`);
                 setTitle(data.title || '');
                 setDescription(data.description || '');
                 setTheme(data.theme || 'vintage');
                 setIsEventRelated(data.isEventRelated);
                 setEvent(data.event || '');
                 setOpenAt(data.openAt?.slice(0, 16) || '');
-                setAllowContributorsToOpen(data.allowContributorsToOpen || false);
+                setAllowContributorsToOpen(
+                    data.allowContributorsToOpen || false
+                );
                 setContributors(data.contributors || []);
                 setRecipients(data.recipients || []);
             } catch (err) {
@@ -119,10 +121,10 @@ const AssembleCapsule = () => {
 
         try {
             if (isNew) {
-                const { success } = await api.post('/timecapsule', payload);
+                const {success} = await api.post('/timecapsule', payload);
                 if (success) setShowCreatedDialog(true);
             } else {
-                const { success } = await api.put(
+                const {success} = await api.put(
                     `/timecapsule/${timecapsuleId}`,
                     payload
                 );
@@ -140,7 +142,6 @@ const AssembleCapsule = () => {
 
     /* ---------------- Delete ---------------- */
     const handleDelete = async () => {
-
         try {
             await api.delete(`/timecapsule/${timecapsuleId}`);
             toast.success('Capsule deleted');
@@ -283,10 +284,7 @@ const AssembleCapsule = () => {
                 {/* Actions */}
                 <div className="flex justify-center gap-4">
                     {!isNew && (
-                        <Button
-                            variant="destructive"
-                            onClick={handleDelete}
-                        >
+                        <Button variant="destructive" onClick={handleDelete}>
                             Delete Capsule
                         </Button>
                     )}
@@ -315,9 +313,7 @@ const AssembleCapsule = () => {
                     </p>
 
                     <DialogFooter>
-                        <Button
-                            onClick={() => navigate('/capsule')}
-                        >
+                        <Button onClick={() => navigate('/capsule')}>
                             I understand
                         </Button>
                     </DialogFooter>

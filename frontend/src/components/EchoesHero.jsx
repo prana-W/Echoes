@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Clock, ArrowRight } from 'lucide-react';
+import React, {useEffect, useRef} from 'react';
+import {Clock, ArrowRight} from 'lucide-react';
 import Logo from '@/components/EchoesLogo.jsx';
 
 const EchoesHero = () => {
@@ -13,7 +13,6 @@ const EchoesHero = () => {
 
     /* ---------------- Canvas Background ---------------- */
     useEffect(() => {
-
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -60,13 +59,13 @@ const EchoesHero = () => {
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            particles.forEach(p => {
+            particles.forEach((p) => {
                 p.update();
                 p.draw();
             });
 
             particles.forEach((a, i) => {
-                particles.slice(i + 1).forEach(b => {
+                particles.slice(i + 1).forEach((b) => {
                     const dx = a.x - b.x;
                     const dy = a.y - b.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -114,17 +113,19 @@ const EchoesHero = () => {
 
         document.addEventListener('pointermove', handlePointerMove);
 
-        chars.forEach(char => {
+        chars.forEach((char) => {
             char.addEventListener('mouseenter', () => {
                 const speed = Math.hypot(velocityX.current, velocityY.current);
                 const angle = Math.atan2(velocityY.current, velocityX.current);
                 const dist = Math.min(speed * 0.07, 36);
 
-                char.style.transition = 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)';
+                char.style.transition =
+                    'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)';
                 char.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
 
                 setTimeout(() => {
-                    char.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+                    char.style.transition =
+                        'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
                     char.style.transform = 'translate(0,0)';
                 }, 800);
             });
@@ -178,8 +179,9 @@ const EchoesHero = () => {
                     </p>
 
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
-                        Create time capsules filled with your memories, questions, and dreams.
-                        Open them when the moment is right — a future date or a life milestone.
+                        Create time capsules filled with your memories,
+                        questions, and dreams. Open them when the moment is
+                        right — a future date or a life milestone.
                     </p>
 
                     {/* CTA */}
@@ -188,21 +190,26 @@ const EchoesHero = () => {
                             className="px-8 py-6 bg-primary text-primary-foreground text-lg rounded-lg
                hover:scale-105 transition-all vintage-glow cursor-target"
                             onClick={() =>
-                                (window.location.href = isLoggedIn ? '/capsule' : '/auth')
+                                (window.location.href = isLoggedIn
+                                    ? '/capsule'
+                                    : '/auth')
                             }
                         >
-    <span className="flex items-center gap-2">
-        {isLoggedIn ? 'Create Your Time Capsule' : 'Enter Now'}
-        <ArrowRight className="w-5 h-5" />
-    </span>
+                            <span className="flex items-center gap-2">
+                                {isLoggedIn
+                                    ? 'Create Your Time Capsule'
+                                    : 'Enter Now'}
+                                <ArrowRight className="w-5 h-5" />
+                            </span>
                         </button>
-
 
                         <button
                             className="px-8 py-6 bg-card border border-border text-foreground text-lg
                                        rounded-lg hover:bg-muted transition-all hover:scale-105 cursor-target"
                             onClick={() =>
-                                document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
+                                document
+                                    .getElementById('about')
+                                    ?.scrollIntoView({behavior: 'smooth'})
                             }
                         >
                             Learn More

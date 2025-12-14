@@ -1,5 +1,5 @@
-import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import {ArrowLeft} from 'lucide-react';
+import {useNavigate} from 'react-router-dom';
 
 export default function GoBackButton() {
     const navigate = useNavigate();
@@ -29,9 +29,7 @@ export default function GoBackButton() {
             "
         >
             <ArrowLeft className="w-4 h-4 text-primary" />
-            <span className="text-sm font-serif hidden sm:inline">
-                Go back
-            </span>
+            <span className="text-sm font-serif hidden sm:inline">Go back</span>
         </button>
     );
 }

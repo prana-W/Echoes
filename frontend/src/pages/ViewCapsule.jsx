@@ -34,7 +34,6 @@ export default function ViewCapsulePage() {
     const [sendingAnswer, setSendingAnswer] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-
     useEffect(() => {
         fetchCapsule();
     }, [capsuleId]);
@@ -55,7 +54,6 @@ export default function ViewCapsulePage() {
             toast.error(err?.message || 'Failed to delete capsule');
         }
     };
-
 
     const fetchCapsule = async () => {
         setLoading(true);
@@ -147,7 +145,7 @@ export default function ViewCapsulePage() {
         <div className="min-h-screen bg-background">
             <GoBackButton />
             {metadata.isOwner && (
-                <div className="absolute top-6 right-6 z-20">
+                <div className="absolute top-6 right-6 z-20 cursor-target">
                     <Button
                         variant="destructive"
                         onClick={() => setShowDeleteDialog(true)}
@@ -156,7 +154,6 @@ export default function ViewCapsulePage() {
                     </Button>
                 </div>
             )}
-
 
             {/* Hero Section - Metadata */}
             <section className="relative overflow-hidden border-b border-border">
@@ -244,8 +241,6 @@ export default function ViewCapsulePage() {
                 </div>
             </section>
 
-
-
             {/* ---------------- Images Section ---------------- */}
             {contents.images?.length > 0 && (
                 <section className="py-16 px-6">
@@ -272,7 +267,10 @@ export default function ViewCapsulePage() {
                                         <div className="relative w-full h-72">
                                             <img
                                                 src={imgSrc}
-                                                alt={image.caption || `Memory ${index + 1}`}
+                                                alt={
+                                                    image.caption ||
+                                                    `Memory ${index + 1}`
+                                                }
                                                 className="w-full h-full object-cover rounded-lg"
                                             />
 
@@ -284,7 +282,8 @@ export default function ViewCapsulePage() {
                                                     onClick={() =>
                                                         setFullscreenImage({
                                                             src: imgSrc,
-                                                            caption: image.caption,
+                                                            caption:
+                                                                image.caption,
                                                         })
                                                     }
                                                 >
@@ -358,9 +357,6 @@ export default function ViewCapsulePage() {
                     </div>
                 </div>
             )}
-
-
-
 
             {/* Videos Section */}
             {contents.videos && contents.videos.length > 0 && (
@@ -590,8 +586,10 @@ export default function ViewCapsulePage() {
                             <p className="text-sm text-muted-foreground leading-relaxed">
                                 All your memories inside this capsule will be
                                 <span className="text-destructive font-medium">
-                        {' '}permanently erased
-                    </span>.
+                                    {' '}
+                                    permanently erased
+                                </span>
+                                .
                                 <br />
                                 This action cannot be undone.
                             </p>
@@ -607,7 +605,7 @@ export default function ViewCapsulePage() {
 
                                 <Button
                                     variant="destructive"
-                                    className="flex-1"
+                                    className="flex-1 cursor-target"
                                     onClick={() => {
                                         setShowDeleteDialog(false);
                                         handleDeleteCapsule();
@@ -620,7 +618,6 @@ export default function ViewCapsulePage() {
                     </Card>
                 </div>
             )}
-
         </div>
     );
 }

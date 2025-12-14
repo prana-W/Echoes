@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Lock, LockOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useApi } from '@/hooks/index.js';
-import { toast } from 'sonner';
+import React, {useState, useEffect} from 'react';
+import {Plus, Lock, LockOpen} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {useApi} from '@/hooks/index.js';
+import {toast} from 'sonner';
 import TimeCapsuleCard from '@/components/TimeCapsuleComponent.jsx';
 
 const TABS = ['all', 'notSealed', 'sealed', 'opened'];
@@ -37,7 +37,7 @@ export default function TimeCapsulesPage() {
     const fetchCapsules = async () => {
         setLoading(true);
         try {
-            const { data, success } = await api.get('/timecapsule');
+            const {data, success} = await api.get('/timecapsule');
             if (success && data) {
                 setCapsules(data);
                 categorize(data);
@@ -92,8 +92,7 @@ export default function TimeCapsulesPage() {
     const handleAddMemories = (c) =>
         (window.location.href = `/capsule/memories/${c._id}`);
 
-    const handleView = (c) =>
-        (window.location.href = `/capsule/view/${c._id}`);
+    const handleView = (c) => (window.location.href = `/capsule/view/${c._id}`);
 
     /* ---------------- Seal logic ---------------- */
     const handleSeal = (capsule) => {
@@ -115,7 +114,7 @@ export default function TimeCapsulesPage() {
 
     const finalizeSeal = async () => {
         try {
-            await api.put(`/timecapsule/${sealTarget._id}`, { isSealed: true });
+            await api.put(`/timecapsule/${sealTarget._id}`, {isSealed: true});
             toast.success('Capsule sealed successfully.');
             setSealTarget(null);
             setSealHolding(false);
@@ -146,7 +145,7 @@ export default function TimeCapsulesPage() {
 
     const finalizeOpen = async () => {
         try {
-            const { success } = await api.post(
+            const {success} = await api.post(
                 `/timecapsule/open/${openTarget._id}`
             );
             if (success) {
@@ -206,10 +205,10 @@ export default function TimeCapsulesPage() {
                             {tab === 'all'
                                 ? 'All'
                                 : tab === 'notSealed'
-                                    ? 'Not Sealed'
-                                    : tab === 'sealed'
-                                        ? 'Sealed'
-                                        : 'Opened'}
+                                  ? 'Not Sealed'
+                                  : tab === 'sealed'
+                                    ? 'Sealed'
+                                    : 'Opened'}
                         </button>
                     ))}
                 </div>
@@ -286,8 +285,8 @@ export default function TimeCapsulesPage() {
                             {activeTab === 'notSealed'
                                 ? 'Not Sealed Capsules'
                                 : activeTab === 'sealed'
-                                    ? 'Sealed Capsules'
-                                    : 'Opened Capsules'}
+                                  ? 'Sealed Capsules'
+                                  : 'Opened Capsules'}
                         </h2>
 
                         <div className="grid md:grid-cols-3 gap-6">
@@ -302,8 +301,8 @@ export default function TimeCapsulesPage() {
                                         c.isOpened
                                             ? handleView
                                             : canOpenCapsule(c)
-                                                ? () => handleOpenRequest(c)
-                                                : undefined
+                                              ? () => handleOpenRequest(c)
+                                              : undefined
                                     }
                                 />
                             ))}
@@ -311,7 +310,6 @@ export default function TimeCapsulesPage() {
                     </section>
                 )}
             </div>
-
 
             {/* ---------------- Seal Modal ---------------- */}
             {sealTarget && (
@@ -350,14 +348,14 @@ export default function TimeCapsulesPage() {
 
 /* ---------------- Hold Modal ---------------- */
 function HoldModal({
-                       title,
-                       subtitle,
-                       progress,
-                       onHoldStart,
-                       onHoldEnd,
-                       onCancel,
-                       icon,
-                   }) {
+    title,
+    subtitle,
+    progress,
+    onHoldStart,
+    onHoldEnd,
+    onCancel,
+    icon,
+}) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
             <div className="bg-card border border-border rounded-xl p-8 max-w-md text-center space-y-6">
@@ -374,7 +372,7 @@ function HoldModal({
                     <div className="h-14 rounded-lg bg-muted overflow-hidden">
                         <div
                             className="h-full bg-primary transition-all"
-                            style={{ width: `${progress}%` }}
+                            style={{width: `${progress}%`}}
                         />
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center font-serif">

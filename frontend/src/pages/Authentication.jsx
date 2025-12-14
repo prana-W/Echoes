@@ -43,7 +43,7 @@ export default function AuthPage() {
             });
 
             if (success) {
-                localStorage.setItem('user', data?.name)
+                localStorage.setItem('user', data?.name);
                 toast.success(message || 'Login successful!');
                 window.location.href = '/';
                 // Handle successful login (e.g., redirect, store token)

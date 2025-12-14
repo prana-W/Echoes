@@ -1,18 +1,13 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Image as ImageIcon,
-    Video,
-    Music,
-    Trash2,
-} from 'lucide-react';
+import {toast} from 'sonner';
+import {motion, AnimatePresence} from 'framer-motion';
+import {Image as ImageIcon, Video, Music, Trash2} from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import {Card} from '@/components/ui/card';
+import {Button} from '@/components/ui/button';
+import {Textarea} from '@/components/ui/textarea';
 import GoBackButton from '@/components/GoBack.jsx';
 
 const API_BASE = import.meta.env.VITE_SERVER_URL;
@@ -24,7 +19,7 @@ const LIMITS = {
 };
 
 export default function AddMemories() {
-    const { capsuleId } = useParams();
+    const {capsuleId} = useParams();
 
     const navigate = useNavigate();
 
@@ -75,12 +70,10 @@ export default function AddMemories() {
         });
     };
 
-
     const clearFiles = (setter) => setter([]);
 
     /* ---------------- Upload ---------------- */
     const handleUpload = async () => {
-
         try {
             if (images.length) {
                 const fd = new FormData();
@@ -109,30 +102,25 @@ export default function AddMemories() {
             if (letter.trim()) {
                 await axios.post(
                     `${API_BASE}/upload/texts/${capsuleId}`,
-                    { text: letter },
-                    { withCredentials: true }
+                    {text: letter},
+                    {withCredentials: true}
                 );
             }
 
             if (question.trim()) {
                 await axios.post(
                     `${API_BASE}/upload/texts/${capsuleId}`,
-                    { text: question, isQuestion: true },
-                    { withCredentials: true }
+                    {text: question, isQuestion: true},
+                    {withCredentials: true}
                 );
             }
 
             toast.success('Memories are now part of history.');
-
         } catch {
             toast.error('Something went wrong while preserving memories');
+        } finally {
+            navigate('/capsule');
         }
-        finally {
-
-            navigate('/capsule')
-
-        }
-
     };
 
     if (loading) {
@@ -209,7 +197,6 @@ export default function AddMemories() {
                     />
                 </div>
 
-
                 {/* Writing */}
                 <Card className="p-8 space-y-6 vintage-shadow">
                     <Textarea
@@ -249,15 +236,15 @@ export default function AddMemories() {
 /* ---------------- Vault ---------------- */
 
 const Vault = ({
-                   title,
-                   icon,
-                   files,
-                   onAdd,
-                   onClear,
-                   accept,
-                   renderPreview,
-                   limit,
-               }) => {
+    title,
+    icon,
+    files,
+    onAdd,
+    onClear,
+    accept,
+    renderPreview,
+    limit,
+}) => {
     const inputId = `vault-${title}`;
     const isFull = files.length >= limit;
 
@@ -297,10 +284,10 @@ const Vault = ({
                 htmlFor={inputId}
                 className={`block text-center px-4 py-2 rounded-md cursor-pointer
                     transition-all ${
-                    isFull
-                        ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                        : 'bg-accent text-accent-foreground hover:bg-accent/80'
-                }`}
+                        isFull
+                            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                            : 'bg-accent text-accent-foreground hover:bg-accent/80'
+                    }`}
             >
                 {isFull ? 'Vault Full' : `Add ${title}`}
             </label>
