@@ -21,6 +21,7 @@ import {useApi} from '@/hooks/index.js';
 import {toast} from 'sonner';
 import {useParams} from 'react-router-dom';
 import ReactionBar from '@/components/ReactionComponent.jsx';
+import GoBackButton from '@/components/GoBack.jsx';
 
 export default function ViewCapsulePage() {
     const {capsuleId} = useParams();
@@ -126,6 +127,7 @@ export default function ViewCapsulePage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <GoBackButton />
             {/* Hero Section - Metadata */}
             <section className="relative overflow-hidden border-b border-border">
                 <div className="absolute inset-0 pointer-events-none">
@@ -426,7 +428,7 @@ export default function ViewCapsulePage() {
                                     >
                                         <CardHeader>
                                             <CardTitle className="text-2xl font-serif text-foreground">
-                                                {question.text}
+                                                {question.content}
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>

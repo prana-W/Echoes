@@ -201,7 +201,7 @@ export default function TimeCapsuleCard({
                         !isEventBased &&
                         isPast && (
                             <Button
-                                className="bg-primary text-primary-foreground hover:bg-primary/90 vintage-glow animate-pulse"
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 vintage-glow animate-pulse cursor-target"
                                 onClick={() => onOpen(capsule)}
                             >
                                 <LockOpen className="w-4 h-4 mr-2" />
