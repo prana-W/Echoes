@@ -1,6 +1,8 @@
 import {ApiError, ApiResponse, asyncHandler} from '../utility/index.js';
 import statusCode from '../constants/statusCode.js';
 import User from '../models/user.model.js';
+import Relation from '../models/relation.model.js';
+import {onlineUsers} from '../store/presence.store.js';
 
 const getUsersByName = asyncHandler(async (req, res) => {
     const {name} = req.params;
@@ -64,9 +66,6 @@ const getUserByEmail = asyncHandler(async (req, res) => {
         );
 });
 
-import Relation from '../models/relation.model.js';
-import {onlineUsers} from '../store/presence.store.js';
-
 const getFriendsOfUser = async (userId) => {
     // Find all relations where user is either side
     const relations = await Relation.find({
@@ -95,19 +94,39 @@ const getFriendsOfUser = async (userId) => {
 const getUserPresence = asyncHandler(async (req, res) => {
     const userId = req.userId;
 
-    const friends = await getFriendsOfUser(userId); // relations logic
+    // Step 1: Get friends (relations logic)
+    const friends = await getFriendsOfUser(userId);
+    // friends => [{ _id: friendUserId, ... }]
 
-    const presence = friends.map((friend) => ({
-        userId: friend._id,
-        name: friend.name,
-        online: onlineUsers.has(friend._id.toString()),
+    // Step 2: Filter only online userIds
+    const onlineFriendIds = friends
+        .map(friend => friend._id.toString())
+        .filter(id => onlineUsers.has(id));
+
+    // Step 3: Fetch user details in ONE DB query
+    const onlineUsersData = await User.find(
+        { _id: { $in: onlineFriendIds } },
+        { name: 1 } // projection
+    );
+
+    // Step 4: Format response
+    const presence = onlineUsersData.map(user => ({
+        userId: user._id,
+        name: user.name,
+        online: true,
     }));
 
-    return res
-        .status(statusCode.OK)
-        .json(
-            new ApiResponse(200, 'User presence fetched successfully', presence)
-        );
+    return res.status(statusCode.OK).json(
+        new ApiResponse(
+            statusCode.OK,
+            "User presence fetched successfully",
+            {
+                myRelationsData: presence,
+                totalOnlineUsers: onlineUsers.size,
+            }
+        )
+    );
 });
+
 
 export {getUsersByName, getUserByEmail, getUserPresence};
