@@ -17,8 +17,8 @@ import GoBackButton from '@/components/GoBack.jsx';
 
 const API_BASE = import.meta.env.VITE_SERVER_URL;
 
-const MAX = {
-    image: 10,
+const LIMITS = {
+    image: 5,
     video: 5,
     audio: 5,
 };
@@ -50,19 +50,31 @@ export default function AddMemories() {
     }, [capsuleId]);
 
     /* ---------------- File handling ---------------- */
-    const addFiles = (files, setter, type) => {
-        const valid = Array.from(files).filter((f) =>
+    const addFiles = (fileList, setter, type) => {
+        const max = LIMITS[type];
+        const incoming = Array.from(fileList).filter((f) =>
             f.type.startsWith(type)
         );
 
         setter((prev) => {
-            if (prev.length + valid.length > MAX[type]) {
-                toast.error(`Max ${MAX[type]} ${type}s allowed`);
+            if (prev.length >= max) {
+                toast.error(`Maximum ${max} ${type}s allowed`);
                 return prev;
             }
-            return [...prev, ...valid];
+
+            const spaceLeft = max - prev.length;
+            const accepted = incoming.slice(0, spaceLeft);
+
+            if (accepted.length < incoming.length) {
+                toast.warning(
+                    `Only ${spaceLeft} more ${type}${spaceLeft > 1 ? 's' : ''} allowed`
+                );
+            }
+
+            return [...prev, ...accepted];
         });
     };
+
 
     const clearFiles = (setter) => setter([]);
 
@@ -152,8 +164,9 @@ export default function AddMemories() {
                         title="Images"
                         icon={<ImageIcon />}
                         files={images}
+                        limit={LIMITS.image}
                         onAdd={(f) => addFiles(f, setImages, 'image')}
-                        onClear={() => clearFiles(setImages)}
+                        onClear={() => setImages([])}
                         accept="image/*"
                         renderPreview={(file) => (
                             <img
@@ -167,8 +180,9 @@ export default function AddMemories() {
                         title="Videos"
                         icon={<Video />}
                         files={videos}
+                        limit={LIMITS.video}
                         onAdd={(f) => addFiles(f, setVideos, 'video')}
-                        onClear={() => clearFiles(setVideos)}
+                        onClear={() => setVideos([])}
                         accept="video/*"
                         renderPreview={(file) => (
                             <video
@@ -183,16 +197,18 @@ export default function AddMemories() {
                         title="Audios"
                         icon={<Music />}
                         files={audios}
+                        limit={LIMITS.audio}
                         onAdd={(f) => addFiles(f, setAudios, 'audio')}
-                        onClear={() => clearFiles(setAudios)}
+                        onClear={() => setAudios([])}
                         accept="audio/*"
                         renderPreview={(file) => (
-                            <div className="flex items-center justify-center text-xs text-muted-foreground">
+                            <div className="flex items-center justify-center text-xs text-muted-foreground text-center px-1">
                                 🎵 {file.name.slice(0, 10)}…
                             </div>
                         )}
                     />
                 </div>
+
 
                 {/* Writing */}
                 <Card className="p-8 space-y-6 vintage-shadow">
@@ -232,7 +248,7 @@ export default function AddMemories() {
 
 /* ---------------- Vault ---------------- */
 
-function Vault({
+const Vault = ({
                    title,
                    icon,
                    files,
@@ -240,62 +256,80 @@ function Vault({
                    onClear,
                    accept,
                    renderPreview,
-               }) {
-    return (
-        <Card className="p-6 bg-card vintage-shadow space-y-4">
-            <div className="flex justify-between items-center">
-                <h3 className="font-serif text-lg flex items-center gap-2">
-                    {icon} {title}
-                </h3>
+                   limit,
+               }) => {
+    const inputId = `vault-${title}`;
+    const isFull = files.length >= limit;
 
-                {files.length > 0 && (
-                    <button
-                        onClick={onClear}
-                        className="text-xs flex items-center gap-1 text-destructive hover:underline"
-                    >
-                        <Trash2 className="w-3 h-3" />
-                        Clear
-                    </button>
-                )}
+    return (
+        <Card className="p-6 bg-muted/40 border-border space-y-4 relative overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="text-primary">{icon}</div>
+                    <h3 className="font-serif text-lg">{title}</h3>
+                </div>
+
+                <span
+                    className={`text-xs font-medium ${
+                        isFull ? 'text-destructive' : 'text-muted-foreground'
+                    }`}
+                >
+                    {files.length} / {limit}
+                </span>
             </div>
 
             {/* Upload */}
             <input
                 type="file"
-                multiple
                 accept={accept}
-                id={title}
+                multiple
+                disabled={isFull}
+                id={inputId}
                 className="hidden"
-                onChange={(e) => onAdd(e.target.files)}
+                onChange={(e) => {
+                    onAdd(e.target.files);
+                    e.target.value = '';
+                }}
             />
 
             <label
-                htmlFor={title}
-                className="block cursor-pointer text-center py-3 rounded-md bg-accent hover:bg-accent/80 transition"
+                htmlFor={inputId}
+                className={`block text-center px-4 py-2 rounded-md cursor-pointer
+                    transition-all ${
+                    isFull
+                        ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                        : 'bg-accent text-accent-foreground hover:bg-accent/80'
+                }`}
             >
-                Add {title}
+                {isFull ? 'Vault Full' : `Add ${title}`}
             </label>
 
-            {/* Previews */}
-            <AnimatePresence>
-                {files.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="grid grid-cols-5 gap-2"
-                    >
-                        {files.map((file, i) => (
-                            <motion.div
-                                key={i}
-                                layout
-                                className="aspect-square bg-muted rounded overflow-hidden"
-                            >
-                                {renderPreview(file)}
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Preview Grid */}
+            {files.length > 0 && (
+                <div className="grid grid-cols-5 gap-2 mt-2">
+                    {files.slice(0, 5).map((file, i) => (
+                        <div
+                            key={i}
+                            className="aspect-square rounded-md overflow-hidden
+                                       bg-background border border-border
+                                       animate-in zoom-in fade-in"
+                        >
+                            {renderPreview(file)}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Clear */}
+            {files.length > 0 && (
+                <button
+                    onClick={onClear}
+                    className="text-xs text-destructive hover:underline mt-1"
+                >
+                    Remove all
+                </button>
+            )}
         </Card>
     );
-}
+};
