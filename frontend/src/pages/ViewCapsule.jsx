@@ -32,10 +32,30 @@ export default function ViewCapsulePage() {
     const [fullscreenImage, setFullscreenImage] = useState(null);
     const [answers, setAnswers] = useState({});
     const [sendingAnswer, setSendingAnswer] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
 
     useEffect(() => {
         fetchCapsule();
     }, [capsuleId]);
+
+    const handleDeleteCapsule = async () => {
+        try {
+            await api.delete(`/timecapsule/${capsuleId}`);
+
+            toast.success('Time capsule deleted successfully.', {
+                duration: 3000,
+            });
+
+            // Delay navigation so toast is visible
+            setTimeout(() => {
+                window.location.href = '/capsule';
+            }, 500);
+        } catch (err) {
+            toast.error(err?.message || 'Failed to delete capsule');
+        }
+    };
+
 
     const fetchCapsule = async () => {
         setLoading(true);
@@ -126,6 +146,18 @@ export default function ViewCapsulePage() {
     return (
         <div className="min-h-screen bg-background">
             <GoBackButton />
+            {metadata.isOwner && (
+                <div className="absolute top-6 right-6 z-20">
+                    <Button
+                        variant="destructive"
+                        onClick={() => setShowDeleteDialog(true)}
+                    >
+                        Delete Capsule
+                    </Button>
+                </div>
+            )}
+
+
             {/* Hero Section - Metadata */}
             <section className="relative overflow-hidden border-b border-border">
                 <div className="absolute inset-0 pointer-events-none">
@@ -542,6 +574,53 @@ export default function ViewCapsulePage() {
                 <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-secondary/3 rounded-full blur-3xl" />
             </div>
             <ReactionBar timecapsuleId={capsuleId} />
+
+            {showDeleteDialog && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                    <Card className="w-full max-w-md border-border vintage-shadow">
+                        <CardContent className="p-8 space-y-6 text-center">
+                            <div className="mx-auto w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                                <X className="w-7 h-7 text-destructive" />
+                            </div>
+
+                            <h2 className="text-2xl font-serif font-bold text-foreground">
+                                Delete Time Capsule?
+                            </h2>
+
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                All your memories inside this capsule will be
+                                <span className="text-destructive font-medium">
+                        {' '}permanently erased
+                    </span>.
+                                <br />
+                                This action cannot be undone.
+                            </p>
+
+                            <div className="flex gap-3 pt-4">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => setShowDeleteDialog(false)}
+                                >
+                                    Cancel
+                                </Button>
+
+                                <Button
+                                    variant="destructive"
+                                    className="flex-1"
+                                    onClick={() => {
+                                        setShowDeleteDialog(false);
+                                        handleDeleteCapsule();
+                                    }}
+                                >
+                                    Yes, Delete
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
         </div>
     );
 }
