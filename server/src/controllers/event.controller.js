@@ -3,6 +3,7 @@ import statusCode from '../constants/statusCode.js';
 import Event from '../models/event.model.js';
 import TimeCapsule from '../models/timeCapsule/timeCapsule.model.js';
 import { eventList } from '../constants/eventsList.js';
+import {Analytics} from '../models/index.js';
 
 const triggerEvent = asyncHandler(async (req, res) => {
     const userId = req.userId;
@@ -42,6 +43,13 @@ const triggerEvent = asyncHandler(async (req, res) => {
                 },
             }
         );
+
+        await Analytics.findOneAndUpdate(
+            {},
+            {$inc: {totalCapsulesOpened: capsuleIds?.length}},
+            {upsert: true, new: true}
+        );
+
     }
 
     return res.status(statusCode.CREATED).json(

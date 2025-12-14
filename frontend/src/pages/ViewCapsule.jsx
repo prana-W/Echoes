@@ -20,6 +20,7 @@ import {Textarea} from '@/components/ui/textarea';
 import {useApi} from '@/hooks/index.js';
 import {toast} from 'sonner';
 import {useParams} from 'react-router-dom';
+import ReactionBar from '@/components/ReactionComponent.jsx';
 
 export default function ViewCapsulePage() {
     const {capsuleId} = useParams();
@@ -523,6 +524,10 @@ export default function ViewCapsulePage() {
                 <div className="absolute top-1/4 left-10 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
                 <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-secondary/3 rounded-full blur-3xl" />
             </div>
+            <ReactionBar
+                timecapsuleId={capsuleId}
+            />
+
         </div>
     );
 }
