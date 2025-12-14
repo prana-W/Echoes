@@ -46,7 +46,8 @@ export default function TimeCapsuleCard({
         daysUntil = Math.ceil(
             (openDate - new Date()) / (1000 * 60 * 60 * 24)
         );
-        isPast = daysUntil < 0;
+        isPast = openDate.getTime() <= Date.now();
+
     }
 
     return (

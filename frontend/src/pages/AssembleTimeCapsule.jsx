@@ -241,7 +241,7 @@ const AssembleCapsule = () => {
                         onClick={handleSave}
                         className="px-12 py-6 text-lg font-serif bg-primary vintage-glow"
                     >
-                        {isNew ? "Seal This Capsule" : "Save Changes"}
+                        {isNew ? "Assemble This Capsule" : "Save Changes"}
                     </Button>
                 </div>
             </div>
