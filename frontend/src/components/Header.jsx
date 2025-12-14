@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Clock, Home, Package, Users, User, LogOut, Plus,  Calendar} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {useApi} from '@/hooks/index.js';
+import {useNavigate} from 'react-router-dom';
 
 export default function Header() {
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState(null);
     const api = useApi();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Check for user in localStorage
@@ -36,7 +39,7 @@ export default function Header() {
         await api.post('/auth/logout');
         localStorage.removeItem('user');
         setUser(null);
-        window.location.href = '/auth';
+        navigate('/auth');
     };
 
     const NavLink = ({ href, icon: Icon, children }) => (
@@ -59,7 +62,7 @@ export default function Header() {
                 <div className="flex items-center gap-4">
                     {/* User Greeting or Get Started */}
                     {user ? (
-                        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10" onClick={() => window.location.href = '/auth'}>
+                        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10" onClick={() => navigate('/auth')}>
                             <User className="w-3.5 h-3.5 text-primary" />
                             <span className="text-xs font-medium text-foreground">
                <span className="text-primary">{user}</span>
@@ -67,7 +70,7 @@ export default function Header() {
                         </div>
                     ) : (
                         <Button
-                            onClick={() => window.location.href = '/auth'}
+                            onClick={() =>navigate('/auth')}
                             size="sm"
                             className="hidden lg:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-sm"
                         >
@@ -117,7 +120,7 @@ export default function Header() {
                                     <span className="hidden sm:inline">About</span>
                                 </NavLink>
                                 <Button
-                                    onClick={() => window.location.href = '/auth'}
+                                    onClick={() => navigate('/auth')}
                                     size="sm"
                                     className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-sm ml-2"
                                 >
