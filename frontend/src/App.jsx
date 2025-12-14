@@ -10,7 +10,7 @@ import {
     ViewCapsule,
     AddEvent,
 } from './pages';
-
+import TargetCursor from '@/components/TargetCursor.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import {ThemeProvider} from '@/components/theme-provider';
 import Layout from './Layout.jsx';
@@ -46,6 +46,11 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <ErrorBoundary>
                 <PresenceProvider>
+                    <TargetCursor
+                        spinDuration={2.5}
+                        hideDefaultCursor={true}
+                        parallaxOn={true}
+                    />
                     <RouterProvider router={router} />
                 </PresenceProvider>
             </ErrorBoundary>
