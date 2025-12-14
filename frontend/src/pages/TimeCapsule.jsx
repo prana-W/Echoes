@@ -66,7 +66,18 @@ export default function TimeCapsulesPage() {
 
     const handleSeal = async (capsule) => {
         // Implement seal functionality
-        toast.success('Capsule sealed successfully!');
+
+        try {
+            await api.put(`/timecapsule/${capsule?._id}`, {isSealed: true});
+            toast.success('Capsule sealed successfully!');
+        }
+    catch (err) {
+
+            toast.error(err?.message || "There was an error was sealing the capsule!")
+
+    }
+
+
         fetchCapsules(); // Refresh
     };
 

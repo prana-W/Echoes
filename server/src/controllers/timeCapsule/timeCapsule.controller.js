@@ -220,7 +220,7 @@ const modifyTimeCapsule = asyncHandler(async (req, res) => {
     }
 
     if (isSealed) {
-        capsule.sealed = true;
+        capsule.isSealed = true;
     }
 
     await capsule.save();
