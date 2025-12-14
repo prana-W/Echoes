@@ -4,5 +4,6 @@ import NotFound from './NotFound';
 import Authentication from './Authentication.jsx';
 import Relations from './Relations.jsx';
 import TimeCapsule from './TimeCapsule.jsx';
+import AssembleTimeCapsule from './AssembleTimeCapsule.jsx';
 
-export {Home, About, NotFound, Authentication, Relations, TimeCapsule};
+export {Home, About, NotFound, Authentication, Relations, TimeCapsule, AssembleTimeCapsule};

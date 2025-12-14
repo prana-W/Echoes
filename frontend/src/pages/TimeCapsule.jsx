@@ -56,7 +56,7 @@ export default function TimeCapsulesPage() {
 
     const handleEdit = (capsule) => {
         // Navigate to edit page or open edit modal
-        window.location.href = `/capsule/${capsule._id}/edit`;
+        window.location.href = `/capsule/assemble/?new=false&capsuleId=${capsule._id}`;
     };
 
     const handleAddMemories = (capsule) => {
@@ -107,7 +107,7 @@ export default function TimeCapsulesPage() {
                         <Button
                             size="lg"
                             className="bg-primary hover:bg-primary/90 text-primary-foreground vintage-glow"
-                            onClick={() => window.location.href = '/capsule/create'}
+                            onClick={() => window.location.href = '/capsule/assemble?new=true'}
                         >
                             <Plus className="w-5 h-5 mr-2" />
                             Create New Capsule

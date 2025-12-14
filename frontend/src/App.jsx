@@ -1,50 +1,47 @@
-import {Home, About, NotFound, Authentication, Relations, TimeCapsule} from './pages';
-import ErrorBoundary from './components/ErrorBoundary.jsx';
-import { ThemeProvider } from "@/components/theme-provider"
-import Layout from './Layout.jsx';
+import {
+    Home,
+    About,
+    NotFound,
+    Authentication,
+    Relations,
+    TimeCapsule,
+    AssembleTimeCapsule,
+} from "./pages";
 
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import { ThemeProvider } from "@/components/theme-provider";
+import Layout from "./Layout.jsx";
 
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: "/",
         element: <Layout />,
         children: [
-            {
-                path: '',
-                element: <Home />,
-            },
-            {
-                path: 'auth',
-                element: <Authentication />,
-            },
-            {
-                path: 'relations',
-                element: <Relations />,
-            },
-            {
-                path: 'capsule',
-                element: <TimeCapsule />,
-            },
-            {
-                path: 'about',
-                element: <About />,
-            },
-            {
-                path: '*',
-                element: <NotFound />,
-            },
+            { index: true, element: <Home /> },
+
+            { path: "auth", element: <Authentication /> },
+            { path: "relations", element: <Relations /> },
+            { path: "about", element: <About /> },
+
+            { path: "capsule", element: <TimeCapsule /> },
+            { path: "capsule/assemble", element: <AssembleTimeCapsule /> },
+
+            { path: "*", element: <NotFound /> },
         ],
     },
 ]);
 
 function App() {
     return (
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <ErrorBoundary>
-            <RouterProvider router={router} />
-        </ErrorBoundary>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <ErrorBoundary>
+                <RouterProvider router={router} />
+            </ErrorBoundary>
         </ThemeProvider>
     );
 }
