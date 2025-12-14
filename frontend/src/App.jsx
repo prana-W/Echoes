@@ -1,4 +1,4 @@
-import {Home, About, NotFound, Authentication, Relations} from './pages';
+import {Home, About, NotFound, Authentication, Relations, TimeCapsule} from './pages';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { ThemeProvider } from "@/components/theme-provider"
 import Layout from './Layout.jsx';
@@ -22,6 +22,10 @@ const router = createBrowserRouter([
             {
                 path: 'relations',
                 element: <Relations />,
+            },
+            {
+                path: 'capsule',
+                element: <TimeCapsule />,
             },
             {
                 path: 'about',

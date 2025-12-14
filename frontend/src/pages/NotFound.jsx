@@ -1,25 +1,51 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const NotFound = () => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 text-center px-6">
-            <h1 className="text-7xl font-extrabold text-blue-500 mb-4">404</h1>
+        <div className="min-h-screen flex items-center justify-center bg-background px-6">
+            <div className="max-w-xl w-full text-center">
 
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
-                Oops! Page Not Found :(
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-                The page you’re looking for doesn’t exist or has been moved.
-            </p>
+                {/* Card */}
+                <div className="bg-card border border-border rounded-xl p-10 vintage-shadow">
 
-            <Link
-                to="/"
-                className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600
-                   text-white font-medium transition-all duration-300 shadow-lg"
-            >
-                Back to Home
-            </Link>
+                    {/* 404 */}
+                    <h1 className="text-8xl font-extrabold text-primary mb-4 tracking-tight">
+                        404
+                    </h1>
+
+                    {/* Title */}
+                    <h2 className="text-2xl font-serif font-semibold text-foreground mb-3">
+                        This memory seems lost
+                    </h2>
+
+                    {/* Description */}
+                    <p className="text-muted-foreground mb-8 leading-relaxed">
+                        The page you’re trying to reach doesn’t exist,
+                        or it may have faded away with time.
+                    </p>
+
+                    {/* Action */}
+                    <Link
+                        to="/"
+                        className="
+                            inline-flex items-center justify-center
+                            px-8 py-3 rounded-md
+                            bg-primary text-primary-foreground
+                            font-medium
+                            hover:vintage-glow
+                            transition-all duration-300
+                        "
+                    >
+                        Return back to the Reality
+                    </Link>
+                </div>
+
+                {/* Subtle footer text */}
+                <p className="mt-6 text-sm text-muted-foreground italic">
+                    Some moments are meant to be remembered, others forgotten.
+                </p>
+            </div>
         </div>
     );
 };
