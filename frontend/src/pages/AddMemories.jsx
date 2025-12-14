@@ -1,19 +1,27 @@
 import {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'sonner';
+import {motion, AnimatePresence} from 'framer-motion';
+import {Image as ImageIcon, Video, Music, Trash2} from 'lucide-react';
+
 import {Card} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
-
-const MAX_IMAGES = 10;
-const MAX_VIDEOS = 5;
-const MAX_AUDIOS = 5;
+import GoBackButton from '@/components/GoBack.jsx';
 
 const API_BASE = import.meta.env.VITE_SERVER_URL;
 
-const AddMemories = () => {
+const LIMITS = {
+    image: 5,
+    video: 5,
+    audio: 5,
+};
+
+export default function AddMemories() {
     const {capsuleId} = useParams();
+
+    const navigate = useNavigate();
 
     const [capsule, setCapsule] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -25,50 +33,51 @@ const AddMemories = () => {
     const [letter, setLetter] = useState('');
     const [question, setQuestion] = useState('');
 
-    /* ---------------- Fetch Capsule ---------------- */
+    /* ---------------- Fetch capsule ---------------- */
     useEffect(() => {
-        const fetchCapsule = async () => {
-            try {
-                const res = await axios.get(
-                    `${API_BASE}/timecapsule/${capsuleId}`,
-                    {withCredentials: true}
-                );
-
-                setCapsule(res.data?.data);
-            } catch (err) {
-                toast.error(err?.response?.data?.message || err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCapsule();
+        axios
+            .get(`${API_BASE}/timecapsule/${capsuleId}`, {
+                withCredentials: true,
+            })
+            .then((res) => setCapsule(res.data?.data))
+            .catch(() => toast.error('Failed to load capsule'))
+            .finally(() => setLoading(false));
     }, [capsuleId]);
 
-    /* ---------------- File Handlers ---------------- */
-    const handleFiles = (files, setter, max, type) => {
-        const valid = Array.from(files).filter((file) =>
-            file.type.startsWith(type)
+    /* ---------------- File handling ---------------- */
+    const addFiles = (fileList, setter, type) => {
+        const max = LIMITS[type];
+        const incoming = Array.from(fileList).filter((f) =>
+            f.type.startsWith(type)
         );
 
         setter((prev) => {
-            if (prev.length + valid.length > max) {
-                toast.error(`Maximum ${max} ${type} files allowed`);
+            if (prev.length >= max) {
+                toast.error(`Maximum ${max} ${type}s allowed`);
                 return prev;
             }
-            return [...prev, ...valid];
+
+            const spaceLeft = max - prev.length;
+            const accepted = incoming.slice(0, spaceLeft);
+
+            if (accepted.length < incoming.length) {
+                toast.warning(
+                    `Only ${spaceLeft} more ${type}${spaceLeft > 1 ? 's' : ''} allowed`
+                );
+            }
+
+            return [...prev, ...accepted];
         });
     };
 
-    /* ---------------- Upload Memories ---------------- */
-    const handleUpload = async () => {
-        toast.success('Uploading memories… Please stay with us.');
+    const clearFiles = (setter) => setter([]);
 
+    /* ---------------- Upload ---------------- */
+    const handleUpload = async () => {
         try {
             if (images.length) {
                 const fd = new FormData();
-                images.forEach((img) => fd.append('images', img));
-
+                images.forEach((f) => fd.append('images', f));
                 await axios.post(`${API_BASE}/upload/images/${capsuleId}`, fd, {
                     withCredentials: true,
                 });
@@ -76,8 +85,7 @@ const AddMemories = () => {
 
             if (videos.length) {
                 const fd = new FormData();
-                videos.forEach((vid) => fd.append('videos', vid));
-
+                videos.forEach((f) => fd.append('videos', f));
                 await axios.post(`${API_BASE}/upload/video/${capsuleId}`, fd, {
                     withCredentials: true,
                 });
@@ -85,8 +93,7 @@ const AddMemories = () => {
 
             if (audios.length) {
                 const fd = new FormData();
-                audios.forEach((aud) => fd.append('audios', aud));
-
+                audios.forEach((f) => fd.append('audios', f));
                 await axios.post(`${API_BASE}/upload/audio/${capsuleId}`, fd, {
                     withCredentials: true,
                 });
@@ -96,168 +103,220 @@ const AddMemories = () => {
                 await axios.post(
                     `${API_BASE}/upload/texts/${capsuleId}`,
                     {text: letter},
-                    {
-                        withCredentials: true,
-                        headers: {'Content-Type': 'application/json'},
-                    }
+                    {withCredentials: true}
                 );
             }
 
             if (question.trim()) {
                 await axios.post(
                     `${API_BASE}/upload/texts/${capsuleId}`,
-                    {
-                        text: question,
-                        isQuestion: true,
-                    },
-                    {
-                        withCredentials: true,
-                        headers: {'Content-Type': 'application/json'},
-                    }
+                    {text: question, isQuestion: true},
+                    {withCredentials: true}
                 );
             }
 
-            toast.success('Memories safely placed into the capsule.');
-        } catch (err) {
-            toast.error(err?.response?.data?.message || err.message);
+            toast.success('Memories are now part of history.');
+        } catch {
+            toast.error('Something went wrong while preserving memories');
+        } finally {
+            navigate('/capsule');
         }
     };
 
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center text-muted-foreground">
-                Retrieving memories…
+                Listening to time…
             </div>
         );
     }
 
-    /* ---------------- UI ---------------- */
     return (
         <div className="min-h-screen bg-background px-6 py-12">
-            <div className="max-w-5xl mx-auto space-y-12">
-                <div className="text-center space-y-2">
+            <GoBackButton />
+
+            <div className="max-w-6xl mx-auto space-y-12">
+                {/* Header */}
+                <div className="text-center">
                     <h1 className="text-4xl font-serif font-bold">
                         {capsule?.title}
                     </h1>
-                    <p className="text-muted-foreground italic">
-                        Place memories gently. Time is listening.
+                    <p className="text-muted-foreground italic mt-1">
+                        This is where moments become memories.
                     </p>
                 </div>
 
-                <Card className="p-10 bg-card vintage-shadow space-y-10">
-                    <div className="grid md:grid-cols-3 gap-6">
-                        <Vault
-                            title="Images"
-                            count={images.length}
-                            max={MAX_IMAGES}
-                            accept="image/*"
-                            onChange={(e) =>
-                                handleFiles(
-                                    e.target.files,
-                                    setImages,
-                                    MAX_IMAGES,
-                                    'image'
-                                )
-                            }
-                        />
-                        <Vault
-                            title="Videos"
-                            count={videos.length}
-                            max={MAX_VIDEOS}
-                            accept="video/*"
-                            onChange={(e) =>
-                                handleFiles(
-                                    e.target.files,
-                                    setVideos,
-                                    MAX_VIDEOS,
-                                    'video'
-                                )
-                            }
-                        />
-                        <Vault
-                            title="Audios"
-                            count={audios.length}
-                            max={MAX_AUDIOS}
-                            accept="audio/*"
-                            onChange={(e) =>
-                                handleFiles(
-                                    e.target.files,
-                                    setAudios,
-                                    MAX_AUDIOS,
-                                    'audio'
-                                )
-                            }
-                        />
-                    </div>
+                {/* Media Vaults */}
+                <div className="grid md:grid-cols-3 gap-8">
+                    <Vault
+                        title="Images"
+                        icon={<ImageIcon />}
+                        files={images}
+                        limit={LIMITS.image}
+                        onAdd={(f) => addFiles(f, setImages, 'image')}
+                        onClear={() => setImages([])}
+                        accept="image/*"
+                        renderPreview={(file) => (
+                            <img
+                                src={URL.createObjectURL(file)}
+                                className="w-full h-full object-cover rounded"
+                            />
+                        )}
+                    />
 
-                    <div className="space-y-3">
-                        <h3 className="font-serif text-lg">
-                            A Letter to the Future
-                        </h3>
-                        <Textarea
-                            rows={7}
-                            value={letter}
-                            onChange={(e) => setLetter(e.target.value)}
-                            placeholder="Write slowly. Ink remembers everything…"
-                            className="font-serif leading-relaxed bg-accent/40 border-border"
-                        />
-                    </div>
+                    <Vault
+                        title="Videos"
+                        icon={<Video />}
+                        files={videos}
+                        limit={LIMITS.video}
+                        onAdd={(f) => addFiles(f, setVideos, 'video')}
+                        onClear={() => setVideos([])}
+                        accept="video/*"
+                        renderPreview={(file) => (
+                            <video
+                                src={URL.createObjectURL(file)}
+                                className="w-full h-full object-cover rounded"
+                                muted
+                            />
+                        )}
+                    />
 
-                    <div className="space-y-3">
-                        <h3 className="font-serif text-lg">
-                            One Question for Your Future Self
-                        </h3>
-                        <Textarea
-                            rows={2}
-                            value={question}
-                            onChange={(e) => setQuestion(e.target.value)}
-                            placeholder="Did things turn out the way you hoped?"
-                            className="font-serif bg-accent/40 border-border"
-                        />
-                    </div>
+                    <Vault
+                        title="Audios"
+                        icon={<Music />}
+                        files={audios}
+                        limit={LIMITS.audio}
+                        onAdd={(f) => addFiles(f, setAudios, 'audio')}
+                        onClear={() => setAudios([])}
+                        accept="audio/*"
+                        renderPreview={(file) => (
+                            <div className="flex items-center justify-center text-xs text-muted-foreground text-center px-1">
+                                🎵 {file.name.slice(0, 10)}…
+                            </div>
+                        )}
+                    />
+                </div>
+
+                {/* Writing */}
+                <Card className="p-8 space-y-6 vintage-shadow">
+                    <Textarea
+                        rows={6}
+                        placeholder="A letter your future self will read slowly…"
+                        value={letter}
+                        onChange={(e) => setLetter(e.target.value)}
+                        className="font-serif"
+                    />
+
+                    <Textarea
+                        rows={2}
+                        placeholder="One question only time can answer…"
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        className="font-serif"
+                    />
                 </Card>
 
+                {/* Action */}
                 <div className="text-center">
                     <Button
                         onClick={handleUpload}
-                        className="px-12 py-6 text-lg font-serif bg-primary text-primary-foreground hover:vintage-glow transition-all duration-500"
+                        className="px-14 py-6 text-lg font-serif bg-primary text-primary-foreground vintage-glow"
                     >
-                        Add Memories to Capsule
+                        Preserve These Memories
                     </Button>
-
-                    <p className="mt-3 text-xs text-muted-foreground italic">
-                        Once placed, memories begin their journey through time.
+                    <p className="text-xs text-muted-foreground italic mt-2">
+                        Once placed, time takes over.
                     </p>
                 </div>
             </div>
         </div>
     );
-};
+}
 
-/* ---------------- Vault Component ---------------- */
-const Vault = ({title, count, max, accept, onChange}) => {
+/* ---------------- Vault ---------------- */
+
+const Vault = ({
+    title,
+    icon,
+    files,
+    onAdd,
+    onClear,
+    accept,
+    renderPreview,
+    limit,
+}) => {
+    const inputId = `vault-${title}`;
+    const isFull = files.length >= limit;
+
     return (
-        <Card className="p-6 bg-muted/40 border-border text-center space-y-3">
-            <h3 className="font-serif text-lg">{title} Vault</h3>
-            <p className="text-sm text-muted-foreground">
-                {count} / {max} stored
-            </p>
+        <Card className="p-6 bg-muted/40 border-border space-y-4 relative overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="text-primary">{icon}</div>
+                    <h3 className="font-serif text-lg">{title}</h3>
+                </div>
+
+                <span
+                    className={`text-xs font-medium ${
+                        isFull ? 'text-destructive' : 'text-muted-foreground'
+                    }`}
+                >
+                    {files.length} / {limit}
+                </span>
+            </div>
+
+            {/* Upload */}
             <input
                 type="file"
                 accept={accept}
                 multiple
-                onChange={onChange}
+                disabled={isFull}
+                id={inputId}
                 className="hidden"
-                id={title}
+                onChange={(e) => {
+                    onAdd(e.target.files);
+                    e.target.value = '';
+                }}
             />
+
             <label
-                htmlFor={title}
-                className="inline-block mt-2 px-5 py-2 rounded-md cursor-pointer bg-accent text-accent-foreground hover:bg-accent/80"
+                htmlFor={inputId}
+                className={`block text-center px-4 py-2 rounded-md cursor-pointer
+                    transition-all ${
+                        isFull
+                            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                            : 'bg-accent text-accent-foreground hover:bg-accent/80'
+                    }`}
             >
-                Place {title}
+                {isFull ? 'Vault Full' : `Add ${title}`}
             </label>
+
+            {/* Preview Grid */}
+            {files.length > 0 && (
+                <div className="grid grid-cols-5 gap-2 mt-2">
+                    {files.slice(0, 5).map((file, i) => (
+                        <div
+                            key={i}
+                            className="aspect-square rounded-md overflow-hidden
+                                       bg-background border border-border
+                                       animate-in zoom-in fade-in"
+                        >
+                            {renderPreview(file)}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Clear */}
+            {files.length > 0 && (
+                <button
+                    onClick={onClear}
+                    className="text-xs text-destructive hover:underline mt-1"
+                >
+                    Remove all
+                </button>
+            )}
         </Card>
     );
 };
-
-export default AddMemories;

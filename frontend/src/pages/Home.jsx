@@ -22,6 +22,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {useApi} from '@/hooks/index.js';
 import Logo from '@/components/EchoesLogo.jsx';
 import OnlinePeopleWidget from '@/components/OnlinePeopleWidget.jsx';
+import EchoesHero from '@/components/EchoesHero.jsx';
 
 export default function HomePage() {
     const api = useApi();
@@ -29,7 +30,7 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchAnalytics();
+        if (localStorage.getItem('user')) fetchAnalytics();
     }, []);
 
     const fetchAnalytics = async () => {
@@ -39,7 +40,7 @@ export default function HomePage() {
                 setAnalytics(data);
             }
         } catch (err) {
-            console.error('Failed to load analytics');
+            toast.error(err?.message || 'Failed to load analytics');
         } finally {
             setLoading(false);
         }
@@ -52,70 +53,9 @@ export default function HomePage() {
     return (
         <div className="min-h-screen bg-background">
             {/* Hero Section */}
-            <section className="relative overflow-hidden">
-                {/* Decorative background */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-                </div>
+            <EchoesHero />
 
-                <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-32">
-                    <div className="text-center max-w-4xl mx-auto">
-                        {/* Logo/Icon */}
-                        <div className="flex justify-center mb-8">
-                            <div className="p-6 rounded-full bg-primary/10 vintage-glow inline-block">
-                                {/*<Clock className="w-16 h-16 text-primary" />*/}
-                                <Logo />
-                            </div>
-                        </div>
-
-                        {/* Main Heading */}
-                        <h1 className="text-5xl lg:text-7xl font-serif font-bold text-foreground mb-6 tracking-tight">
-                            Echoes of the Past
-                        </h1>
-
-                        <p className="text-xl lg:text-2xl text-muted-foreground mb-8 leading-relaxed">
-                            Capture today's memories. Preserve them for
-                            tomorrow.
-                            <br />
-                            <span className="text-primary">
-                                Talk to your future self.
-                            </span>
-                        </p>
-
-                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
-                            Create time capsules filled with your memories,
-                            questions, and dreams. Open them when the moment is
-                            right—whether it's a date in the future or a
-                            milestone in your life.
-                        </p>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <Button
-                                size="lg"
-                                className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 vintage-glow"
-                                onClick={() =>
-                                    (window.location.href = '/capsule')
-                                }
-                            >
-                                Create Your Time Capsule
-                                <ArrowRight className="ml-2 w-5 h-5" />
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="border-border hover:bg-muted text-lg px-8 py-6"
-                                onClick={() => scrollToSection('about')}
-                            >
-                                Learn More
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <OnlinePeopleWidget />
+            {localStorage.getItem('user') && <OnlinePeopleWidget />}
 
             {/* Analytics Section */}
             {!loading && analytics && (
@@ -123,7 +63,7 @@ export default function HomePage() {
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-serif font-bold text-foreground mb-4">
-                                Our Community's Journey
+                                Echoes Analytics
                             </h2>
                             <p className="text-muted-foreground">
                                 Together, we're preserving memories across time
@@ -557,7 +497,7 @@ export default function HomePage() {
                         </p>
                         <Button
                             size="lg"
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-10 py-6 vintage-glow"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-10 py-6 vintage-glow cursor-target"
                             onClick={() => (window.location.href = '/capsule')}
                         >
                             Create Your Time Capsule Now

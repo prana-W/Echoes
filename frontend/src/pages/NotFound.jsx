@@ -32,7 +32,7 @@ const NotFound = () => {
                             bg-primary text-primary-foreground
                             font-medium
                             hover:vintage-glow
-                            transition-all duration-300
+                            transition-all duration-300 cursor-target
                         "
                     >
                         Return back to the Reality

@@ -21,6 +21,7 @@ import {useApi} from '@/hooks/index.js';
 import {toast} from 'sonner';
 import {useParams} from 'react-router-dom';
 import ReactionBar from '@/components/ReactionComponent.jsx';
+import GoBackButton from '@/components/GoBack.jsx';
 
 export default function ViewCapsulePage() {
     const {capsuleId} = useParams();
@@ -31,10 +32,28 @@ export default function ViewCapsulePage() {
     const [fullscreenImage, setFullscreenImage] = useState(null);
     const [answers, setAnswers] = useState({});
     const [sendingAnswer, setSendingAnswer] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     useEffect(() => {
         fetchCapsule();
     }, [capsuleId]);
+
+    const handleDeleteCapsule = async () => {
+        try {
+            await api.delete(`/timecapsule/${capsuleId}`);
+
+            toast.success('Time capsule deleted successfully.', {
+                duration: 3000,
+            });
+
+            // Delay navigation so toast is visible
+            setTimeout(() => {
+                window.location.href = '/capsule';
+            }, 500);
+        } catch (err) {
+            toast.error(err?.message || 'Failed to delete capsule');
+        }
+    };
 
     const fetchCapsule = async () => {
         setLoading(true);
@@ -60,12 +79,10 @@ export default function ViewCapsulePage() {
             const link = document.createElement('a');
             link.href = downloadUrl;
             link.download = filename;
-            document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
             window.URL.revokeObjectURL(downloadUrl);
             toast.success('Download started!');
-        } catch (err) {
+        } catch {
             toast.error('Failed to download file');
         }
     };
@@ -126,6 +143,18 @@ export default function ViewCapsulePage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <GoBackButton />
+            {metadata.isOwner && (
+                <div className="absolute top-6 right-6 z-20 cursor-target">
+                    <Button
+                        variant="destructive"
+                        onClick={() => setShowDeleteDialog(true)}
+                    >
+                        Delete Capsule
+                    </Button>
+                </div>
+            )}
+
             {/* Hero Section - Metadata */}
             <section className="relative overflow-hidden border-b border-border">
                 <div className="absolute inset-0 pointer-events-none">
@@ -212,69 +241,121 @@ export default function ViewCapsulePage() {
                 </div>
             </section>
 
-            {/* Images Section */}
-            {contents.images && contents.images.length > 0 && (
+            {/* ---------------- Images Section ---------------- */}
+            {contents.images?.length > 0 && (
                 <section className="py-16 px-6">
                     <div className="max-w-6xl mx-auto">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="p-3 rounded-lg bg-primary/10">
                                 <Image className="w-6 h-6 text-primary" />
                             </div>
-                            <h2 className="text-3xl font-serif font-bold text-foreground">
+                            <h2 className="text-3xl font-serif font-bold">
                                 Captured Moments
                             </h2>
                         </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {contents.images.map((image, index) => (
-                                <Card
-                                    key={index}
-                                    className="border-border overflow-hidden group"
-                                >
-                                    <div className="relative aspect-square">
-                                        <img
-                                            src={`${import.meta.env.VITE_BASE_SERVER_URL}${image.content}`}
-                                            alt={
-                                                image.caption ||
-                                                `Memory ${index + 1}`
-                                            }
-                                            className="w-full h-full object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                            <Button
-                                                size="sm"
-                                                variant="secondary"
-                                                onClick={() =>
-                                                    setFullscreenImage(image)
+                            {contents.images.map((image, index) => {
+                                const imgSrc = `${import.meta.env.VITE_BASE_SERVER_URL}${image.content}`;
+
+                                return (
+                                    <Card
+                                        key={index}
+                                        className="border-border overflow-hidden group"
+                                    >
+                                        {/* FIXED SIZE IMAGE */}
+                                        <div className="relative w-full h-72">
+                                            <img
+                                                src={imgSrc}
+                                                alt={
+                                                    image.caption ||
+                                                    `Memory ${index + 1}`
                                                 }
-                                            >
-                                                <Maximize2 className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="secondary"
-                                                onClick={() =>
-                                                    handleDownload(
-                                                        image.url,
-                                                        `memory-${index + 1}.jpg`
-                                                    )
-                                                }
-                                            >
-                                                <Download className="w-4 h-4" />
-                                            </Button>
+                                                className="w-full h-full object-cover rounded-lg"
+                                            />
+
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    onClick={() =>
+                                                        setFullscreenImage({
+                                                            src: imgSrc,
+                                                            caption:
+                                                                image.caption,
+                                                        })
+                                                    }
+                                                >
+                                                    <Maximize2 className="w-4 h-4" />
+                                                </Button>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    onClick={() =>
+                                                        handleDownload(
+                                                            imgSrc,
+                                                            `memory-${index + 1}.jpg`
+                                                        )
+                                                    }
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {image.caption && (
-                                        <CardContent className="p-4">
-                                            <p className="text-sm text-muted-foreground">
-                                                {image.caption}
-                                            </p>
-                                        </CardContent>
-                                    )}
-                                </Card>
-                            ))}
+
+                                        {image.caption && (
+                                            <CardContent className="p-4">
+                                                <p className="text-sm text-muted-foreground">
+                                                    {image.caption}
+                                                </p>
+                                            </CardContent>
+                                        )}
+                                    </Card>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
+            )}
+
+            {/* ---------------- Fullscreen Image Modal (FIXED) ---------------- */}
+            {fullscreenImage && (
+                <div
+                    className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+                    onClick={() => setFullscreenImage(null)}
+                >
+                    <button
+                        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20"
+                        onClick={() => setFullscreenImage(null)}
+                    >
+                        <X className="w-6 h-6 text-white" />
+                    </button>
+
+                    <img
+                        src={fullscreenImage.src}
+                        alt={fullscreenImage.caption || 'Fullscreen'}
+                        className="max-w-full max-h-full object-contain"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+
+                    <div className="absolute bottom-4 right-4">
+                        <Button
+                            variant="secondary"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownload(
+                                    fullscreenImage.src,
+                                    'memory.jpg'
+                                );
+                            }}
+                        >
+                            <Download className="w-4 h-4 mr-2" />
+                            Download
+                        </Button>
+                    </div>
+                </div>
             )}
 
             {/* Videos Section */}
@@ -426,7 +507,7 @@ export default function ViewCapsulePage() {
                                     >
                                         <CardHeader>
                                             <CardTitle className="text-2xl font-serif text-foreground">
-                                                {question.text}
+                                                {question.content}
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
@@ -483,48 +564,60 @@ export default function ViewCapsulePage() {
                 </div>
             </section>
 
-            {/* Fullscreen Image Modal */}
-            {fullscreenImage && (
-                <div
-                    className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-                    onClick={() => setFullscreenImage(null)}
-                >
-                    <button
-                        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                        onClick={() => setFullscreenImage(null)}
-                    >
-                        <X className="w-6 h-6 text-white" />
-                    </button>
-                    <img
-                        src={fullscreenImage.url}
-                        alt={fullscreenImage.caption || 'Fullscreen'}
-                        className="max-w-full max-h-full object-contain"
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                    <div className="absolute bottom-4 right-4">
-                        <Button
-                            variant="secondary"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDownload(
-                                    fullscreenImage.url,
-                                    'memory.jpg'
-                                );
-                            }}
-                        >
-                            <Download className="w-4 h-4 mr-2" />
-                            Download
-                        </Button>
-                    </div>
-                </div>
-            )}
-
             {/* Background Decoration */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
                 <div className="absolute top-1/4 left-10 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
                 <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-secondary/3 rounded-full blur-3xl" />
             </div>
             <ReactionBar timecapsuleId={capsuleId} />
+
+            {showDeleteDialog && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                    <Card className="w-full max-w-md border-border vintage-shadow">
+                        <CardContent className="p-8 space-y-6 text-center">
+                            <div className="mx-auto w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                                <X className="w-7 h-7 text-destructive" />
+                            </div>
+
+                            <h2 className="text-2xl font-serif font-bold text-foreground">
+                                Delete Time Capsule?
+                            </h2>
+
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                All your memories inside this capsule will be
+                                <span className="text-destructive font-medium">
+                                    {' '}
+                                    permanently erased
+                                </span>
+                                .
+                                <br />
+                                This action cannot be undone.
+                            </p>
+
+                            <div className="flex gap-3 pt-4">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => setShowDeleteDialog(false)}
+                                >
+                                    Cancel
+                                </Button>
+
+                                <Button
+                                    variant="destructive"
+                                    className="flex-1 cursor-target"
+                                    onClick={() => {
+                                        setShowDeleteDialog(false);
+                                        handleDeleteCapsule();
+                                    }}
+                                >
+                                    Yes, Delete
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

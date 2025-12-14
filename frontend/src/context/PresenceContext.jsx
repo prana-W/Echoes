@@ -45,6 +45,9 @@ export const PresenceProvider = ({children}) => {
 
     /* ---------- Socket lifecycle ---------- */
     useEffect(() => {
+        if (!localStorage.getItem('user')) {
+            return;
+        }
         socket.connect();
         fetchPresence();
 
