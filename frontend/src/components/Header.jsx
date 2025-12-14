@@ -59,7 +59,7 @@ export default function Header() {
                 <div className="flex items-center gap-4">
                     {/* User Greeting or Get Started */}
                     {user ? (
-                        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10">
+                        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10" onClick={() => window.location.href = '/auth'}>
                             <User className="w-3.5 h-3.5 text-primary" />
                             <span className="text-xs font-medium text-foreground">
                <span className="text-primary">{user}</span>

@@ -1,12 +1,20 @@
-import {useEffect, useState} from 'react';
-import {useSearchParams, useNavigate} from 'react-router-dom';
-import {toast} from 'sonner';
-import {useApi} from '@/hooks';
-import {Button} from '@/components/ui/button';
-import {Card} from '@/components/ui/card';
-import {Input} from '@/components/ui/input';
-import {Textarea} from '@/components/ui/textarea';
-import {Switch} from '@/components/ui/switch';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useApi } from '@/hooks';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Info } from 'lucide-react';
 
 const eventList = [
     'birthday',
@@ -33,6 +41,7 @@ const AssembleCapsule = () => {
     const timecapsuleId = searchParams.get('capsuleId');
 
     const [loading, setLoading] = useState(false);
+    const [showCreatedDialog, setShowCreatedDialog] = useState(false);
 
     /* Core fields */
     const [title, setTitle] = useState('');
@@ -53,15 +62,9 @@ const AssembleCapsule = () => {
 
     /* ---------------- Fetch relations ---------------- */
     useEffect(() => {
-        const fetchRelations = async () => {
-            try {
-                const {data} = await api.get('/relations');
-                setRelations(data || []);
-            } catch (err) {
-                toast.error(err?.message);
-            }
-        };
-        fetchRelations();
+        api.get('/relations')
+            .then(({ data }) => setRelations(data || []))
+            .catch((err) => toast.error(err?.message));
     }, []);
 
     /* ---------------- Fetch capsule (edit mode) ---------------- */
@@ -71,17 +74,14 @@ const AssembleCapsule = () => {
         const fetchCapsule = async () => {
             setLoading(true);
             try {
-                const {data} = await api.get(`/timecapsule/${timecapsuleId}`);
-
+                const { data } = await api.get(`/timecapsule/${timecapsuleId}`);
                 setTitle(data.title || '');
                 setDescription(data.description || '');
                 setTheme(data.theme || 'vintage');
                 setIsEventRelated(data.isEventRelated);
                 setEvent(data.event || '');
                 setOpenAt(data.openAt?.slice(0, 16) || '');
-                setAllowContributorsToOpen(
-                    data.allowContributorsToOpen || false
-                );
+                setAllowContributorsToOpen(data.allowContributorsToOpen || false);
                 setContributors(data.contributors || []);
                 setRecipients(data.recipients || []);
             } catch (err) {
@@ -94,7 +94,6 @@ const AssembleCapsule = () => {
         fetchCapsule();
     }, [isNew, timecapsuleId]);
 
-    /* ---------------- Toggle helpers ---------------- */
     const toggleSelection = (id, setter) => {
         setter((prev) =>
             prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -119,20 +118,17 @@ const AssembleCapsule = () => {
 
         try {
             if (isNew) {
-                const {success, message, data} = await api.post(
-                    '/timecapsule',
-                    payload
-                );
-                if (success) {
-                    toast.success(message);
-                    navigate(`/capsule/${data._id}`);
-                }
+                const { success } = await api.post('/timecapsule', payload);
+                if (success) setShowCreatedDialog(true);
             } else {
-                const {success, message} = await api.put(
+                const { success } = await api.put(
                     `/timecapsule/${timecapsuleId}`,
                     payload
                 );
-                if (success) toast.success(message);
+                if (success) {
+                    toast.success('Capsule updated');
+                    navigate('/capsule');
+                }
             }
         } catch (err) {
             toast.error(err?.message);
@@ -141,7 +137,18 @@ const AssembleCapsule = () => {
         }
     };
 
-    /* ---------------- UI ---------------- */
+    /* ---------------- Delete ---------------- */
+    const handleDelete = async () => {
+
+        try {
+            await api.delete(`/timecapsule/${timecapsuleId}`);
+            toast.success('Capsule deleted');
+            navigate('/capsule');
+        } catch (err) {
+            toast.error(err?.message);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-background px-6 py-12">
             <div className="max-w-3xl mx-auto space-y-10">
@@ -155,7 +162,6 @@ const AssembleCapsule = () => {
                     </p>
                 </div>
 
-                {/* Core */}
                 <Card className="p-8 vintage-shadow space-y-8">
                     <Input
                         placeholder="A letter to my future self…"
@@ -166,16 +172,18 @@ const AssembleCapsule = () => {
 
                     <Textarea
                         rows={6}
-                        placeholder="Write as if time itself is listening…"
+                        placeholder="Describe this capsule..."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         className="font-serif"
                     />
 
                     {/* Event / Date */}
-                    <Card className="p-5 bg-muted/40">
+                    <Card className="p-5 bg-muted/40 space-y-3">
                         <div className="flex justify-between items-center">
-                            <span>Tie to a life event</span>
+                            <span className="font-medium">
+                                Tie to a life event
+                            </span>
                             <Switch
                                 checked={isEventRelated}
                                 onCheckedChange={setIsEventRelated}
@@ -184,7 +192,7 @@ const AssembleCapsule = () => {
 
                         {isEventRelated ? (
                             <select
-                                className="mt-4 w-full bg-background border border-border p-2 rounded-md"
+                                className="w-full bg-background border border-border px-3 py-2 rounded-lg"
                                 value={event}
                                 onChange={(e) => setEvent(e.target.value)}
                             >
@@ -198,7 +206,7 @@ const AssembleCapsule = () => {
                         ) : (
                             <Input
                                 type="datetime-local"
-                                className="mt-4"
+                                className="bg-background border-border focus:ring-2 focus:ring-primary"
                                 value={openAt}
                                 onChange={(e) => setOpenAt(e.target.value)}
                             />
@@ -207,14 +215,23 @@ const AssembleCapsule = () => {
 
                     {/* Contributors */}
                     <Card className="p-5 bg-muted/40 space-y-3">
-                        <h3 className="font-serif">Contributors</h3>
+                        <div className="flex items-center gap-2">
+                            <h3 className="font-serif">Contributors</h3>
+                            <Info className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Contributors can add memories and open the capsule
+                            once the time arrives.
+                        </p>
+
                         {relations.map((rel) => (
                             <label
                                 key={rel._id}
-                                className="flex items-center gap-2 text-sm"
+                                className="flex items-center gap-3 text-sm cursor-pointer"
                             >
                                 <input
                                     type="checkbox"
+                                    className="accent-primary scale-110"
                                     checked={contributors.includes(rel.to._id)}
                                     onChange={() =>
                                         toggleSelection(
@@ -230,14 +247,23 @@ const AssembleCapsule = () => {
 
                     {/* Recipients */}
                     <Card className="p-5 bg-muted/40 space-y-3">
-                        <h3 className="font-serif">Recipients</h3>
+                        <div className="flex items-center gap-2">
+                            <h3 className="font-serif">Recipients</h3>
+                            <Info className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Recipients can only read memories once the capsule
+                            is opened.
+                        </p>
+
                         {relations.map((rel) => (
                             <label
                                 key={rel._id}
-                                className="flex items-center gap-2 text-sm"
+                                className="flex items-center gap-3 text-sm cursor-pointer"
                             >
                                 <input
                                     type="checkbox"
+                                    className="accent-secondary scale-110"
                                     checked={recipients.includes(rel.to._id)}
                                     onChange={() =>
                                         toggleSelection(
@@ -252,8 +278,17 @@ const AssembleCapsule = () => {
                     </Card>
                 </Card>
 
-                {/* Action */}
-                <div className="text-center">
+                {/* Actions */}
+                <div className="flex justify-center gap-4">
+                    {!isNew && (
+                        <Button
+                            variant="destructive"
+                            onClick={handleDelete}
+                        >
+                            Delete Capsule
+                        </Button>
+                    )}
+
                     <Button
                         disabled={loading}
                         onClick={handleSave}
@@ -263,6 +298,29 @@ const AssembleCapsule = () => {
                     </Button>
                 </div>
             </div>
+
+            {/* Created Dialog */}
+            <Dialog open={showCreatedDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            Your capsule has been assembled ✨
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <p className="text-muted-foreground">
+                        Don’t forget to add memories to it before sealing.
+                    </p>
+
+                    <DialogFooter>
+                        <Button
+                            onClick={() => navigate('/capsule')}
+                        >
+                            I understand
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

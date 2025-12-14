@@ -1,6 +1,5 @@
 import {
     Home,
-    About,
     NotFound,
     Authentication,
     Relations,
@@ -27,7 +26,6 @@ const router = createBrowserRouter([
 
             {path: 'auth', element: <Authentication />},
             {path: 'relations', element: <Relations />},
-            {path: 'about', element: <About />},
 
             {path: 'capsule', element: <TimeCapsule />},
             {path: 'capsule/assemble', element: <AssembleTimeCapsule />},
