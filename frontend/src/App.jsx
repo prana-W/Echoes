@@ -6,6 +6,7 @@ import {
     Relations,
     TimeCapsule,
     AssembleTimeCapsule,
+    AddMemories
 } from "./pages";
 
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
 
             { path: "capsule", element: <TimeCapsule /> },
             { path: "capsule/assemble", element: <AssembleTimeCapsule /> },
+            { path: "capsule/memories/:capsuleId", element: <AddMemories /> },
 
             { path: "*", element: <NotFound /> },
         ],
