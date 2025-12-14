@@ -83,4 +83,4 @@ export const capsuleMaturationTemplate = `<!DOCTYPE html>
     </table>
 </body>
 </html>
-`
+`;

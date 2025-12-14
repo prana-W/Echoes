@@ -13,7 +13,7 @@ import {
     timeCapsuleRouter,
     timeCapsuleContentRouter,
     eventsRouter,
-    analyticsRouter
+    analyticsRouter,
 } from './routes/index.js';
 
 const app = express();

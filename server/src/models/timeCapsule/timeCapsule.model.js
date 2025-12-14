@@ -86,7 +86,7 @@ const timeCapsuleSchema = new mongoose.Schema(
         emailSent: {
             type: Boolean,
             default: false,
-        }
+        },
     },
     {
         timestamps: true,

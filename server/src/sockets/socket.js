@@ -1,5 +1,5 @@
 import verifyAccessToken from './middlewares/verifyAccessToken.middleware.js';
-import { onlineUsers } from "../store/presence.store.js";
+import {onlineUsers} from '../store/presence.store.js';
 
 function registerSockets(io) {
     // Middleware to verify access token for each socket connection
@@ -14,13 +14,13 @@ function registerSockets(io) {
 
         if (userId) {
             onlineUsers.set(userId, socket.id);
-            io.emit("presence:update", { userId, status: "online" });
+            io.emit('presence:update', {userId, status: 'online'});
         }
 
-        socket.on("disconnect", () => {
+        socket.on('disconnect', () => {
             if (userId) {
                 onlineUsers.delete(userId);
-                io.emit("presence:update", { userId, status: "offline" });
+                io.emit('presence:update', {userId, status: 'offline'});
             }
         });
     });
