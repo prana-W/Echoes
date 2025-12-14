@@ -17,10 +17,13 @@ const startCapsuleEmailCron = () => {
         try {
             const now = SERVER_TIME();
 
+            console.log('Cron has ran at', now.toISOString());
+
             const capsules = await TimeCapsule.find({
                 isEventRelated: false,
                 isOpened: false,
-                emailSentOnOpen: false,
+                isEmailSent: false,
+                isSealed: true,
                 openAt: {$lte: now},
             }).populate('owner', 'name email');
 
@@ -28,10 +31,13 @@ const startCapsuleEmailCron = () => {
                 await sendEmail({
                     to: capsule?.owner?.email,
                     subject: 'Your Time Capsule Is Ready to Be Opened',
-                    html: capsuleMaturationTemplate,
+                    html: capsuleMaturationTemplate(capsule?.owner?.name, capsule?.title),
                 });
 
-                capsule.emailSent = true;
+                capsule.isEmailSent = true;
+
+                console.log('Email sent for capsule ID:', capsule._id);
+
                 await capsule.save();
             }
         } catch (err) {
