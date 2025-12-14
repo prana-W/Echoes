@@ -4,6 +4,6 @@ import {verifyAccessToken} from '../middlewares/index.js';
 
 const router = express.Router();
 
-router.get('/', verifyAccessToken, getAnalytics);
+router.get('/', getAnalytics);
 
 export default router;

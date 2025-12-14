@@ -30,11 +30,13 @@ const reciprocalMap = {
     aunt: 'niece',
     nephew: 'uncle',
     niece: 'aunt',
+
+    other: 'other'
 };
 
 const createRelation = asyncHandler(async (req, res) => {
     const fromUserId = req.userId;
-    const {targetUserId, relation} = req.body;
+    const { targetUserId, relation } = req.body;
 
     if (!targetUserId || !relation) {
         throw new ApiError(
@@ -63,28 +65,37 @@ const createRelation = asyncHandler(async (req, res) => {
         throw new ApiError(statusCode.NOT_FOUND, 'Target user not found');
     }
 
-    // CHECK 1: Direct relation already exists
-    const directExists = await Relation.findOne({
+    // CHECK: any existing relationship between these two users
+    const existingDirect = await Relation.findOne({
         from: fromUserId,
         to: targetUserId,
-        relation,
     });
 
-    // CHECK 2: Reciprocal relation already exists
-    const reverseExists = await Relation.findOne({
+    const existingReverse = await Relation.findOne({
         from: targetUserId,
         to: fromUserId,
-        relation: reciprocalRelation,
     });
 
-    if (directExists || reverseExists) {
-        throw new ApiError(
-            statusCode.CONFLICT,
-            'This relationship is already established'
+    // UPDATE case
+    if (existingDirect && existingReverse) {
+        existingDirect.relation = relation;
+        existingReverse.relation = reciprocalRelation;
+
+        await Promise.all([
+            existingDirect.save(),
+            existingReverse.save(),
+        ]);
+
+        return res.status(statusCode.OK).json(
+            new ApiResponse(
+                statusCode.OK,
+                'Relationship updated successfully',
+                [existingDirect, existingReverse]
+            )
         );
     }
 
-    // Create both relations
+    // CREATE case (no relationship exists yet)
     const relations = await Relation.create([
         {
             from: fromUserId,
@@ -98,16 +109,15 @@ const createRelation = asyncHandler(async (req, res) => {
         },
     ]);
 
-    return res
-        .status(statusCode.CREATED)
-        .json(
-            new ApiResponse(
-                statusCode.CREATED,
-                'Relationship created successfully',
-                relations
-            )
-        );
+    return res.status(statusCode.CREATED).json(
+        new ApiResponse(
+            statusCode.CREATED,
+            'Relationship created successfully',
+            relations
+        )
+    );
 });
+
 
 const getAllRelations = asyncHandler(async (req, res) => {
     const userId = req.userId;
