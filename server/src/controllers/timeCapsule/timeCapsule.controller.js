@@ -480,7 +480,7 @@ const openTimeCapsule = asyncHandler(async (req, res) => {
     // Analytics update
     await Analytics.findOneAndUpdate(
         {},
-        {$inc: {totalTimeCapsulesOpened: 1}},
+        {$inc: {totalCapsulesOpened: 1}},
         {upsert: true, new: true}
     );
 
@@ -583,6 +583,7 @@ const getEntireTimeCapsule = asyncHandler(async (req, res) => {
             createdAt: capsule.createdAt,
             openedAt: capsule.updatedAt,
             timeElapsedMs,
+            isOwner
         },
 
         contents: {

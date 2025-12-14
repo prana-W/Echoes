@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
+import axios from 'axios';
+import {toast} from 'sonner';
+import {Card} from '@/components/ui/card';
+import {Button} from '@/components/ui/button';
+import {Textarea} from '@/components/ui/textarea';
 
 const MAX_IMAGES = 10;
 const MAX_VIDEOS = 5;
@@ -13,7 +13,7 @@ const MAX_AUDIOS = 5;
 const API_BASE = import.meta.env.VITE_SERVER_URL;
 
 const AddMemories = () => {
-    const { capsuleId } = useParams();
+    const {capsuleId} = useParams();
 
     const [capsule, setCapsule] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,8 +22,8 @@ const AddMemories = () => {
     const [videos, setVideos] = useState([]);
     const [audios, setAudios] = useState([]);
 
-    const [letter, setLetter] = useState("");
-    const [question, setQuestion] = useState("");
+    const [letter, setLetter] = useState('');
+    const [question, setQuestion] = useState('');
 
     /* ---------------- Fetch Capsule ---------------- */
     useEffect(() => {
@@ -31,7 +31,7 @@ const AddMemories = () => {
             try {
                 const res = await axios.get(
                     `${API_BASE}/timecapsule/${capsuleId}`,
-                    { withCredentials: true }
+                    {withCredentials: true}
                 );
 
                 setCapsule(res.data?.data);
@@ -62,49 +62,43 @@ const AddMemories = () => {
 
     /* ---------------- Upload Memories ---------------- */
     const handleUpload = async () => {
-        toast.success("Uploading memories… Please stay with us.");
+        toast.success('Uploading memories… Please stay with us.');
 
         try {
             if (images.length) {
                 const fd = new FormData();
-                images.forEach((img) => fd.append("images", img));
+                images.forEach((img) => fd.append('images', img));
 
-                await axios.post(
-                    `${API_BASE}/upload/images/${capsuleId}`,
-                    fd,
-                    { withCredentials: true }
-                );
+                await axios.post(`${API_BASE}/upload/images/${capsuleId}`, fd, {
+                    withCredentials: true,
+                });
             }
 
             if (videos.length) {
                 const fd = new FormData();
-                videos.forEach((vid) => fd.append("videos", vid));
+                videos.forEach((vid) => fd.append('videos', vid));
 
-                await axios.post(
-                    `${API_BASE}/upload/video/${capsuleId}`,
-                    fd,
-                    { withCredentials: true }
-                );
+                await axios.post(`${API_BASE}/upload/video/${capsuleId}`, fd, {
+                    withCredentials: true,
+                });
             }
 
             if (audios.length) {
                 const fd = new FormData();
-                audios.forEach((aud) => fd.append("audios", aud));
+                audios.forEach((aud) => fd.append('audios', aud));
 
-                await axios.post(
-                    `${API_BASE}/upload/audio/${capsuleId}`,
-                    fd,
-                    { withCredentials: true }
-                );
+                await axios.post(`${API_BASE}/upload/audio/${capsuleId}`, fd, {
+                    withCredentials: true,
+                });
             }
 
             if (letter.trim()) {
                 await axios.post(
                     `${API_BASE}/upload/texts/${capsuleId}`,
-                    { text: letter },
+                    {text: letter},
                     {
                         withCredentials: true,
-                        headers: { "Content-Type": "application/json" },
+                        headers: {'Content-Type': 'application/json'},
                     }
                 );
             }
@@ -118,12 +112,12 @@ const AddMemories = () => {
                     },
                     {
                         withCredentials: true,
-                        headers: { "Content-Type": "application/json" },
+                        headers: {'Content-Type': 'application/json'},
                     }
                 );
             }
 
-            toast.success("Memories safely placed into the capsule.");
+            toast.success('Memories safely placed into the capsule.');
         } catch (err) {
             toast.error(err?.response?.data?.message || err.message);
         }
@@ -162,7 +156,7 @@ const AddMemories = () => {
                                     e.target.files,
                                     setImages,
                                     MAX_IMAGES,
-                                    "image"
+                                    'image'
                                 )
                             }
                         />
@@ -176,7 +170,7 @@ const AddMemories = () => {
                                     e.target.files,
                                     setVideos,
                                     MAX_VIDEOS,
-                                    "video"
+                                    'video'
                                 )
                             }
                         />
@@ -190,7 +184,7 @@ const AddMemories = () => {
                                     e.target.files,
                                     setAudios,
                                     MAX_AUDIOS,
-                                    "audio"
+                                    'audio'
                                 )
                             }
                         />
@@ -241,7 +235,7 @@ const AddMemories = () => {
 };
 
 /* ---------------- Vault Component ---------------- */
-const Vault = ({ title, count, max, accept, onChange }) => {
+const Vault = ({title, count, max, accept, onChange}) => {
     return (
         <Card className="p-6 bg-muted/40 border-border text-center space-y-3">
             <h3 className="font-serif text-lg">{title} Vault</h3>

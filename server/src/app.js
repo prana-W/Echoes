@@ -15,6 +15,7 @@ import {
     eventsRouter,
     analyticsRouter,
 } from './routes/index.js';
+import path from 'path';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.use(cookieParser());
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // API Routes
 

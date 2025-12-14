@@ -6,5 +6,18 @@ import Relations from './Relations.jsx';
 import TimeCapsule from './TimeCapsule.jsx';
 import AssembleTimeCapsule from './AssembleTimeCapsule.jsx';
 import AddMemories from './AddMemories.jsx';
+import ViewCapsule from './ViewCapsule.jsx';
+import AddEvent from './AddEvent.jsx';
 
-export {Home, About, NotFound, Authentication, Relations, TimeCapsule, AssembleTimeCapsule, AddMemories};
+export {
+    Home,
+    About,
+    NotFound,
+    Authentication,
+    Relations,
+    TimeCapsule,
+    AssembleTimeCapsule,
+    AddMemories,
+    ViewCapsule,
+    AddEvent,
+};

@@ -6,34 +6,36 @@ import {
     Relations,
     TimeCapsule,
     AssembleTimeCapsule,
-    AddMemories
-} from "./pages";
+    AddMemories,
+    ViewCapsule,
+    AddEvent,
+} from './pages';
 
-import ErrorBoundary from "./components/ErrorBoundary.jsx";
-import { ThemeProvider } from "@/components/theme-provider";
-import Layout from "./Layout.jsx";
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+import {ThemeProvider} from '@/components/theme-provider';
+import Layout from './Layout.jsx';
 
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from "react-router-dom";
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
 const router = createBrowserRouter([
     {
-        path: "/",
+        path: '/',
         element: <Layout />,
         children: [
-            { index: true, element: <Home /> },
+            {index: true, element: <Home />},
 
-            { path: "auth", element: <Authentication /> },
-            { path: "relations", element: <Relations /> },
-            { path: "about", element: <About /> },
+            {path: 'auth', element: <Authentication />},
+            {path: 'relations', element: <Relations />},
+            {path: 'about', element: <About />},
 
-            { path: "capsule", element: <TimeCapsule /> },
-            { path: "capsule/assemble", element: <AssembleTimeCapsule /> },
-            { path: "capsule/memories/:capsuleId", element: <AddMemories /> },
+            {path: 'capsule', element: <TimeCapsule />},
+            {path: 'capsule/assemble', element: <AssembleTimeCapsule />},
+            {path: 'capsule/memories/:capsuleId', element: <AddMemories />},
+            {path: 'capsule/view/:capsuleId', element: <ViewCapsule />},
 
-            { path: "*", element: <NotFound /> },
+            {path: 'event', element: <AddEvent />},
+
+            {path: '*', element: <NotFound />},
         ],
     },
 ]);

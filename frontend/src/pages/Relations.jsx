@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Search, Plus, X, UserPlus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, {useState, useEffect} from 'react';
+import {Users, Search, Plus, X, UserPlus} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -18,36 +24,36 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useApi } from '@/hooks/index.js';
-import { toast } from 'sonner';
+import {useApi} from '@/hooks/index.js';
+import {toast} from 'sonner';
 
 const RELATIONS = [
-    { value: 'father', label: 'Father' },
-    { value: 'mother', label: 'Mother' },
-    { value: 'son', label: 'Son' },
-    { value: 'daughter', label: 'Daughter' },
-    { value: 'husband', label: 'Husband' },
-    { value: 'wife', label: 'Wife' },
-    { value: 'brother', label: 'Brother' },
-    { value: 'sister', label: 'Sister' },
-    { value: 'maternal_grandfather', label: 'Maternal Grandfather' },
-    { value: 'maternal_grandmother', label: 'Maternal Grandmother' },
-    { value: 'paternal_grandfather', label: 'Paternal Grandfather' },
-    { value: 'paternal_grandmother', label: 'Paternal Grandmother' },
-    { value: 'grandson', label: 'Grandson' },
-    { value: 'granddaughter', label: 'Granddaughter' },
-    { value: 'brother_in_law', label: 'Brother-in-law' },
-    { value: 'sister_in_law', label: 'Sister-in-law' },
-    { value: 'uncle', label: 'Uncle' },
-    { value: 'aunt', label: 'Aunt' },
-    { value: 'cousin', label: 'Cousin' },
-    { value: 'maternal_uncle', label: 'Maternal Uncle' },
-    { value: 'maternal_aunt', label: 'Maternal Aunt' },
-    { value: 'paternal_uncle', label: 'Paternal Uncle' },
-    { value: 'paternal_aunt', label: 'Paternal Aunt' },
-    { value: 'nephew', label: 'Nephew' },
-    { value: 'niece', label: 'Niece' },
-    { value: 'other', label: 'Other' },
+    {value: 'father', label: 'Father'},
+    {value: 'mother', label: 'Mother'},
+    {value: 'son', label: 'Son'},
+    {value: 'daughter', label: 'Daughter'},
+    {value: 'husband', label: 'Husband'},
+    {value: 'wife', label: 'Wife'},
+    {value: 'brother', label: 'Brother'},
+    {value: 'sister', label: 'Sister'},
+    {value: 'maternal_grandfather', label: 'Maternal Grandfather'},
+    {value: 'maternal_grandmother', label: 'Maternal Grandmother'},
+    {value: 'paternal_grandfather', label: 'Paternal Grandfather'},
+    {value: 'paternal_grandmother', label: 'Paternal Grandmother'},
+    {value: 'grandson', label: 'Grandson'},
+    {value: 'granddaughter', label: 'Granddaughter'},
+    {value: 'brother_in_law', label: 'Brother-in-law'},
+    {value: 'sister_in_law', label: 'Sister-in-law'},
+    {value: 'uncle', label: 'Uncle'},
+    {value: 'aunt', label: 'Aunt'},
+    {value: 'cousin', label: 'Cousin'},
+    {value: 'maternal_uncle', label: 'Maternal Uncle'},
+    {value: 'maternal_aunt', label: 'Maternal Aunt'},
+    {value: 'paternal_uncle', label: 'Paternal Uncle'},
+    {value: 'paternal_aunt', label: 'Paternal Aunt'},
+    {value: 'nephew', label: 'Nephew'},
+    {value: 'niece', label: 'Niece'},
+    {value: 'other', label: 'Other'},
 ];
 
 export default function RelationsPage() {
@@ -69,7 +75,7 @@ export default function RelationsPage() {
     const fetchRelations = async () => {
         setLoading(true);
         try {
-            const { data, success } = await api.get('/relations');
+            const {data, success} = await api.get('/relations');
             if (success) {
                 setRelations(data || []);
             }
@@ -88,7 +94,9 @@ export default function RelationsPage() {
 
         setSearching(true);
         try {
-            const { data, success } = await api.get(`/users/email/${searchEmail}`);
+            const {data, success} = await api.get(
+                `/users/email/${searchEmail}`
+            );
             if (success && data) {
                 setSearchedUser(data);
             }
@@ -112,7 +120,7 @@ export default function RelationsPage() {
 
         setAdding(true);
         try {
-            const { success, message } = await api.post('/relations', {
+            const {success, message} = await api.post('/relations', {
                 targetUserId: searchedUser._id,
                 relation: selectedRelation,
             });
@@ -146,7 +154,9 @@ export default function RelationsPage() {
                         <div className="p-2 rounded-lg bg-primary/10">
                             <Users className="w-6 h-6 text-primary" />
                         </div>
-                        <h1 className="text-3xl font-serif text-foreground">Family & Friends</h1>
+                        <h1 className="text-3xl font-serif text-foreground">
+                            Family & Friends
+                        </h1>
                     </div>
                     <p className="text-muted-foreground">
                         Connect with your loved ones and share memories together
@@ -167,7 +177,9 @@ export default function RelationsPage() {
                 {/* Relations List */}
                 {loading ? (
                     <div className="flex items-center justify-center py-12">
-                        <div className="text-muted-foreground">Loading relations...</div>
+                        <div className="text-muted-foreground">
+                            Loading relations...
+                        </div>
                     </div>
                 ) : relations.length === 0 ? (
                     <Card className="border-border">
@@ -183,7 +195,10 @@ export default function RelationsPage() {
                 ) : (
                     <div className="grid gap-4">
                         {relations.map((relation) => (
-                            <Card key={relation._id} className="border-border hover:border-primary/50 transition-colors">
+                            <Card
+                                key={relation._id}
+                                className="border-border hover:border-primary/50 transition-colors"
+                            >
                                 <CardContent className="flex items-center justify-between p-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -199,9 +214,9 @@ export default function RelationsPage() {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                    <span className="inline-block px-3 py-1 rounded-full bg-secondary/20 text-secondary-foreground text-sm font-medium">
-                      {formatRelation(relation.relation)}
-                    </span>
+                                        <span className="inline-block px-3 py-1 rounded-full bg-secondary/20 text-secondary-foreground text-sm font-medium">
+                                            {formatRelation(relation.relation)}
+                                        </span>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -213,16 +228,22 @@ export default function RelationsPage() {
                 <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                     <DialogContent className="bg-card border-border">
                         <DialogHeader>
-                            <DialogTitle className="text-foreground">Add Family Member or Friend</DialogTitle>
+                            <DialogTitle className="text-foreground">
+                                Add Family Member or Friend
+                            </DialogTitle>
                             <DialogDescription className="text-muted-foreground">
-                                Search for a user by email and select your relation with them.
+                                Search for a user by email and select your
+                                relation with them.
                             </DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-6 py-4">
                             {/* Search User */}
                             <div className="space-y-2">
-                                <Label htmlFor="search-email" className="text-foreground">
+                                <Label
+                                    htmlFor="search-email"
+                                    className="text-foreground"
+                                >
                                     Email Address
                                 </Label>
                                 <div className="flex gap-2">
@@ -234,8 +255,13 @@ export default function RelationsPage() {
                                             placeholder="user@example.com"
                                             className="pl-10 bg-muted/50 border-border"
                                             value={searchEmail}
-                                            onChange={(e) => setSearchEmail(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleSearchUser()}
+                                            onChange={(e) =>
+                                                setSearchEmail(e.target.value)
+                                            }
+                                            onKeyPress={(e) =>
+                                                e.key === 'Enter' &&
+                                                handleSearchUser()
+                                            }
                                         />
                                     </div>
                                     <Button
@@ -257,8 +283,12 @@ export default function RelationsPage() {
                                                 <Users className="w-5 h-5 text-primary" />
                                             </div>
                                             <div>
-                                                <p className="font-medium text-foreground">{searchedUser.name}</p>
-                                                <p className="text-sm text-muted-foreground">{searchedUser.email}</p>
+                                                <p className="font-medium text-foreground">
+                                                    {searchedUser.name}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {searchedUser.email}
+                                                </p>
                                             </div>
                                         </div>
                                     </CardContent>
@@ -268,16 +298,25 @@ export default function RelationsPage() {
                             {/* Relation Selection */}
                             {searchedUser && (
                                 <div className="space-y-2">
-                                    <Label htmlFor="relation" className="text-foreground">
+                                    <Label
+                                        htmlFor="relation"
+                                        className="text-foreground"
+                                    >
                                         Relation
                                     </Label>
-                                    <Select value={selectedRelation} onValueChange={setSelectedRelation}>
+                                    <Select
+                                        value={selectedRelation}
+                                        onValueChange={setSelectedRelation}
+                                    >
                                         <SelectTrigger className="bg-muted/50 border-border">
                                             <SelectValue placeholder="Select relation" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-popover border-border">
                                             {RELATIONS.map((rel) => (
-                                                <SelectItem key={rel.value} value={rel.value}>
+                                                <SelectItem
+                                                    key={rel.value}
+                                                    value={rel.value}
+                                                >
                                                     {rel.label}
                                                 </SelectItem>
                                             ))}
@@ -302,7 +341,11 @@ export default function RelationsPage() {
                                 </Button>
                                 <Button
                                     onClick={handleAddRelation}
-                                    disabled={!searchedUser || !selectedRelation || adding}
+                                    disabled={
+                                        !searchedUser ||
+                                        !selectedRelation ||
+                                        adding
+                                    }
                                     className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                                 >
                                     {adding ? 'Adding...' : 'Add Relation'}

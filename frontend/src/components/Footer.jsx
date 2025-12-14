@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useApi } from "@/hooks/index.js";
+import {useEffect, useState} from 'react';
+import {useApi} from '@/hooks/index.js';
 
 const Footer = () => {
     const [pageViews, setPageViews] = useState(0);
@@ -9,10 +9,10 @@ const Footer = () => {
     useEffect(() => {
         const updateVisitors = async () => {
             try {
-                const { data } = await api.post("/visitors");
+                const {data} = await api.post('/visitors');
                 setPageViews(data?.count || 0);
             } catch (err) {
-                console.error("Visitor update failed", err);
+                console.error('Visitor update failed', err);
             }
         };
 
@@ -40,10 +40,9 @@ const Footer = () => {
     return (
         <footer className="border-t border-border py-6 px-6">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-muted-foreground text-sm">
-
                 {/* Left */}
                 <div className="text-center md:text-left">
-                    © {new Date().getFullYear()}{" "}
+                    © {new Date().getFullYear()}{' '}
                     <span className="text-foreground font-medium">
                         Echoes of the Past
                     </span>
@@ -51,7 +50,7 @@ const Footer = () => {
 
                 {/* Center */}
                 <div className="tracking-wide">
-                    Page views{" "}
+                    Page views{' '}
                     <span className="text-foreground font-semibold">
                         {displayViews.toLocaleString()}
                     </span>
@@ -59,7 +58,7 @@ const Footer = () => {
 
                 {/* Right */}
                 <div className="text-center md:text-right">
-                    Made with <span className="text-red-400">❤️</span> by{" "}
+                    Made with <span className="text-red-400">❤️</span> by{' '}
                     <a
                         href="https://pranaw-kumar-portfolio.vercel.app"
                         target="_blank"
@@ -69,7 +68,6 @@ const Footer = () => {
                         Pranaw Kumar
                     </a>
                 </div>
-
             </div>
         </footer>
     );
