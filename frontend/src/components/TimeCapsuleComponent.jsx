@@ -14,23 +14,40 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal, onOpen }) {
+export default function TimeCapsuleCard({
+                                            capsule,
+                                            onEdit,
+                                            onAddMemories,
+                                            onSeal,
+                                            onOpen,
+                                        }) {
     const isLocked = capsule.isSealed && !capsule.isOpened;
     const isOpened = capsule.isOpened;
     const canEdit = capsule.isOwner && !capsule.isSealed;
-    const canAddMemories = (capsule.isOwner || capsule.isContributor) && !capsule.isSealed;
+    const canAddMemories =
+        (capsule.isOwner || capsule.isContributor) && !capsule.isSealed;
     const canSeal = capsule.isOwner && !capsule.isSealed;
 
-    // Format date
-    const openDate = new Date(capsule.openAt);
-    const formattedDate = openDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    const isEventBased = capsule.isEventRelated;
 
-    const daysUntil = Math.ceil((openDate - new Date()) / (1000 * 60 * 60 * 24));
-    const isPast = daysUntil < 0;
+    /* ---------------- Date logic (only if NOT event-based) ---------------- */
+    let formattedDate = null;
+    let daysUntil = null;
+    let isPast = false;
+
+    if (!isEventBased && capsule.openAt) {
+        const openDate = new Date(capsule.openAt);
+        formattedDate = openDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+
+        daysUntil = Math.ceil(
+            (openDate - new Date()) / (1000 * 60 * 60 * 24)
+        );
+        isPast = daysUntil < 0;
+    }
 
     return (
         <Card className="relative overflow-hidden border-2 border-border hover:border-primary/50 transition-all duration-300 group">
@@ -44,21 +61,22 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
             </div>
 
             {/* Status Indicator */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
 
             <div className="relative p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                            {/* Status Icon */}
-                            <div className={`p-2 rounded-full ${
-                                isOpened
-                                    ? 'bg-primary/20 vintage-glow'
-                                    : isLocked
-                                        ? 'bg-secondary/20'
-                                        : 'bg-muted'
-                            }`}>
+                            <div
+                                className={`p-2 rounded-full ${
+                                    isOpened
+                                        ? 'bg-primary/20 vintage-glow'
+                                        : isLocked
+                                            ? 'bg-secondary/20'
+                                            : 'bg-muted'
+                                }`}
+                            >
                                 {isOpened ? (
                                     <CheckCircle className="w-5 h-5 text-primary" />
                                 ) : isLocked ? (
@@ -68,13 +86,11 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                                 )}
                             </div>
 
-                            {/* Title */}
                             <h3 className="text-xl font-serif font-bold text-foreground group-hover:text-primary transition-colors">
                                 {capsule.title}
                             </h3>
                         </div>
 
-                        {/* Theme Badge */}
                         <Badge
                             variant="secondary"
                             className="bg-primary/10 text-primary border-primary/20 mb-3"
@@ -83,7 +99,6 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                         </Badge>
                     </div>
 
-                    {/* Edit Button */}
                     {canEdit && (
                         <Button
                             size="sm"
@@ -101,22 +116,34 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                     {capsule.description}
                 </p>
 
-                {/* Metadata Grid */}
+                {/* Metadata */}
                 <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                    {/* Open Date */}
+                    {/* Date / Event */}
                     <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="w-4 h-4" />
-                        <span>{formattedDate}</span>
+                        {isEventBased ? (
+                            <span className="italic">
+                                Event:{' '}
+                                <span className="text-foreground font-medium capitalize">
+                                    {capsule.event}
+                                </span>
+                            </span>
+                        ) : (
+                            <span>{formattedDate}</span>
+                        )}
                     </div>
 
-                    {/* Contributors Count */}
+                    {/* Contributors */}
                     <div className="flex items-center gap-2 text-muted-foreground">
                         <Users className="w-4 h-4" />
-                        <span>{capsule.contributors.length} contributor{capsule.contributors.length !== 1 ? 's' : ''}</span>
+                        <span>
+                            {capsule.contributors.length} contributor
+                            {capsule.contributors.length !== 1 ? 's' : ''}
+                        </span>
                     </div>
                 </div>
 
-                {/* Days Until/Status */}
+                {/* Status Line */}
                 <div className="mb-4">
                     {isOpened ? (
                         <div className="flex items-center gap-2 text-primary font-medium">
@@ -126,12 +153,26 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                     ) : isLocked ? (
                         <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-secondary" />
-                            {isPast ? (
-                                <span className="text-secondary font-medium">Ready to open!</span>
+                            {isEventBased ? (
+                                <span className="text-muted-foreground italic">
+                                    Opens when{' '}
+                                    <span className="text-foreground font-medium capitalize">
+                                        {capsule.event}
+                                    </span>{' '}
+                                    happens
+                                </span>
+                            ) : isPast ? (
+                                <span className="text-secondary font-medium">
+                                    Ready to open!
+                                </span>
                             ) : (
                                 <span className="text-muted-foreground">
-                  Opens in <span className="text-foreground font-medium">{daysUntil}</span> days
-                </span>
+                                    Opens in{' '}
+                                    <span className="text-foreground font-medium">
+                                        {daysUntil}
+                                    </span>{' '}
+                                    days
+                                </span>
                             )}
                         </div>
                     ) : (
@@ -142,7 +183,7 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                     )}
                 </div>
 
-                {/* Wax Seal Effect */}
+                {/* Wax Seal */}
                 {isLocked && (
                     <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
                         <div className="w-16 h-16 rounded-full bg-destructive/30 flex items-center justify-center border-2 border-destructive/50">
@@ -151,7 +192,7 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                     </div>
                 )}
 
-                {/* Action Buttons */}
+                {/* Actions */}
                 <div className="flex gap-2 flex-wrap pt-4 border-t border-border">
                     {isOpened ? (
                         <Button
@@ -163,7 +204,7 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                         </Button>
                     ) : isLocked ? (
                         <>
-                            {isPast && (
+                            {!isEventBased && isPast && (
                                 <Button
                                     className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground vintage-glow"
                                     onClick={() => onOpen(capsule)}
@@ -172,14 +213,15 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                                     Open Capsule
                                 </Button>
                             )}
-                            {!isPast && (
+
+                            {(!isPast || isEventBased) && (
                                 <Button
                                     variant="outline"
                                     className="flex-1 border-border cursor-not-allowed opacity-50"
                                     disabled
                                 >
                                     <Lock className="w-4 h-4 mr-2" />
-                                    Sealed Until {formattedDate}
+                                    Sealed
                                 </Button>
                             )}
                         </>
@@ -211,7 +253,10 @@ export default function TimeCapsuleCard({ capsule, onEdit, onAddMemories, onSeal
                 {/* Owner Badge */}
                 {capsule.isOwner && (
                     <div className="absolute bottom-2 right-2">
-                        <Badge variant="outline" className="text-xs border-primary/30 text-primary/70">
+                        <Badge
+                            variant="outline"
+                            className="text-xs border-primary/30 text-primary/70"
+                        >
                             Owner
                         </Badge>
                     </div>
