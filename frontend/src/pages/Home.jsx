@@ -20,7 +20,7 @@ import {
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {useApi} from '@/hooks/index.js';
-import {toast} from 'sonner';
+import Logo from '@/components/EchoesLogo.jsx'
 
 export default function HomePage() {
     const api = useApi();
@@ -63,7 +63,8 @@ export default function HomePage() {
                         {/* Logo/Icon */}
                         <div className="flex justify-center mb-8">
                             <div className="p-6 rounded-full bg-primary/10 vintage-glow inline-block">
-                                <Clock className="w-16 h-16 text-primary" />
+                                {/*<Clock className="w-16 h-16 text-primary" />*/}
+                                <Logo />
                             </div>
                         </div>
 
