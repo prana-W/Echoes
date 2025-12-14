@@ -199,7 +199,7 @@ const AssembleCapsule = () => {
                                 <option value="">Select an event</option>
                                 {eventList.map((ev) => (
                                     <option key={ev} value={ev}>
-                                        {ev}
+                                        {ev.toUpperCase()}
                                     </option>
                                 ))}
                             </select>

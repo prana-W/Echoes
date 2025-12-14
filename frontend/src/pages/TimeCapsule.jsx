@@ -1,9 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import {Clock, Plus, Lock, LockOpen} from 'lucide-react';
-import {Button} from '@/components/ui/button';
-import {useApi} from '@/hooks/index.js';
-import {toast} from 'sonner';
+import React, { useState, useEffect } from 'react';
+import { Plus, Lock, LockOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useApi } from '@/hooks/index.js';
+import { toast } from 'sonner';
 import TimeCapsuleCard from '@/components/TimeCapsuleComponent.jsx';
+
+const TABS = ['all', 'notSealed', 'sealed', 'opened'];
 
 export default function TimeCapsulesPage() {
     const api = useApi();
@@ -14,6 +16,8 @@ export default function TimeCapsulesPage() {
     const [openedCapsules, setOpenedCapsules] = useState([]);
     const [sealedCapsules, setSealedCapsules] = useState([]);
     const [unsealedCapsules, setUnsealedCapsules] = useState([]);
+
+    const [activeTab, setActiveTab] = useState('all');
 
     /* ---------------- Seal ritual ---------------- */
     const [sealTarget, setSealTarget] = useState(null);
@@ -33,7 +37,7 @@ export default function TimeCapsulesPage() {
     const fetchCapsules = async () => {
         setLoading(true);
         try {
-            const {data, success} = await api.get('/timecapsule');
+            const { data, success } = await api.get('/timecapsule');
             if (success && data) {
                 setCapsules(data);
                 categorize(data);
@@ -61,18 +65,35 @@ export default function TimeCapsulesPage() {
         setUnsealedCapsules(unsealed);
     };
 
-    /* ---------------- Navigation handlers ---------------- */
-    const handleEdit = (capsule) => {
-        window.location.href = `/capsule/assemble/?new=false&capsuleId=${capsule._id}`;
+    /* ---------------- Helpers ---------------- */
+    const canOpenCapsule = (capsule) => {
+        if (!capsule.isSealed || capsule.isOpened) return false;
+        if (capsule.isEventRelated) return false;
+        return new Date(capsule.openAt) < new Date();
     };
 
-    const handleAddMemories = (capsule) => {
-        window.location.href = `/capsule/memories/${capsule._id}`;
+    const getVisibleCapsules = () => {
+        switch (activeTab) {
+            case 'notSealed':
+                return unsealedCapsules;
+            case 'sealed':
+                return sealedCapsules;
+            case 'opened':
+                return openedCapsules;
+            default:
+                return capsules;
+        }
     };
 
-    const handleView = (capsule) => {
-        window.location.href = `/capsule/view/${capsule._id}`;
-    };
+    /* ---------------- Navigation ---------------- */
+    const handleEdit = (c) =>
+        (window.location.href = `/capsule/assemble/?new=false&capsuleId=${c._id}`);
+
+    const handleAddMemories = (c) =>
+        (window.location.href = `/capsule/memories/${c._id}`);
+
+    const handleView = (c) =>
+        (window.location.href = `/capsule/view/${c._id}`);
 
     /* ---------------- Seal logic ---------------- */
     const handleSeal = (capsule) => {
@@ -83,52 +104,29 @@ export default function TimeCapsulesPage() {
 
     useEffect(() => {
         if (!sealHolding) return;
-
         const start = Date.now();
-        const duration = 5000;
-
         const interval = setInterval(() => {
-            const progress = Math.min(
-                ((Date.now() - start) / duration) * 100,
-                100
-            );
+            const progress = Math.min(((Date.now() - start) / 5000) * 100, 100);
             setSealProgress(progress);
-
-            if (progress >= 100) {
-                clearInterval(interval);
-                finalizeSeal();
-            }
+            if (progress >= 100) finalizeSeal();
         }, 50);
-
         return () => clearInterval(interval);
     }, [sealHolding]);
 
     const finalizeSeal = async () => {
         try {
-            await api.put(`/timecapsule/${sealTarget._id}`, {isSealed: true});
+            await api.put(`/timecapsule/${sealTarget._id}`, { isSealed: true });
             toast.success('Capsule sealed successfully.');
             setSealTarget(null);
             setSealHolding(false);
             setSealProgress(0);
             fetchCapsules();
-        } catch (err) {
-            toast.error(err?.message || 'Failed to seal capsule');
-            setSealHolding(false);
+        } catch {
+            toast.error('Failed to seal capsule');
         }
     };
 
     /* ---------------- Open logic ---------------- */
-    const canOpenCapsule = (capsule) => {
-        if (!capsule.isSealed || capsule.isOpened) return false;
-        if (capsule.isEventRelated) return false;
-
-        if (new Date(capsule?.openAt) < new Date()) {
-            return true;
-        }
-
-        return false;
-    };
-
     const handleOpenRequest = (capsule) => {
         setOpenTarget(capsule);
         setOpenHolding(false);
@@ -137,44 +135,29 @@ export default function TimeCapsulesPage() {
 
     useEffect(() => {
         if (!openHolding) return;
-
         const start = Date.now();
-        const duration = 5000;
-
         const interval = setInterval(() => {
-            const progress = Math.min(
-                ((Date.now() - start) / duration) * 100,
-                100
-            );
+            const progress = Math.min(((Date.now() - start) / 5000) * 100, 100);
             setOpenProgress(progress);
-
-            if (progress >= 100) {
-                clearInterval(interval);
-                finalizeOpen();
-            }
+            if (progress >= 100) finalizeOpen();
         }, 50);
-
         return () => clearInterval(interval);
     }, [openHolding]);
 
     const finalizeOpen = async () => {
         try {
-            const {success} = await api.post(
+            const { success } = await api.post(
                 `/timecapsule/open/${openTarget._id}`
             );
-
             if (success) {
-                toast.success(
-                    'The capsule is finally opened. You may now view the memories.'
-                );
+                toast.success('Capsule opened. Memories await.');
                 setOpenTarget(null);
                 setOpenHolding(false);
                 setOpenProgress(0);
                 fetchCapsules();
             }
-        } catch (err) {
-            toast.error(err?.message || 'Failed to open capsule');
-            setOpenHolding(false);
+        } catch {
+            toast.error('Failed to open capsule');
         }
     };
 
@@ -183,7 +166,7 @@ export default function TimeCapsulesPage() {
         <div className="min-h-screen bg-background">
             {/* Header */}
             <div className="border-b border-border bg-card/30">
-                <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between">
+                <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
                     <div>
                         <h1 className="text-4xl font-serif font-bold">
                             My Time Capsules
@@ -207,60 +190,120 @@ export default function TimeCapsulesPage() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-8 space-y-16">
-                {/* 1️⃣ Waiting to be sealed */}
-                {unsealedCapsules.length > 0 && (
+            {/* Tabs */}
+            <div className="max-w-7xl mx-auto px-6 pt-6">
+                <div className="flex gap-3">
+                    {TABS.map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                                activeTab === tab
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted text-muted-foreground hover:bg-muted/70'
+                            }`}
+                        >
+                            {tab === 'all'
+                                ? 'All'
+                                : tab === 'notSealed'
+                                    ? 'Not Sealed'
+                                    : tab === 'sealed'
+                                        ? 'Sealed'
+                                        : 'Opened'}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Capsules Grid */}
+            <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
+                {/* ALL TAB → grouped with headings */}
+                {activeTab === 'all' && (
+                    <>
+                        {unsealedCapsules.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-serif font-bold mb-6">
+                                    Waiting to be Sealed
+                                </h2>
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    {unsealedCapsules.map((c) => (
+                                        <TimeCapsuleCard
+                                            key={c._id}
+                                            capsule={c}
+                                            onEdit={handleEdit}
+                                            onAddMemories={handleAddMemories}
+                                            onSeal={handleSeal}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {sealedCapsules.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-serif font-bold mb-6">
+                                    Sealed & Waiting
+                                </h2>
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    {sealedCapsules.map((c) => (
+                                        <TimeCapsuleCard
+                                            key={c._id}
+                                            capsule={c}
+                                            onOpen={
+                                                canOpenCapsule(c)
+                                                    ? () => handleOpenRequest(c)
+                                                    : undefined
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {openedCapsules.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-serif font-bold mb-6">
+                                    Opened & Revealed
+                                </h2>
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    {openedCapsules.map((c) => (
+                                        <TimeCapsuleCard
+                                            key={c._id}
+                                            capsule={c}
+                                            onOpen={handleView}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+                    </>
+                )}
+
+                {/* OTHER TABS → single heading */}
+                {activeTab !== 'all' && (
                     <section>
-                        <h2 className="text-2xl font-serif font-bold mb-6">
-                            Waiting to be Sealed
+                        <h2 className="text-2xl font-serif font-bold mb-6 capitalize">
+                            {activeTab === 'notSealed'
+                                ? 'Not Sealed Capsules'
+                                : activeTab === 'sealed'
+                                    ? 'Sealed Capsules'
+                                    : 'Opened Capsules'}
                         </h2>
+
                         <div className="grid md:grid-cols-3 gap-6">
-                            {unsealedCapsules.map((c) => (
+                            {getVisibleCapsules().map((c) => (
                                 <TimeCapsuleCard
                                     key={c._id}
                                     capsule={c}
                                     onEdit={handleEdit}
                                     onAddMemories={handleAddMemories}
                                     onSeal={handleSeal}
-                                />
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {/* 2️⃣ Opened */}
-                {openedCapsules.length > 0 && (
-                    <section>
-                        <h2 className="text-2xl font-serif font-bold mb-6">
-                            Opened & Revealed
-                        </h2>
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {openedCapsules.map((c) => (
-                                <TimeCapsuleCard
-                                    key={c._id}
-                                    capsule={c}
-                                    onOpen={handleView}
-                                />
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {/* 3️⃣ Sealed but not opened */}
-                {sealedCapsules.length > 0 && (
-                    <section>
-                        <h2 className="text-2xl font-serif font-bold mb-6">
-                            Sealed & Waiting
-                        </h2>
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {sealedCapsules.map((c) => (
-                                <TimeCapsuleCard
-                                    key={c._id}
-                                    capsule={c}
                                     onOpen={
-                                        canOpenCapsule(c)
-                                            ? () => handleOpenRequest(c)
-                                            : undefined
+                                        c.isOpened
+                                            ? handleView
+                                            : canOpenCapsule(c)
+                                                ? () => handleOpenRequest(c)
+                                                : undefined
                                     }
                                 />
                             ))}
@@ -268,6 +311,7 @@ export default function TimeCapsulesPage() {
                     </section>
                 )}
             </div>
+
 
             {/* ---------------- Seal Modal ---------------- */}
             {sealTarget && (
@@ -304,21 +348,20 @@ export default function TimeCapsulesPage() {
     );
 }
 
-/* ---------------- Shared Hold Modal ---------------- */
+/* ---------------- Hold Modal ---------------- */
 function HoldModal({
-    title,
-    subtitle,
-    progress,
-    onHoldStart,
-    onHoldEnd,
-    onCancel,
-    icon,
-}) {
+                       title,
+                       subtitle,
+                       progress,
+                       onHoldStart,
+                       onHoldEnd,
+                       onCancel,
+                       icon,
+                   }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
             <div className="bg-card border border-border rounded-xl p-8 max-w-md text-center space-y-6">
                 <div className="mx-auto">{icon}</div>
-
                 <h2 className="text-2xl font-serif font-bold">{title}</h2>
                 <p className="text-sm text-muted-foreground">{subtitle}</p>
 
@@ -331,7 +374,7 @@ function HoldModal({
                     <div className="h-14 rounded-lg bg-muted overflow-hidden">
                         <div
                             className="h-full bg-primary transition-all"
-                            style={{width: `${progress}%`}}
+                            style={{ width: `${progress}%` }}
                         />
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center font-serif">

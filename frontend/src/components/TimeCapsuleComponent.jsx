@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Clock,
     Lock,
@@ -9,18 +9,25 @@ import {
     Users,
     Calendar,
     CheckCircle,
+    Info,
 } from 'lucide-react';
-import {Button} from '@/components/ui/button';
-import {Card} from '@/components/ui/card';
-import {Badge} from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+import EmptyCapsule from '@/assets/empty-capsule.png';
+import FullCapsule from '@/assets/full_capsule.png';
+import LockedCapsule from '@/assets/locked_capsule.png';
 
 export default function TimeCapsuleCard({
-    capsule,
-    onEdit,
-    onAddMemories,
-    onSeal,
-    onOpen,
-}) {
+                                            capsule,
+                                            onEdit,
+                                            onAddMemories,
+                                            onSeal,
+                                            onOpen,
+                                        }) {
+    const [isHovered, setIsHovered] = useState(false);
+
     const isLocked = capsule.isSealed && !capsule.isOpened;
     const isOpened = capsule.isOpened;
     const canEdit = capsule.isOwner && !capsule.isSealed;
@@ -30,7 +37,7 @@ export default function TimeCapsuleCard({
 
     const isEventBased = capsule.isEventRelated;
 
-    /* ---------------- Date logic (only if NOT event-based) ---------------- */
+    /* ---------------- Date logic ---------------- */
     let formattedDate = null;
     let daysUntil = null;
     let isPast = false;
@@ -47,55 +54,33 @@ export default function TimeCapsuleCard({
         isPast = openDate.getTime() <= Date.now();
     }
 
+    /* ---------------- Capsule Image ---------------- */
+    const capsuleImage = isOpened
+        ? FullCapsule
+        : isLocked
+            ? LockedCapsule
+            : EmptyCapsule;
+
     return (
-        <Card className="relative overflow-hidden border-2 border-border hover:border-primary/50 transition-all duration-300 group">
-            {/* Capsule Shape Background */}
-            <div className="absolute inset-0 pointer-events-none opacity-5">
-                <svg viewBox="0 0 200 300" className="w-full h-full">
-                    <ellipse
-                        cx="100"
-                        cy="80"
-                        rx="80"
-                        ry="80"
-                        fill="currentColor"
-                        className="text-primary"
-                    />
-                    <rect
-                        x="20"
-                        y="80"
-                        width="160"
-                        height="140"
-                        fill="currentColor"
-                        className="text-primary"
-                    />
-                    <ellipse
-                        cx="100"
-                        cy="220"
-                        rx="80"
-                        ry="80"
-                        fill="currentColor"
-                        className="text-primary"
-                    />
-                </svg>
-            </div>
+        <Card
+            className="group relative overflow-visible border border-border bg-transparent hover:border-primary/50 transition-all duration-300"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* Hover Details Popup */}
+            <div
+                className={`absolute -top-2 left-1/2 -translate-x-1/2 w-80 bg-card border-2 border-primary/30 rounded-xl p-5 shadow-2xl vintage-glow z-50 transition-all duration-300 ${
+                    isHovered ? 'opacity-100 -translate-y-full' : 'opacity-0 -translate-y-[calc(100%+1rem)] pointer-events-none'
+                }`}
+            >
+                {/* Arrow pointer */}
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-card border-r-2 border-b-2 border-primary/30 rotate-45" />
 
-            {/* Status Indicator */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
-
-            <div className="relative p-6">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div
-                                className={`p-2 rounded-full ${
-                                    isOpened
-                                        ? 'bg-primary/20 vintage-glow'
-                                        : isLocked
-                                          ? 'bg-secondary/20'
-                                          : 'bg-muted'
-                                }`}
-                            >
+                <div className="relative">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
                                 {isOpened ? (
                                     <CheckCircle className="w-5 h-5 text-primary" />
                                 ) : isLocked ? (
@@ -103,153 +88,143 @@ export default function TimeCapsuleCard({
                                 ) : (
                                     <LockOpen className="w-5 h-5 text-muted-foreground" />
                                 )}
+                                <h3 className="font-serif font-bold text-lg text-foreground">
+                                    {capsule.title}
+                                </h3>
                             </div>
 
-                            <h3 className="text-xl font-serif font-bold text-foreground group-hover:text-primary transition-colors">
-                                {capsule.title}
-                            </h3>
+                            <Badge
+                                variant="secondary"
+                                className="bg-primary/10 text-primary border-primary/20"
+                            >
+                                {capsule.theme}
+                            </Badge>
                         </div>
-
-                        <Badge
-                            variant="secondary"
-                            className="bg-primary/10 text-primary border-primary/20 mb-3"
-                        >
-                            {capsule.theme}
-                        </Badge>
                     </div>
 
-                    {canEdit && (
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="hover:bg-primary/10 hover:text-primary"
-                            onClick={() => onEdit(capsule)}
-                        >
-                            <Edit className="w-4 h-4" />
-                        </Button>
-                    )}
-                </div>
+                    {/* Description */}
+                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                        {capsule.description}
+                    </p>
 
-                {/* Description */}
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                    {capsule.description}
-                </p>
-
-                {/* Metadata */}
-                <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                    {/* Date / Event */}
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        {isEventBased ? (
-                            <span className="italic">
-                                Event:{' '}
-                                <span className="text-foreground font-medium capitalize">
-                                    {capsule.event}
-                                </span>
+                    {/* Metadata */}
+                    <div className="space-y-2.5 text-sm mb-4 bg-muted/30 rounded-lg p-3">
+                        <div className="flex items-center gap-2 text-foreground">
+                            <Users className="w-4 h-4 text-primary" />
+                            <span>
+                                {capsule.contributors.length} contributor
+                                {capsule.contributors.length !== 1 ? 's' : ''}
                             </span>
-                        ) : (
-                            <span>{formattedDate}</span>
-                        )}
-                    </div>
-
-                    {/* Contributors */}
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                        <Users className="w-4 h-4" />
-                        <span>
-                            {capsule.contributors.length} contributor
-                            {capsule.contributors.length !== 1 ? 's' : ''}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Status Line */}
-                <div className="mb-4">
-                    {isOpened ? (
-                        <div className="flex items-center gap-2 text-primary font-medium">
-                            <Sparkles className="w-4 h-4" />
-                            <span>Opened & Revealed</span>
                         </div>
-                    ) : isLocked ? (
+
+                        {/* Status */}
                         <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-secondary" />
-                            {isEventBased ? (
-                                <span className="text-muted-foreground italic">
-                                    Opens when{' '}
-                                    <span className="text-foreground font-medium capitalize">
-                                        {capsule.event}
-                                    </span>{' '}
-                                    happens
-                                </span>
-                            ) : isPast ? (
-                                <span className="text-secondary font-medium">
-                                    Ready to open!
-                                </span>
+                            {isOpened ? (
+                                <>
+                                    <Sparkles className="w-4 h-4 text-primary" />
+                                    <span className="text-primary font-medium">Opened & Revealed</span>
+                                </>
+                            ) : isLocked ? (
+                                <>
+                                    <Clock className="w-4 h-4 text-secondary" />
+                                    {isEventBased ? (
+                                        <span className="italic">Opens on {capsule.event}</span>
+                                    ) : isPast ? (
+                                        <span className="text-secondary font-medium">Ready to open!</span>
+                                    ) : (
+                                        <span>Opens in <strong className="text-primary">{daysUntil}</strong> days</span>
+                                    )}
+                                </>
                             ) : (
-                                <span className="text-muted-foreground">
-                                    Opens in{' '}
-                                    <span className="text-foreground font-medium">
-                                        {daysUntil}
-                                    </span>{' '}
-                                    days
-                                </span>
+                                <>
+                                    <Info className="w-4 h-4 text-muted-foreground" />
+                                    <span className="italic text-muted-foreground">Not sealed yet</span>
+                                </>
                             )}
                         </div>
-                    ) : (
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <LockOpen className="w-4 h-4" />
-                            <span className="italic">Not sealed yet</span>
+                    </div>
+
+                    {/* Owner Badge */}
+                    {capsule.isOwner && (
+                        <div className="flex justify-end">
+                            <Badge
+                                variant="outline"
+                                className="text-xs border-primary/40 text-primary bg-primary/5"
+                            >
+                                You own this
+                            </Badge>
                         </div>
                     )}
                 </div>
+            </div>
 
-                {/* Wax Seal */}
-                {isLocked && (
-                    <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity">
-                        <div className="w-16 h-16 rounded-full bg-destructive/30 flex items-center justify-center border-2 border-destructive/50">
-                            <Lock className="w-8 h-8 text-destructive" />
-                        </div>
-                    </div>
-                )}
+            {/* Capsule Image - Direct on page */}
+            <div className="relative h-72 flex items-center justify-center py-8">
+                <img
+                    src={capsuleImage}
+                    alt="Time Capsule"
+                    className="h-64 object-contain transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-2xl drop-shadow-xl"
+                    style={{
+                        filter: isHovered ? 'brightness(1.1) drop-shadow(0 0 30px rgba(211, 167, 89, 0.4))' : 'none'
+                    }}
+                />
+            </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 flex-wrap pt-4 border-t border-border">
+            {/* Title and Date/Event - Always Visible */}
+            <div className="px-6 pb-2 text-center border-t border-border/50 pt-4">
+                <h3 className="font-serif font-bold text-xl text-foreground mb-2">
+                    {capsule.title}
+                </h3>
+
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    {isEventBased ? (
+                        <span className="italic capitalize">
+                            Event: <span className="text-foreground font-medium">{capsule.event}</span>
+                        </span>
+                    ) : (
+                        <span className="text-foreground">{formattedDate}</span>
+                    )}
+                </div>
+
+                {/* Action Buttons - Always Visible */}
+                <div className="flex gap-2 justify-center flex-wrap">
                     {isOpened ? (
                         <Button
-                            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 vintage-glow"
                             onClick={() => onOpen(capsule)}
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
                             View Memories
                         </Button>
                     ) : isLocked ? (
-                        <>
-                            {!isEventBased && isPast && (
-                                <Button
-                                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground vintage-glow"
-                                    onClick={() => onOpen(capsule)}
-                                >
-                                    <LockOpen className="w-4 h-4 mr-2" />
-                                    Open Capsule
-                                </Button>
-                            )}
-
-                            {(!isPast || isEventBased) && (
-                                <Button
-                                    variant="outline"
-                                    className="flex-1 border-border cursor-not-allowed opacity-50"
-                                    disabled
-                                >
-                                    <Lock className="w-4 h-4 mr-2" />
-                                    Sealed
-                                </Button>
-                            )}
-                        </>
+                        !isEventBased &&
+                        isPast && (
+                            <Button
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 vintage-glow animate-pulse"
+                                onClick={() => onOpen(capsule)}
+                            >
+                                <LockOpen className="w-4 h-4 mr-2" />
+                                Open Capsule
+                            </Button>
+                        )
                     ) : (
                         <>
+                            {canEdit && (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="border border-border hover:border-primary/50"
+                                    onClick={() => onEdit(capsule)}
+                                >
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Edit
+                                </Button>
+                            )}
                             {canAddMemories && (
                                 <Button
                                     variant="outline"
-                                    className="flex-1 border-primary/50 hover:bg-primary/10 hover:text-primary"
+                                    className="border-primary/30 hover:bg-primary/10"
                                     onClick={() => onAddMemories(capsule)}
                                 >
                                     <Plus className="w-4 h-4 mr-2" />
@@ -258,7 +233,7 @@ export default function TimeCapsuleCard({
                             )}
                             {canSeal && (
                                 <Button
-                                    className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
                                     onClick={() => onSeal(capsule)}
                                 >
                                     <Lock className="w-4 h-4 mr-2" />
@@ -268,18 +243,6 @@ export default function TimeCapsuleCard({
                         </>
                     )}
                 </div>
-
-                {/* Owner Badge */}
-                {capsule.isOwner && (
-                    <div className="absolute bottom-2 right-2">
-                        <Badge
-                            variant="outline"
-                            className="text-xs border-primary/30 text-primary/70"
-                        >
-                            Owner
-                        </Badge>
-                    </div>
-                )}
             </div>
         </Card>
     );
