@@ -1,15 +1,11 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 
 const audio = new Audio('/sounds/time_machine.mp3');
 
-export default function TimeTravelOverlay({
-                                              duration = 5000,
-                                              onFinish,
-                                          }) {
+export default function TimeTravelOverlay({duration = 5000, onFinish}) {
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
-
         audio.volume = 0.6;
 
         audio.play().catch(() => {

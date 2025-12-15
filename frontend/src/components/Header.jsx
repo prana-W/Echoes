@@ -87,25 +87,37 @@ export default function Header() {
                     <nav className="flex items-center gap-1">
                         {user ? (
                             <>
-                                <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                <Link
+                                    to="/"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200"
+                                >
                                     <Home className="w-4 h-4" />
                                     <span className="hidden md:inline font-medium text-sm">
                                         Home
                                     </span>
                                 </Link>
-                                <Link to="/capsule" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                <Link
+                                    to="/capsule"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200"
+                                >
                                     <Package className="w-4 h-4" />
                                     <span className="hidden md:inline font-medium text-sm">
                                         Capsules
                                     </span>
                                 </Link>
-                                <Link to="/relations" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                <Link
+                                    to="/relations"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200"
+                                >
                                     <Users className="w-4 h-4" />
                                     <span className="hidden lg:inline font-medium text-sm">
                                         Family
                                     </span>
                                 </Link>
-                                <Link to="/event" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                <Link
+                                    to="/event"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200"
+                                >
                                     <Calendar className="w-4 h-4" />
                                     <span className="hidden md:inline font-medium text-sm">
                                         Event
@@ -123,14 +135,26 @@ export default function Header() {
                             </>
                         ) : (
                             <>
-                                <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                <Link
+                                    to="/"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200"
+                                >
                                     <Home className="w-4 h-4" />
-                                    <span className="hidden sm:inline font-medium text-sm" onClick={() => navigate('/')}>
+                                    <span
+                                        className="hidden sm:inline font-medium text-sm"
+                                        onClick={() => navigate('/')}
+                                    >
                                         Home
                                     </span>
                                 </Link>
-                                <Link to="/#about" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
-                                    <span className="hidden sm:inline font-medium text-sm" onClick={() => navigate('/#about')}>
+                                <Link
+                                    to="/#about"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200"
+                                >
+                                    <span
+                                        className="hidden sm:inline font-medium text-sm"
+                                        onClick={() => navigate('/#about')}
+                                    >
                                         About
                                     </span>
                                 </Link>

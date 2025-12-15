@@ -51,7 +51,6 @@ export default function TimeCapsulesPage() {
         return () => clearInterval(intervalId);
     }, []);
 
-
     /* ---------------- Fetch ---------------- */
     const fetchCapsules = async () => {
         setLoading(true);
@@ -117,7 +116,6 @@ export default function TimeCapsulesPage() {
         setTravelTo(`/capsule/view/${c._id}`);
     };
 
-
     /* ---------------- Seal logic ---------------- */
     const handleSeal = (capsule) => {
         setSealTarget(capsule);
@@ -140,10 +138,7 @@ export default function TimeCapsulesPage() {
         const start = Date.now();
 
         const interval = setInterval(() => {
-            const progress = Math.min(
-                ((Date.now() - start) / 5000) * 100,
-                100
-            );
+            const progress = Math.min(((Date.now() - start) / 5000) * 100, 100);
 
             setSealProgress(progress);
 
@@ -161,7 +156,6 @@ export default function TimeCapsulesPage() {
             sealHoldSound.currentTime = 0;
         };
     }, [sealHolding]);
-
 
     const finalizeSeal = async () => {
         try {
@@ -200,10 +194,7 @@ export default function TimeCapsulesPage() {
         const start = Date.now();
 
         const interval = setInterval(() => {
-            const progress = Math.min(
-                ((Date.now() - start) / 5000) * 100,
-                100
-            );
+            const progress = Math.min(((Date.now() - start) / 5000) * 100, 100);
 
             setOpenProgress(progress);
 
@@ -221,7 +212,6 @@ export default function TimeCapsulesPage() {
             openHoldSound.currentTime = 0;
         };
     }, [openHolding]);
-
 
     const finalizeOpen = async () => {
         try {
@@ -243,198 +233,202 @@ export default function TimeCapsulesPage() {
     /* ---------------- UI ---------------- */
     return (
         <>
-        <div>
-            {travelTo && (
-                <TimeTravelOverlay
-                    onFinish={() => {
-                        navigate(travelTo);
-                    }}
-                />
-            )}
-
-        </div>
+            <div>
+                {travelTo && (
+                    <TimeTravelOverlay
+                        onFinish={() => {
+                            navigate(travelTo);
+                        }}
+                    />
+                )}
+            </div>
 
             <div className="min-h-screen bg-background">
-            {/* Header */}
-            <div className="border-b border-border bg-card/30">
-                <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
-                    <div>
-                        <h1 className="text-4xl font-serif font-bold">
-                            My Time Capsules
-                        </h1>
-                        <p className="text-muted-foreground">
-                            Your memories preserved through time
-                        </p>
-                    </div>
-
-                    <Button
-                        size="lg"
-                        className="bg-primary text-primary-foreground cursor-target"
-                        onClick={() =>
-                            (window.location.href =
-                                '/capsule/assemble?new=true')
-                        }
-                    >
-                        <Plus className="w-5 h-5 mr-2" />
-                        Create Capsule
-                    </Button>
-                </div>
-            </div>
-
-            {/* Tabs */}
-            <div className="max-w-7xl mx-auto px-6 pt-6">
-                <div className="flex gap-3">
-                    {TABS.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                                activeTab === tab
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-muted text-muted-foreground hover:bg-muted/70'
-                            }`}
-                        >
-                            {tab === 'all'
-                                ? 'All'
-                                : tab === 'notSealed'
-                                  ? 'Not Sealed'
-                                  : tab === 'sealed'
-                                    ? 'Sealed'
-                                    : 'Opened'}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Capsules Grid */}
-            <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
-                {/* ALL TAB → grouped with headings */}
-                {activeTab === 'all' && (
-                    <>
-                        {unsealedCapsules.length > 0 && (
-                            <section>
-                                <h2 className="text-2xl font-serif font-bold mb-6">
-                                    Waiting to be Sealed
-                                </h2>
-                                <div className="grid md:grid-cols-3 gap-6">
-                                    {unsealedCapsules.map((c) => (
-                                        <TimeCapsuleCard
-                                            key={c._id}
-                                            capsule={c}
-                                            onEdit={handleEdit}
-                                            onAddMemories={handleAddMemories}
-                                            onSeal={handleSeal}
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {sealedCapsules.length > 0 && (
-                            <section>
-                                <h2 className="text-2xl font-serif font-bold mb-6">
-                                    Sealed & Waiting
-                                </h2>
-                                <div className="grid md:grid-cols-3 gap-6">
-                                    {sealedCapsules.map((c) => (
-                                        <TimeCapsuleCard
-                                            key={c._id}
-                                            capsule={c}
-                                            onOpen={
-                                                canOpenCapsule(c)
-                                                    ? () => handleOpenRequest(c)
-                                                    : undefined
-                                            }
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {openedCapsules.length > 0 && (
-                            <section>
-                                <h2 className="text-2xl font-serif font-bold mb-6">
-                                    Opened & Revealed
-                                </h2>
-                                <div className="grid md:grid-cols-3 gap-6">
-                                    {openedCapsules.map((c) => (
-                                        <TimeCapsuleCard
-                                            key={c._id}
-                                            capsule={c}
-                                            onOpen={handleView}
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-                    </>
-                )}
-
-                {/* OTHER TABS → single heading */}
-                {activeTab !== 'all' && (
-                    <section>
-                        <h2 className="text-2xl font-serif font-bold mb-6 capitalize">
-                            {activeTab === 'notSealed'
-                                ? 'Not Sealed Capsules'
-                                : activeTab === 'sealed'
-                                  ? 'Sealed Capsules'
-                                  : 'Opened Capsules'}
-                        </h2>
-
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {getVisibleCapsules().map((c) => (
-                                <TimeCapsuleCard
-                                    key={c._id}
-                                    capsule={c}
-                                    onEdit={handleEdit}
-                                    onAddMemories={handleAddMemories}
-                                    onSeal={handleSeal}
-                                    onOpen={
-                                        c.isOpened
-                                            ? handleView
-                                            : canOpenCapsule(c)
-                                              ? () => handleOpenRequest(c)
-                                              : undefined
-                                    }
-                                />
-                            ))}
+                {/* Header */}
+                <div className="border-b border-border bg-card/30">
+                    <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+                        <div>
+                            <h1 className="text-4xl font-serif font-bold">
+                                My Time Capsules
+                            </h1>
+                            <p className="text-muted-foreground">
+                                Your memories preserved through time
+                            </p>
                         </div>
-                    </section>
+
+                        <Button
+                            size="lg"
+                            className="bg-primary text-primary-foreground cursor-target"
+                            onClick={() =>
+                                (window.location.href =
+                                    '/capsule/assemble?new=true')
+                            }
+                        >
+                            <Plus className="w-5 h-5 mr-2" />
+                            Create Capsule
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Tabs */}
+                <div className="max-w-7xl mx-auto px-6 pt-6">
+                    <div className="flex gap-3">
+                        {TABS.map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                                    activeTab === tab
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'bg-muted text-muted-foreground hover:bg-muted/70'
+                                }`}
+                            >
+                                {tab === 'all'
+                                    ? 'All'
+                                    : tab === 'notSealed'
+                                      ? 'Not Sealed'
+                                      : tab === 'sealed'
+                                        ? 'Sealed'
+                                        : 'Opened'}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Capsules Grid */}
+                <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
+                    {/* ALL TAB → grouped with headings */}
+                    {activeTab === 'all' && (
+                        <>
+                            {unsealedCapsules.length > 0 && (
+                                <section>
+                                    <h2 className="text-2xl font-serif font-bold mb-6">
+                                        Waiting to be Sealed
+                                    </h2>
+                                    <div className="grid md:grid-cols-3 gap-6">
+                                        {unsealedCapsules.map((c) => (
+                                            <TimeCapsuleCard
+                                                key={c._id}
+                                                capsule={c}
+                                                onEdit={handleEdit}
+                                                onAddMemories={
+                                                    handleAddMemories
+                                                }
+                                                onSeal={handleSeal}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {sealedCapsules.length > 0 && (
+                                <section>
+                                    <h2 className="text-2xl font-serif font-bold mb-6">
+                                        Sealed & Waiting
+                                    </h2>
+                                    <div className="grid md:grid-cols-3 gap-6">
+                                        {sealedCapsules.map((c) => (
+                                            <TimeCapsuleCard
+                                                key={c._id}
+                                                capsule={c}
+                                                onOpen={
+                                                    canOpenCapsule(c)
+                                                        ? () =>
+                                                              handleOpenRequest(
+                                                                  c
+                                                              )
+                                                        : undefined
+                                                }
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {openedCapsules.length > 0 && (
+                                <section>
+                                    <h2 className="text-2xl font-serif font-bold mb-6">
+                                        Opened & Revealed
+                                    </h2>
+                                    <div className="grid md:grid-cols-3 gap-6">
+                                        {openedCapsules.map((c) => (
+                                            <TimeCapsuleCard
+                                                key={c._id}
+                                                capsule={c}
+                                                onOpen={handleView}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+                        </>
+                    )}
+
+                    {/* OTHER TABS → single heading */}
+                    {activeTab !== 'all' && (
+                        <section>
+                            <h2 className="text-2xl font-serif font-bold mb-6 capitalize">
+                                {activeTab === 'notSealed'
+                                    ? 'Not Sealed Capsules'
+                                    : activeTab === 'sealed'
+                                      ? 'Sealed Capsules'
+                                      : 'Opened Capsules'}
+                            </h2>
+
+                            <div className="grid md:grid-cols-3 gap-6">
+                                {getVisibleCapsules().map((c) => (
+                                    <TimeCapsuleCard
+                                        key={c._id}
+                                        capsule={c}
+                                        onEdit={handleEdit}
+                                        onAddMemories={handleAddMemories}
+                                        onSeal={handleSeal}
+                                        onOpen={
+                                            c.isOpened
+                                                ? handleView
+                                                : canOpenCapsule(c)
+                                                  ? () => handleOpenRequest(c)
+                                                  : undefined
+                                        }
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                </div>
+
+                {/* ---------------- Seal Modal ---------------- */}
+                {sealTarget && (
+                    <HoldModal
+                        title="Seal This Capsule?"
+                        subtitle="This action is irreversible."
+                        progress={sealProgress}
+                        onHoldStart={() => setSealHolding(true)}
+                        onHoldEnd={() => {
+                            setSealHolding(false);
+                            setSealProgress(0);
+                        }}
+                        onCancel={() => setSealTarget(null)}
+                        icon={<Lock className="w-12 h-12 text-secondary" />}
+                    />
+                )}
+
+                {/* ---------------- Open Modal ---------------- */}
+                {openTarget && (
+                    <HoldModal
+                        title="Open This Capsule?"
+                        subtitle="Time has arrived. Memories await."
+                        progress={openProgress}
+                        onHoldStart={() => setOpenHolding(true)}
+                        onHoldEnd={() => {
+                            setOpenHolding(false);
+                            setOpenProgress(0);
+                        }}
+                        onCancel={() => setOpenTarget(null)}
+                        icon={<LockOpen className="w-12 h-12 text-primary" />}
+                    />
                 )}
             </div>
-
-            {/* ---------------- Seal Modal ---------------- */}
-            {sealTarget && (
-                <HoldModal
-                    title="Seal This Capsule?"
-                    subtitle="This action is irreversible."
-                    progress={sealProgress}
-                    onHoldStart={() => setSealHolding(true)}
-                    onHoldEnd={() => {
-                        setSealHolding(false);
-                        setSealProgress(0);
-                    }}
-                    onCancel={() => setSealTarget(null)}
-                    icon={<Lock className="w-12 h-12 text-secondary" />}
-                />
-            )}
-
-            {/* ---------------- Open Modal ---------------- */}
-            {openTarget && (
-                <HoldModal
-                    title="Open This Capsule?"
-                    subtitle="Time has arrived. Memories await."
-                    progress={openProgress}
-                    onHoldStart={() => setOpenHolding(true)}
-                    onHoldEnd={() => {
-                        setOpenHolding(false);
-                        setOpenProgress(0);
-                    }}
-                    onCancel={() => setOpenTarget(null)}
-                    icon={<LockOpen className="w-12 h-12 text-primary" />}
-                />
-            )}
-        </div>
         </>
     );
 }
