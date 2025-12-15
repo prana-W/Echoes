@@ -1,6 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import {SERVER_TIME} from '../constants/constants.js';
 
 const uploadDir = 'uploads';
 
@@ -19,7 +20,7 @@ const storage = multer.diskStorage({
 
         const random = Math.floor(Math.random() * 1e9);
 
-        const filename = `${timecapsuleId}_${userId}_${Date.now()}_${random}${path.extname(
+        const filename = `${timecapsuleId}_${userId}_${SERVER_TIME()}_${random}${path.extname(
             file.originalname
         )}`;
 
