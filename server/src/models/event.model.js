@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import {eventList} from '../constants/eventsList.js';
+import {SERVER_TIME} from '../constants/constants.js';
 
 const eventSchema = new mongoose.Schema(
     {
@@ -17,7 +18,7 @@ const eventSchema = new mongoose.Schema(
 
         eventTime: {
             type: Date,
-            default: Date.now,
+            default: SERVER_TIME(),
         },
     },
     {

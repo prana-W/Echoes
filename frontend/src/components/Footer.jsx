@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApi } from '@/hooks';
 import { AlertTriangle } from 'lucide-react';
 
-const DEMO_KEY = 'echoes-demo-warning-shown';
+const DEMO_KEY = 'vercel_warning_shown';
 
 const Footer = () => {
     const [pageViews, setPageViews] = useState(0);
@@ -68,7 +68,7 @@ const Footer = () => {
                 <div className="fixed inset-0 z-[99999] bg-black/80 flex items-center justify-center px-6">
                     <div className="max-w-lg w-full bg-card border border-border rounded-2xl p-8 text-center space-y-6 vintage-shadow">
                         <div className="flex justify-center">
-                            <AlertTriangle className="w-12 h-12 text-yellow-400 animate-pulse" />
+                            <AlertTriangle className="w-12 h-12 text-red-500 animate-pulse" />
                         </div>
 
                         <h2 className="text-2xl font-serif font-bold text-foreground">
@@ -76,23 +76,41 @@ const Footer = () => {
                         </h2>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            The <strong>frontend</strong> of this application is deployed on{" "}
-                            <strong>Vercel</strong>, while the <strong>backend</strong> is hosted
-                            on <strong>Render</strong>.
-                            <br />
-                            <br />
-                            The backend may take up to <strong>~1 minute</strong> to wake up
-                            if it has been idle. Please be patient during the initial load.
+                            This application uses a <strong>React frontend deployed on Vercel</strong>{" "}
+                            and a <strong>Node.js backend hosted on Render</strong>.
                         </p>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            You can confirm that the server is active once the{" "}
-                            <strong>Page Views</strong> count in the footer starts updating.
+                            Due to several <span className="text-red-500 font-medium">platform-level limitations</span>,
+                            the web app may <span className="text-red-500 font-medium">not behave as originally intended</span>{" "}
+                            in this environment.
                         </p>
 
-                        <p className="text-muted-foreground">
-                            Some features (such as image uploads, emails, or background jobs)
-                            may not work reliably in this demo environment.
+                        <div className="text-left text-sm space-y-2">
+                            <p className="text-red-500">
+                                • Server ↔ Client timezone mismatches
+                            </p>
+                            <p className="text-red-500">
+                                • No server-side file storage
+                            </p>
+                            <p className="text-red-500">
+                                • Long backend wake-up times (cold starts)
+                            </p>
+                            <p className="text-red-500">
+                                • Server sleeping causes CRON jobs to fail or skip
+                            </p>
+                        </div>
+
+                        <p className="text-muted-foreground leading-relaxed">
+                            Because of these and other unintended issues, almost every feature may behave
+                            unpredictably or not work at all.
+                        </p>
+
+                        <p className="text-muted-foreground leading-relaxed">
+                            To experience the application <strong>as it was designed</strong>,
+                            we <span className="text-red-500 font-medium">strongly recommend</span>{" "}
+                            running the project locally using Docker.
+                            The setup requires just <strong>one command</strong>, available in the repository.
                         </p>
 
                         <div className="space-y-3 pt-2">
@@ -102,20 +120,19 @@ const Footer = () => {
                                 rel="noopener noreferrer"
                                 className="block w-full px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition"
                             >
-                                Experience the Best — Run Locally via Docker
+                                Run Locally (Recommended)
                             </a>
 
                             <button
                                 onClick={handleCloseDemoWarning}
                                 className="w-full px-6 py-3 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition"
                             >
-                                Accept Possible Limitations & Continue
+                                Explore a Bit Anyway
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-
 
             {/* ---------------- FOOTER ---------------- */}
             <footer className="border-t border-border py-6 px-6">

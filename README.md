@@ -127,6 +127,58 @@ http://localhost:5173
 
 ---
 
+Here’s a **clean, professional README-ready version** of your **Demo & Media** section that:
+
+* Shows **video first**
+* Displays **5 primary screenshots**
+* Uses a **collapsible section** to reveal more images later
+* Is GitHub-friendly (pure Markdown)
+* Looks polished even before you add real assets
+
+You can copy-paste this directly.
+
+---
+
+## 🎬 Demo & Media
+
+### 📹 Video Demo
+
+> 🎥 **Watch Echoes in action**
+
+* **Hackathon Pitch Video**
+  👉 *(link coming soon)*
+
+* **Full App Walkthrough**
+  👉 *(link coming soon)*
+
+<details>
+<summary><strong>ℹ️ Note</strong></summary>
+
+The demo videos showcase the complete local (Docker-based) setup, including backend features that may not function reliably in the hosted demo.
+
+</details>
+
+---
+
+### 🖼️ Screenshots
+
+|                                      |                                        |
+|--------------------------------------|----------------------------------------|
+| **Landing Page**                     | **Online Users and Analytics**         |
+| ![Landing Page](demo_files/hero.png) | ![Analytics](demo_files/analytics.png) |
+
+|                                        |                                           |
+|----------------------------------------|-------------------------------------------|
+| **Reminder Mail via CRON**             | **Sealed Capsule**                        |
+| ![Reminder Mail](demo_files/mail.jpeg) | ![Capsule](demo_files/sealed_capsule.png) |
+
+|                                            |                                      |
+|--------------------------------------------|--------------------------------------|
+| **Time Travel**                            | **Echoes of the Past**               |
+| ![Time Travel](demo_files/to_the_past.png) | ![Memories](demo_files/memories.png) |
+
+---
+
 ## ✨ Core Features
 
 ### 🕰️ Time Capsules
@@ -225,23 +277,6 @@ All content is preserved securely until the capsule opens.
 * Frontend guarded with graceful fallbacks & overlays
 
 ---
-
-## 🎬 Demo & Media
-
-> 📌 **Add your demos here**
-
-### 📹 Video Demo
-
-* [ ] Hackathon Pitch Video
-* [ ] Full App Walkthrough
-
-### 🖼️ Screenshots
-
-* [ ] Landing Page
-* [ ] Capsule Creation
-* [ ] Memory Upload Vault
-* [ ] Capsule Opening Experience
-* [ ] Real-Time Presence UI
 
 ---
 
