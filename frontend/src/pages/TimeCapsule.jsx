@@ -13,6 +13,10 @@ const sealHoldSound = new Audio('/sounds/slash.mp3');
 sealHoldSound.loop = true;
 sealHoldSound.volume = 0.5;
 
+const openHoldSound = new Audio('/sounds/slash.mp3');
+openHoldSound.loop = true;
+openHoldSound.volume = 0.5;
+
 export default function TimeCapsulesPage() {
     const api = useApi();
 
@@ -37,7 +41,16 @@ export default function TimeCapsulesPage() {
 
     useEffect(() => {
         fetchCapsules();
+
+        // fetch every 10 seconds
+        const intervalId = setInterval(() => {
+            fetchCapsules();
+        }, 10000);
+
+        // cleanup on unmount
+        return () => clearInterval(intervalId);
     }, []);
+
 
     /* ---------------- Fetch ---------------- */
     const fetchCapsules = async () => {
@@ -173,15 +186,42 @@ export default function TimeCapsulesPage() {
     };
 
     useEffect(() => {
-        if (!openHolding) return;
+        if (!openHolding) {
+            // Stop sound immediately when user releases
+            openHoldSound.pause();
+            openHoldSound.currentTime = 0;
+            return;
+        }
+
+        // Start sound
+        openHoldSound.currentTime = 0;
+        openHoldSound.play().catch(() => {});
+
         const start = Date.now();
+
         const interval = setInterval(() => {
-            const progress = Math.min(((Date.now() - start) / 5000) * 100, 100);
+            const progress = Math.min(
+                ((Date.now() - start) / 5000) * 100,
+                100
+            );
+
             setOpenProgress(progress);
-            if (progress >= 100) finalizeOpen();
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                openHoldSound.pause();
+                openHoldSound.currentTime = 0;
+                finalizeOpen(); // 👈 success
+            }
         }, 50);
-        return () => clearInterval(interval);
+
+        return () => {
+            clearInterval(interval);
+            openHoldSound.pause();
+            openHoldSound.currentTime = 0;
+        };
     }, [openHolding]);
+
 
     const finalizeOpen = async () => {
         try {
