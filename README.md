@@ -23,6 +23,7 @@ This is the **easiest and recommended way** to run the complete app (frontend + 
 
 ```bash
 git clone git@github.com:prana-W/Echoes.git
+# git clone https://github.com/prana-W/Echoes.git
 cd Echoes
 ```
 
@@ -61,6 +62,7 @@ Use this only if you **don’t want Docker**.
 
 ```bash
 git clone git@github.com:prana-W/Echoes.git
+# git clone https://github.com/prana-W/Echoes.git
 cd Echoes
 ```
 
