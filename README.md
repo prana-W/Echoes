@@ -6,18 +6,65 @@ Echoes allows users to preserve memories, seal them in time, and relive them in 
 
 ---
 
-## 🚀 Getting Started (Local Setup)
+## 🚀 Getting Started
 
 > ⚠️ **Important**
->  
-> The live deployment on **Vercel is frontend-only (DEMO)**.  
-> To fully experience Echoes (emails, real-time presence, uploads, cron jobs), you must run it **locally with the backend**.
+>
+> The live deployment on **Vercel is frontend-only (DEMO)**.
+> To fully experience **Echoes** (emails, real-time presence, uploads, cron jobs), you must run it **locally with the backend**.
+
+---
+
+## 🐳 Recommended: Run with Docker (One Command)
+
+This is the **easiest and recommended way** to run the complete app (frontend + backend + MongoDB).
 
 ### 1️⃣ Clone the Repository
+
 ```bash
 git clone git@github.com:prana-W/Echoes.git
-cd echoes
-````
+cd Echoes
+```
+
+### 2️⃣ Start Everything with Docker
+
+```bash
+docker compose up --build
+```
+
+Docker will:
+
+* Build the **frontend**
+* Build the **backend**
+* Start **MongoDB**
+* Automatically connect all services
+
+### 3️⃣ Open the App
+
+```text
+http://localhost:5173
+```
+
+✅ No manual installs
+✅ No environment setup
+✅ No separate terminals
+
+---
+
+## 🛠️ Manual Local Setup (Without Docker)
+
+Use this only if you **don’t want Docker**.
+
+---
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone git@github.com:prana-W/Echoes.git
+cd Echoes
+```
+
+---
 
 ### 2️⃣ Install Dependencies
 
@@ -31,9 +78,12 @@ cd ../server
 npm install
 ```
 
+---
+
 ### 3️⃣ Environment Variables
 
-Create `.env` files for both frontend and backend (don't add/remove/modify) anything.
+Create `.env` files for both frontend and backend
+⚠️ **Do not add / remove / modify any variables**
 
 #### Backend (`server/.env`)
 
@@ -55,6 +105,8 @@ VITE_SERVER_URL=http://localhost:8000/api/v1
 VITE_BASE_SERVER_URL=http://localhost:8000
 ```
 
+---
+
 ### 4️⃣ Run the App
 
 ```bash
@@ -65,6 +117,12 @@ npm run dev
 # frontend
 cd client
 npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:5173
 ```
 
 ---
