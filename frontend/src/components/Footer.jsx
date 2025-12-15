@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useApi } from '@/hooks';
-import { AlertTriangle } from 'lucide-react';
+import {useEffect, useState} from 'react';
+import {useApi} from '@/hooks';
+import {AlertTriangle} from 'lucide-react';
 
 const DEMO_KEY = 'vercel_warning_shown';
 
@@ -15,7 +15,7 @@ const Footer = () => {
     useEffect(() => {
         const updateVisitors = async () => {
             try {
-                const { data } = await api.post('/visitors');
+                const {data} = await api.post('/visitors');
                 setPageViews(data?.count || 0);
             } catch (err) {
                 console.error('Visitor update failed', err);
@@ -76,13 +76,21 @@ const Footer = () => {
                         </h2>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            This application uses a <strong>React frontend deployed on Vercel</strong>{" "}
-                            and a <strong>Node.js backend hosted on Render</strong>.
+                            This application uses a{' '}
+                            <strong>React frontend deployed on Vercel</strong>{' '}
+                            and a{' '}
+                            <strong>Node.js backend hosted on Render</strong>.
                         </p>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            Due to several <span className="text-red-500 font-medium">platform-level limitations</span>,
-                            the web app may <span className="text-red-500 font-medium">not behave as originally intended</span>{" "}
+                            Due to several{' '}
+                            <span className="text-red-500 font-medium">
+                                platform-level limitations
+                            </span>
+                            , the web app may{' '}
+                            <span className="text-red-500 font-medium">
+                                not behave as originally intended
+                            </span>{' '}
                             in this environment.
                         </p>
 
@@ -97,20 +105,26 @@ const Footer = () => {
                                 • Long backend wake-up times (cold starts)
                             </p>
                             <p className="text-red-500">
-                                • Server sleeping causes CRON jobs to fail or skip
+                                • Server sleeping causes CRON jobs to fail or
+                                skip
                             </p>
                         </div>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            Because of these and other unintended issues, almost every feature may behave
-                            unpredictably or not work at all.
+                            Because of these and other unintended issues, almost
+                            every feature may behave unpredictably or not work
+                            at all.
                         </p>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            To experience the application <strong>as it was designed</strong>,
-                            we <span className="text-red-500 font-medium">strongly recommend</span>{" "}
-                            running the project locally using Docker.
-                            The setup requires just <strong>one command</strong>, available in the repository.
+                            To experience the application{' '}
+                            <strong>as it was designed</strong>, we{' '}
+                            <span className="text-red-500 font-medium">
+                                strongly recommend
+                            </span>{' '}
+                            running the project locally using Docker. The setup
+                            requires just <strong>one command</strong>,
+                            available in the repository.
                         </p>
 
                         <div className="space-y-3 pt-2">
@@ -137,7 +151,6 @@ const Footer = () => {
             {/* ---------------- FOOTER ---------------- */}
             <footer className="border-t border-border py-6 px-6">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm">
-
                     {/* Left - Page Views */}
                     <div className="flex flex-col items-center md:items-start gap-1">
                         <div>

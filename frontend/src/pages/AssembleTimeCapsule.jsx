@@ -7,7 +7,7 @@ import {Card} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
-import { RefreshCcw } from 'lucide-react';
+import {RefreshCcw} from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -239,8 +239,9 @@ const AssembleCapsule = () => {
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Info className="w-4 h-4" />
                             <span>
-            Contributors can add memories and open the capsule once the time arrives.
-        </span>
+                                Contributors can add memories and open the
+                                capsule once the time arrives.
+                            </span>
                         </div>
 
                         {relations.map((rel) => (
@@ -253,14 +254,16 @@ const AssembleCapsule = () => {
                                     className="accent-primary scale-110"
                                     checked={contributors.includes(rel.to._id)}
                                     onChange={() =>
-                                        toggleSelection(rel.to._id, setContributors)
+                                        toggleSelection(
+                                            rel.to._id,
+                                            setContributors
+                                        )
                                     }
                                 />
                                 {rel.to.name}
                             </label>
                         ))}
                     </Card>
-
 
                     <Card className="p-5 bg-muted/40 space-y-3">
                         {/* Header */}
@@ -282,8 +285,9 @@ const AssembleCapsule = () => {
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Info className="w-4 h-4" />
                             <span>
-            Recipients can only read memories once the capsule is opened.
-        </span>
+                                Recipients can only read memories once the
+                                capsule is opened.
+                            </span>
                         </div>
 
                         {relations.map((rel) => (
@@ -296,15 +300,16 @@ const AssembleCapsule = () => {
                                     className="accent-secondary scale-110"
                                     checked={recipients.includes(rel.to._id)}
                                     onChange={() =>
-                                        toggleSelection(rel.to._id, setRecipients)
+                                        toggleSelection(
+                                            rel.to._id,
+                                            setRecipients
+                                        )
                                     }
                                 />
                                 {rel.to.name}
                             </label>
                         ))}
                     </Card>
-
-
                 </Card>
 
                 {/* Actions */}
@@ -359,8 +364,6 @@ const AssembleCapsule = () => {
                     <RefreshCcw className="w-5 h-5 text-destructive" />
                 </button>
             )}
-
-
         </div>
     );
 };
