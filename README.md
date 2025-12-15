@@ -10,7 +10,7 @@ Echoes allows users to preserve memories, seal them in time, and relive them in 
 
 > ⚠️ **Important**
 >
-> The live deployment on **Vercel is frontend-only (DEMO)**.
+> The live deployment on **Vercel is not working as intended**.
 > To fully experience **Echoes** (emails, real-time presence, uploads, cron jobs), you must run it **locally with the backend**.
 
 ---
@@ -127,38 +127,14 @@ http://localhost:5173
 
 ---
 
-Here’s a **clean, professional README-ready version** of your **Demo & Media** section that:
-
-* Shows **video first**
-* Displays **5 primary screenshots**
-* Uses a **collapsible section** to reveal more images later
-* Is GitHub-friendly (pure Markdown)
-* Looks polished even before you add real assets
-
-You can copy-paste this directly.
-
----
-
 ## 🎬 Demo & Media
 
-### 📹 Video Demo
+### 🎥 **Echoes — Full App Demo**  
 
-> 🎥 **Watch Echoes in action**
+> Click on the below thumbnail to watch the full demo video on YouTube.
 
-* **Hackathon Pitch Video**
-  👉 *(link coming soon)*
+[![Watch the demo](https://img.youtube.com/vi/JRKV4HEjN78/0.jpg)](https://youtu.be/JRKV4HEjN78)
 
-* **Full App Walkthrough**
-  👉 *(link coming soon)*
-
-<details>
-<summary><strong>ℹ️ Note</strong></summary>
-
-The demo videos showcase the complete local (Docker-based) setup, including backend features that may not function reliably in the hosted demo.
-
-</details>
-
----
 
 ### 🖼️ Screenshots
 
