@@ -76,37 +76,46 @@ const Footer = () => {
                         </h2>
 
                         <p className="text-muted-foreground leading-relaxed">
-                            This website is deployed on <strong>Vercel</strong>{' '}
-                            as a <strong>frontend-only demo</strong>.
+                            The <strong>frontend</strong> of this application is deployed on{" "}
+                            <strong>Vercel</strong>, while the <strong>backend</strong> is hosted
+                            on <strong>Render</strong>.
                             <br />
                             <br />
-                            The backend server is <strong>not connected</strong>{' '}
-                            in this environment.
+                            The backend may take up to <strong>~1 minute</strong> to wake up
+                            if it has been idle. Please be patient during the initial load.
+                        </p>
+
+                        <p className="text-muted-foreground leading-relaxed">
+                            You can confirm that the server is active once the{" "}
+                            <strong>Page Views</strong> count in the footer starts updating.
                         </p>
 
                         <p className="text-muted-foreground">
-                            To fully test and use this application, please clone
-                            the repository and run it locally.
+                            Some features (such as image uploads, emails, or background jobs)
+                            may not work reliably in this demo environment.
                         </p>
 
-                        <a
-                            href="https://github.com/prana-W/echoes"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block text-primary underline underline-offset-4 hover:opacity-90 transition"
-                        >
-                            View GitHub Repository
-                        </a>
+                        <div className="space-y-3 pt-2">
+                            <a
+                                href="https://github.com/prana-W/Echoes"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition"
+                            >
+                                Experience the Best — Run Locally via Docker
+                            </a>
 
-                        <button
-                            onClick={handleCloseDemoWarning}
-                            className="w-full mt-4 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition"
-                        >
-                            I Understand
-                        </button>
+                            <button
+                                onClick={handleCloseDemoWarning}
+                                className="w-full px-6 py-3 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition"
+                            >
+                                Accept Possible Limitations & Continue
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
+
 
             {/* ---------------- FOOTER ---------------- */}
             <footer className="border-t border-border py-6 px-6">
