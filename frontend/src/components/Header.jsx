@@ -12,6 +12,7 @@ import {
 import {Button} from '@/components/ui/button';
 import {useApi} from '@/hooks/index.js';
 import {useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 export default function Header() {
     const [isVisible, setIsVisible] = useState(false);
@@ -51,16 +52,6 @@ export default function Header() {
         navigate('/auth');
     };
 
-    const NavLink = ({href, icon: Icon, children}) => (
-        <a
-            href={href}
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-foreground/90 hover:bg-primary/10 hover:text-primary transition-all duration-200 group"
-        >
-            <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span className="font-medium text-sm">{children}</span>
-        </a>
-    );
-
     return (
         <div
             className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out ${
@@ -96,34 +87,30 @@ export default function Header() {
                     <nav className="flex items-center gap-1">
                         {user ? (
                             <>
-                                <NavLink href="/" icon={Home}>
-                                    <span className="hidden md:inline">
+                                <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                    <Home className="w-4 h-4" />
+                                    <span className="hidden md:inline font-medium text-sm">
                                         Home
                                     </span>
-                                </NavLink>
-                                <NavLink href="/capsule" icon={Package}>
-                                    <span className="hidden md:inline">
+                                </Link>
+                                <Link to="/capsule" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                    <Package className="w-4 h-4" />
+                                    <span className="hidden md:inline font-medium text-sm">
                                         Capsules
                                     </span>
-                                </NavLink>
-                                <NavLink href="/relations" icon={Users}>
-                                    <span className="hidden lg:inline">
+                                </Link>
+                                <Link to="/relations" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                    <Users className="w-4 h-4" />
+                                    <span className="hidden lg:inline font-medium text-sm">
                                         Family
                                     </span>
-                                </NavLink>
-                                <NavLink href="/event" icon={Calendar}>
-                                    <span className="hidden md:inline">
+                                </Link>
+                                <Link to="/event" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                    <Calendar className="w-4 h-4" />
+                                    <span className="hidden md:inline font-medium text-sm">
                                         Event
                                     </span>
-                                </NavLink>
-                                {/*<Button*/}
-                                {/*    onClick={() => window.location.href = '/capsule/assemble?new=true'}*/}
-                                {/*    size="sm"*/}
-                                {/*    className="hidden xl:flex bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-full px-4 py-1 text-sm ml-2"*/}
-                                {/*>*/}
-                                {/*    <Plus className="w-3.5 h-3.5 mr-1" />*/}
-                                {/*    New*/}
-                                {/*</Button>*/}
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="flex items-center gap-2 px-4 py-2 rounded-full text-destructive hover:bg-destructive/10 transition-all duration-200 ml-2"
@@ -136,16 +123,17 @@ export default function Header() {
                             </>
                         ) : (
                             <>
-                                <NavLink href="/" icon={Home}>
-                                    <span className="hidden sm:inline">
+                                <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                    <Home className="w-4 h-4" />
+                                    <span className="hidden sm:inline font-medium text-sm" onClick={() => navigate('/')}>
                                         Home
                                     </span>
-                                </NavLink>
-                                <NavLink href="/#about" icon={Clock}>
-                                    <span className="hidden sm:inline">
+                                </Link>
+                                <Link to="/#about" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 transition-all duration-200">
+                                    <span className="hidden sm:inline font-medium text-sm" onClick={() => navigate('/#about')}>
                                         About
                                     </span>
-                                </NavLink>
+                                </Link>
                                 <Button
                                     onClick={() => navigate('/auth')}
                                     size="sm"

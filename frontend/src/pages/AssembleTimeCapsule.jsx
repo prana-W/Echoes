@@ -7,6 +7,7 @@ import {Card} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
+import { RefreshCcw } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -40,6 +41,8 @@ const AssembleCapsule = () => {
 
     const isNew = searchParams.get('new') === 'true';
     const timecapsuleId = searchParams.get('capsuleId');
+
+    const [showRefresh, setShowRefresh] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [showCreatedDialog, setShowCreatedDialog] = useState(false);
@@ -216,16 +219,29 @@ const AssembleCapsule = () => {
                         )}
                     </Card>
 
-                    {/* Contributors */}
                     <Card className="p-5 bg-muted/40 space-y-3">
-                        <div className="flex items-center gap-2">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
                             <h3 className="font-serif">Contributors</h3>
-                            <Info className="w-4 h-4 text-muted-foreground" />
+
+                            <button
+                                onClick={() => {
+                                    window.open('/relations', '_blank');
+                                    setShowRefresh(true);
+                                }}
+                                className="text-xs text-primary hover:underline"
+                            >
+                                Add New People
+                            </button>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            Contributors can add memories and open the capsule
-                            once the time arrives.
-                        </p>
+
+                        {/* Info line */}
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Info className="w-4 h-4" />
+                            <span>
+            Contributors can add memories and open the capsule once the time arrives.
+        </span>
+                        </div>
 
                         {relations.map((rel) => (
                             <label
@@ -237,10 +253,7 @@ const AssembleCapsule = () => {
                                     className="accent-primary scale-110"
                                     checked={contributors.includes(rel.to._id)}
                                     onChange={() =>
-                                        toggleSelection(
-                                            rel.to._id,
-                                            setContributors
-                                        )
+                                        toggleSelection(rel.to._id, setContributors)
                                     }
                                 />
                                 {rel.to.name}
@@ -248,16 +261,30 @@ const AssembleCapsule = () => {
                         ))}
                     </Card>
 
-                    {/* Recipients */}
+
                     <Card className="p-5 bg-muted/40 space-y-3">
-                        <div className="flex items-center gap-2">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
                             <h3 className="font-serif">Recipients</h3>
-                            <Info className="w-4 h-4 text-muted-foreground" />
+
+                            <button
+                                onClick={() => {
+                                    window.open('/relations', '_blank');
+                                    setShowRefresh(true);
+                                }}
+                                className="text-xs text-primary hover:underline"
+                            >
+                                Add New People
+                            </button>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            Recipients can only read memories once the capsule
-                            is opened.
-                        </p>
+
+                        {/* Info line */}
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Info className="w-4 h-4" />
+                            <span>
+            Recipients can only read memories once the capsule is opened.
+        </span>
+                        </div>
 
                         {relations.map((rel) => (
                             <label
@@ -269,16 +296,15 @@ const AssembleCapsule = () => {
                                     className="accent-secondary scale-110"
                                     checked={recipients.includes(rel.to._id)}
                                     onChange={() =>
-                                        toggleSelection(
-                                            rel.to._id,
-                                            setRecipients
-                                        )
+                                        toggleSelection(rel.to._id, setRecipients)
                                     }
                                 />
                                 {rel.to.name}
                             </label>
                         ))}
                     </Card>
+
+
                 </Card>
 
                 {/* Actions */}
@@ -319,6 +345,22 @@ const AssembleCapsule = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            {showRefresh && (
+                <button
+                    onClick={() => window.location.reload()}
+                    title="Refresh people list"
+                    className="fixed bottom-6 right-6 z-50
+                   h-12 w-12 rounded-full
+                   bg-destructive/10 border border-destructive/30
+                   flex items-center justify-center
+                   hover:bg-destructive hover:text-white
+                   transition-all duration-200 shadow-lg"
+                >
+                    <RefreshCcw className="w-5 h-5 text-destructive" />
+                </button>
+            )}
+
+
         </div>
     );
 };

@@ -4,8 +4,14 @@ import {Button} from '@/components/ui/button';
 import {useApi} from '@/hooks/index.js';
 import {toast} from 'sonner';
 import TimeCapsuleCard from '@/components/TimeCapsuleComponent.jsx';
+import TimeTravelOverlay from '@/components/TimeTravelOverlay.jsx';
+import {useNavigate} from 'react-router-dom';
 
 const TABS = ['all', 'notSealed', 'sealed', 'opened'];
+
+const sealHoldSound = new Audio('/sounds/slash.mp3');
+sealHoldSound.loop = true;
+sealHoldSound.volume = 0.5;
 
 export default function TimeCapsulesPage() {
     const api = useApi();
@@ -92,7 +98,12 @@ export default function TimeCapsulesPage() {
     const handleAddMemories = (c) =>
         (window.location.href = `/capsule/memories/${c._id}`);
 
-    const handleView = (c) => (window.location.href = `/capsule/view/${c._id}`);
+    const [travelTo, setTravelTo] = useState(null);
+
+    const handleView = (c) => {
+        setTravelTo(`/capsule/view/${c._id}`);
+    };
+
 
     /* ---------------- Seal logic ---------------- */
     const handleSeal = (capsule) => {
@@ -102,15 +113,42 @@ export default function TimeCapsulesPage() {
     };
 
     useEffect(() => {
-        if (!sealHolding) return;
+        if (!sealHolding) {
+            // Stop sound immediately when user releases
+            sealHoldSound.pause();
+            sealHoldSound.currentTime = 0;
+            return;
+        }
+
+        // Start sound
+        sealHoldSound.currentTime = 0;
+        sealHoldSound.play().catch(() => {});
+
         const start = Date.now();
+
         const interval = setInterval(() => {
-            const progress = Math.min(((Date.now() - start) / 5000) * 100, 100);
+            const progress = Math.min(
+                ((Date.now() - start) / 5000) * 100,
+                100
+            );
+
             setSealProgress(progress);
-            if (progress >= 100) finalizeSeal();
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                sealHoldSound.pause();
+                sealHoldSound.currentTime = 0;
+                finalizeSeal(); // 👈 success
+            }
         }, 50);
-        return () => clearInterval(interval);
+
+        return () => {
+            clearInterval(interval);
+            sealHoldSound.pause();
+            sealHoldSound.currentTime = 0;
+        };
     }, [sealHolding]);
+
 
     const finalizeSeal = async () => {
         try {
@@ -124,6 +162,8 @@ export default function TimeCapsulesPage() {
             toast.error('Failed to seal capsule');
         }
     };
+
+    const navigate = useNavigate();
 
     /* ---------------- Open logic ---------------- */
     const handleOpenRequest = (capsule) => {
@@ -162,7 +202,19 @@ export default function TimeCapsulesPage() {
 
     /* ---------------- UI ---------------- */
     return (
-        <div className="min-h-screen bg-background">
+        <>
+        <div>
+            {travelTo && (
+                <TimeTravelOverlay
+                    onFinish={() => {
+                        navigate(travelTo);
+                    }}
+                />
+            )}
+
+        </div>
+
+            <div className="min-h-screen bg-background">
             {/* Header */}
             <div className="border-b border-border bg-card/30">
                 <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
@@ -343,6 +395,7 @@ export default function TimeCapsulesPage() {
                 />
             )}
         </div>
+        </>
     );
 }
 
